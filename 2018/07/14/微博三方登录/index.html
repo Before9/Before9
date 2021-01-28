@@ -6,23 +6,28 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>VUE父子组件 | 博客</title>
+  <title>微博三方登录 | 博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="VUE父子组件使用在vue组件通信中其中最常见通信方式就是父子组件之中的通信，而父子组件的设定方式在不同情况下又各有不同。最常见的就是父组件为控制组件，子组件为视图组件。父组件传递数据给子组件使用，遇到业务逻辑操作时子组件触发父组件的自定义事件。但是，无论哪种组织方式父子组件的通信方式都是大同小异">
+  <meta name="description" content="三方登录流程：    理解第三方登录的流程     用户向后端发起请求，我要用微博进行登录     我们的前端凑一个url让用户跳转到第三方应用的url(微博的登录页面)     用户在该界面点击输入用户名密码之后，点击授权。     微博有个回调url指向我们的后端。     我们的后端就可以获取到用户的基本信息等。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="VUE父子组件">
-<meta property="og:url" content="http://example.com/2018/07/13/vue%E7%88%B6%E5%AD%90%E7%BB%84%E4%BB%B6/index.html">
+<meta property="og:title" content="微博三方登录">
+<meta property="og:url" content="http://example.com/2018/07/14/%E5%BE%AE%E5%8D%9A%E4%B8%89%E6%96%B9%E7%99%BB%E5%BD%95/index.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="VUE父子组件使用在vue组件通信中其中最常见通信方式就是父子组件之中的通信，而父子组件的设定方式在不同情况下又各有不同。最常见的就是父组件为控制组件，子组件为视图组件。父组件传递数据给子组件使用，遇到业务逻辑操作时子组件触发父组件的自定义事件。但是，无论哪种组织方式父子组件的通信方式都是大同小异">
+<meta property="og:description" content="三方登录流程：    理解第三方登录的流程     用户向后端发起请求，我要用微博进行登录     我们的前端凑一个url让用户跳转到第三方应用的url(微博的登录页面)     用户在该界面点击输入用户名密码之后，点击授权。     微博有个回调url指向我们的后端。     我们的后端就可以获取到用户的基本信息等。">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://example.com/2018/07/13/vue%E7%88%B6%E5%AD%90%E7%BB%84%E4%BB%B6/01.png">
-<meta property="og:image" content="http://example.com/2018/07/13/vue%E7%88%B6%E5%AD%90%E7%BB%84%E4%BB%B6/02.png">
-<meta property="article:published_time" content="2018-07-13T12:46:25.000Z">
-<meta property="article:modified_time" content="2021-01-28T03:44:24.856Z">
+<meta property="og:image" content="http://example.com/2018/07/14/%E5%BE%AE%E5%8D%9A%E4%B8%89%E6%96%B9%E7%99%BB%E5%BD%95/01.png">
+<meta property="og:image" content="http://example.com/2018/07/14/%E5%BE%AE%E5%8D%9A%E4%B8%89%E6%96%B9%E7%99%BB%E5%BD%95/02.png">
+<meta property="og:image" content="http://example.com/2018/07/14/%E5%BE%AE%E5%8D%9A%E4%B8%89%E6%96%B9%E7%99%BB%E5%BD%95/03.png">
+<meta property="og:image" content="http://example.com/2018/07/14/%E5%BE%AE%E5%8D%9A%E4%B8%89%E6%96%B9%E7%99%BB%E5%BD%95/04.png">
+<meta property="og:image" content="http://example.com/2018/07/14/%E5%BE%AE%E5%8D%9A%E4%B8%89%E6%96%B9%E7%99%BB%E5%BD%95/05.png">
+<meta property="og:image" content="http://example.com/2018/07/14/%E5%BE%AE%E5%8D%9A%E4%B8%89%E6%96%B9%E7%99%BB%E5%BD%95/06.png">
+<meta property="og:image" content="http://example.com/2018/07/14/%E5%BE%AE%E5%8D%9A%E4%B8%89%E6%96%B9%E7%99%BB%E5%BD%95/07.png">
+<meta property="article:published_time" content="2018-07-14T12:46:25.000Z">
+<meta property="article:modified_time" content="2021-01-28T08:00:12.642Z">
 <meta property="article:author" content="小刘同学">
-<meta property="article:tag" content="vue,组件">
+<meta property="article:tag" content="python,django">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/2018/07/13/vue%E7%88%B6%E5%AD%90%E7%BB%84%E4%BB%B6/01.png">
+<meta name="twitter:image" content="http://example.com/2018/07/14/%E5%BE%AE%E5%8D%9A%E4%B8%89%E6%96%B9%E7%99%BB%E5%BD%95/01.png">
   
     <link rel="alternative" href="/atom.xml" title="博客" type="application/atom+xml">
   
@@ -158,39 +163,58 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-vue父子组件" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-微博三方登录" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      VUE父子组件
+      微博三方登录
     </h1>
   
 
         
-        <a href="/2018/07/13/vue%E7%88%B6%E5%AD%90%E7%BB%84%E4%BB%B6/" class="archive-article-date">
-  	<time datetime="2018-07-13T12:46:25.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-07-13</time>
+        <a href="/2018/07/14/%E5%BE%AE%E5%8D%9A%E4%B8%89%E6%96%B9%E7%99%BB%E5%BD%95/" class="archive-article-date">
+  	<time datetime="2018-07-14T12:46:25.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-07-14</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h4 id="VUE父子组件使用"><a href="#VUE父子组件使用" class="headerlink" title="VUE父子组件使用"></a>VUE父子组件使用</h4><p>在vue组件通信中其中最常见通信方式就是父子组件之中的通信，而父子组件的设定方式在不同情况下又各有不同。<br>最常见的就是父组件为控制组件，子组件为视图组件。<br>父组件传递数据给子组件使用，遇到业务逻辑操作时子组件触发父组件的自定义事件。<br>但是，无论哪种组织方式父子组件的通信方式都是大同小异</p>
+        <p>三方登录流程：</p>
+<pre><code>   理解第三方登录的流程
+
+   用户向后端发起请求，我要用微博进行登录
+
+   我们的前端凑一个url让用户跳转到第三方应用的url(微博的登录页面)
+
+   用户在该界面点击输入用户名密码之后，点击授权。
+
+   微博有个回调url指向我们的后端。
+
+   我们的后端就可以获取到用户的基本信息等。</code></pre>
 <a id="more"></a>
 
-<h4 id="父组件向子组件传参-★★★★★"><a href="#父组件向子组件传参-★★★★★" class="headerlink" title="父组件向子组件传参 ★★★★★"></a>父组件向子组件传参 ★★★★★</h4><p><strong>通过 [props]传递数据 (推荐)</strong></p>
-<p>父子通讯中最常见的数据传递方式就是通过props传递数据，就好像方法的传参一样，父组件调用子组件并传入数据，子组件接受到父组件传递的数据进行验证<br>使用props 可以是数组或对象，用于接收来自父组件的数据。<br>props 可以是简单的数组，或者使用对象作为替代，对象允许配置高级选项，如类型检测、自定义校验和设置默认值prop 的定义应该尽量详细，至少需要指定其类型</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- 父组件  Father --&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;Son :parentMessage&#x3D;&quot;parentMessage&quot;&gt;&lt;&#x2F;Son&gt;</span><br><span class="line">  &lt;&#x2F;div&gt;</span><br><span class="line">&lt;&#x2F;template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">import Son from &quot;.&#x2F;Son&quot;;</span><br><span class="line"></span><br><span class="line">export default &#123;</span><br><span class="line">  components: &#123;</span><br><span class="line">    Son</span><br><span class="line">  &#125;,</span><br><span class="line">  data() &#123;</span><br><span class="line">    return &#123;</span><br><span class="line">      parentMessage: &quot;我是来自父组件的消息，借用一下子组件的地方渲染一下&quot;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">&lt;&#x2F;script&gt;</span><br><span class="line">&lt;style&gt;&lt;&#x2F;style&gt;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- 子组件 Son  --&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;h1&gt;你好哇&lt;&#x2F;h1&gt;</span><br><span class="line">    &lt;span&gt;&#123;&#123; parentMessage &#125;&#125;&lt;&#x2F;span&gt;</span><br><span class="line">  &lt;&#x2F;div&gt;</span><br><span class="line">&lt;&#x2F;template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">export default &#123;</span><br><span class="line">  mounted() &#123;</span><br><span class="line">    console.log(this.parentMessage)</span><br><span class="line">  &#125;,</span><br><span class="line">  &#x2F;&#x2F;第一种方法  </span><br><span class="line">  &#x2F;&#x2F; props: [&#39;parentMessage&#39;]</span><br><span class="line">  &#x2F;&#x2F;第二种方法</span><br><span class="line">    props: &#123;</span><br><span class="line">      parentMessage: &#123;</span><br><span class="line">        type: String,</span><br><span class="line">        default: &#39;子组件默认显示的信息&#39;,</span><br><span class="line">        require: true</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;  </span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">&lt;&#x2F;script&gt;</span><br><span class="line">&lt;style&gt;&lt;&#x2F;style&gt;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>效果：<br><img src="/2018/07/13/vue%E7%88%B6%E5%AD%90%E7%BB%84%E4%BB%B6/01.png" alt="父子组件传参"></p>
-<h4 id="子组件向父组件传参-★★★★★"><a href="#子组件向父组件传参-★★★★★" class="headerlink" title="子组件向父组件传参 ★★★★★"></a>子组件向父组件传参 ★★★★★</h4><p><strong>通过 [$emit]传递数据 (推荐)</strong><br>通过 $emit 传递父组件数据与父组件到子组件通讯中的$on配套使用，可以向父组件中触发的方法传递参数供父组件使用。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- 父组件  Father --&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    </span><br><span class="line">    &lt;h1&gt;&#123;&#123;data&#125;&#125;&lt;&#x2F;h1&gt;</span><br><span class="line"></span><br><span class="line">    &lt;Son @event&#x3D;&quot;change&quot;&gt;&lt;&#x2F;Son&gt;</span><br><span class="line">  &lt;&#x2F;div&gt;</span><br><span class="line">&lt;&#x2F;template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">import Son from &quot;.&#x2F;Son&quot;;</span><br><span class="line"></span><br><span class="line">export default &#123;</span><br><span class="line">  components: &#123;</span><br><span class="line">    Son</span><br><span class="line">  &#125;,</span><br><span class="line">  data() &#123;</span><br><span class="line">    return &#123;</span><br><span class="line">      data:&quot;我是父组件&quot;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">    methods: &#123;</span><br><span class="line">      change(event) &#123;</span><br><span class="line">        this.data &#x3D; event</span><br><span class="line">          console.log(event)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">&lt;&#x2F;script&gt;</span><br><span class="line">&lt;style&gt;&lt;&#x2F;style&gt;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- 子组件 Son  --&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">    &lt;div&gt;</span><br><span class="line">      &lt;button @click&#x3D;&quot;toFather&quot;&gt;向父组件传值&lt;&#x2F;button&gt;</span><br><span class="line">    &lt;&#x2F;div&gt;</span><br><span class="line">&lt;&#x2F;template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">export default &#123;</span><br><span class="line">  data()&#123;</span><br><span class="line">    return&#123;</span><br><span class="line">      data:&quot;我是子组件&quot;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  methods:&#123;</span><br><span class="line">      toFather()&#123;</span><br><span class="line">        this.$emit(&#39;event&#39;, this.data)</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;</span><br><span class="line">&lt;&#x2F;script&gt;</span><br><span class="line">&lt;style&gt;&lt;&#x2F;style&gt;</span><br></pre></td></tr></table></figure>
-<p>效果：<br><img src="/2018/07/13/vue%E7%88%B6%E5%AD%90%E7%BB%84%E4%BB%B6/02.png" alt="子父组件传参"></p>
+<p>微博开放平台网址：<a target="_blank" rel="noopener" href="https://open.weibo.com/?sudaref=www.baidu.com">https://open.weibo.com/?sudaref=www.baidu.com</a></p>
+<p>微博三方登录的指导思想：OAuth2.0授权认证</p>
+<p>步骤：</p>
+<h4 id="1-创建应用"><a href="#1-创建应用" class="headerlink" title="1.创建应用"></a>1.创建应用</h4><p><img src="/2018/07/14/%E5%BE%AE%E5%8D%9A%E4%B8%89%E6%96%B9%E7%99%BB%E5%BD%95/01.png" alt="创建应用"></p>
+<h4 id="2-设置回调地址"><a href="#2-设置回调地址" class="headerlink" title="2.设置回调地址"></a>2.设置回调地址</h4><p><img src="/2018/07/14/%E5%BE%AE%E5%8D%9A%E4%B8%89%E6%96%B9%E7%99%BB%E5%BD%95/02.png" alt="设置回调地址"></p>
+<h4 id="3-请求用户授权token"><a href="#3-请求用户授权token" class="headerlink" title="3. 请求用户授权token"></a>3. 请求用户授权token</h4><p><img src="/2018/07/14/%E5%BE%AE%E5%8D%9A%E4%B8%89%E6%96%B9%E7%99%BB%E5%BD%95/03.png" alt="请求用户授权Token"><br><img src="/2018/07/14/%E5%BE%AE%E5%8D%9A%E4%B8%89%E6%96%B9%E7%99%BB%E5%BD%95/04.png" alt="请求用户授权Token"><br><img src="/2018/07/14/%E5%BE%AE%E5%8D%9A%E4%B8%89%E6%96%B9%E7%99%BB%E5%BD%95/05.png" alt="请求用户授权Token"></p>
+<ul>
+<li><p>在前端写一个超链接用来向微博发送请求</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;https://api.weibo.com/oauth2/authorize?client_id=xxxxxxxx&amp;redirect_uri=xxxxxxxx&quot;</span>&gt;</span><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;../../assets/240.png&quot;</span> <span class="attr">alt</span>=<span class="string">&quot;&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h4 id="4-获取授权过的Access-Token"><a href="#4-获取授权过的Access-Token" class="headerlink" title="4.获取授权过的Access Token"></a>4.获取授权过的Access Token</h4><p><img src="/2018/07/14/%E5%BE%AE%E5%8D%9A%E4%B8%89%E6%96%B9%E7%99%BB%E5%BD%95/06.png" alt="获取授权过的Acccess Token"><br><img src="/2018/07/14/%E5%BE%AE%E5%8D%9A%E4%B8%89%E6%96%B9%E7%99%BB%E5%BD%95/07.png" alt="获取授权过的Acccess Token"></p>
+</li>
+<li><p>在后端写一个接口用来进行网络请求(使用requests三方模块)</p>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">WeiboView</span>(<span class="params">APIView</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">self, request</span>):</span></span><br><span class="line">        code = request.GET.get(<span class="string">&quot;code&quot;</span>)</span><br><span class="line">        <span class="comment"># 通过python进行网络请求 requests</span></span><br><span class="line">        r = requests.post(<span class="string">&quot;https://api.weibo.com/oauth2/access_token&quot;</span>, &#123;</span><br><span class="line">            <span class="comment"># App Key</span></span><br><span class="line">            <span class="string">&quot;client_id&quot;</span>: xxxx,</span><br><span class="line">            <span class="comment"># 密钥  App Secret</span></span><br><span class="line">            <span class="string">&quot;client_secret&quot;</span>: <span class="string">&quot;&quot;</span>,</span><br><span class="line">            <span class="comment"># 请求的类型</span></span><br><span class="line">            <span class="string">&quot;grant_type&quot;</span>: <span class="string">&quot;authorization_code&quot;</span>,</span><br><span class="line">            <span class="comment"># 调用authorize获得的code值。</span></span><br><span class="line">            <span class="string">&quot;code&quot;</span>: code,</span><br><span class="line">            <span class="comment"># 回调地址</span></span><br><span class="line">            <span class="string">&quot;redirect_uri&quot;</span>: <span class="string">&quot;http://127.0.0.1:8000/weibo/&quot;</span></span><br><span class="line">        &#125;)</span><br><span class="line">        access_token = r.json()[<span class="string">&#x27;access_token&#x27;</span>]</span><br><span class="line">        uid = r.json()[<span class="string">&#x27;uid&#x27;</span>]</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 先判断微博账号是否登录过，没有登录过则把账号添加到第三方表中，登陆过则返回登录信息</span></span><br><span class="line">        open_user = OpenUser.objects.<span class="built_in">filter</span>(uid=uid).first()</span><br><span class="line">        <span class="keyword">if</span> open_user:</span><br><span class="line">            <span class="comment"># 已经登录过了</span></span><br><span class="line">            user = open_user.user</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            user = User.objects.create(username=uid, password=uid)</span><br><span class="line">            <span class="comment"># 没有登录</span></span><br><span class="line">            OpenUser.objects.create(uid=uid, cate=<span class="string">&quot;微博&quot;</span>, user=user)</span><br><span class="line">        <span class="comment"># 生成令牌</span></span><br><span class="line">        token = jwt.encode(&#123;<span class="string">&quot;uid&quot;</span>:user.<span class="built_in">id</span>&#125;,<span class="string">&#x27;123&#x27;</span>)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 跳转到前端首页</span></span><br><span class="line">        <span class="keyword">return</span> HttpResponse(<span class="string">&quot;登录成功,点击跳转&lt;a href=&#x27;http://127.0.0.1:8080/#/index?token=%s&amp;username=%s&#x27;&gt;跳转&lt;/a&gt;&quot;</span>%(token.decode(),uid))</span><br></pre></td></tr></table></figure>
+<ul>
+<li>这样一个微博三方登录就做好啦</li>
+</ul>
 
       
 
@@ -225,7 +249,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">vue,组件</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">python,django</a>
         		</li>
       		
 		</ul>
@@ -281,7 +305,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2018/07/13/vue%E7%88%B6%E5%AD%90%E7%BB%84%E4%BB%B6/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2018/07/14/%E5%BE%AE%E5%8D%9A%E4%B8%89%E6%96%B9%E7%99%BB%E5%BD%95/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -295,18 +319,9 @@
   
 <nav id="article-nav">
   
-    <a href="/2018/07/14/%E5%BE%AE%E5%8D%9A%E4%B8%89%E6%96%B9%E7%99%BB%E5%BD%95/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          微博三方登录
-        
-      </div>
-    </a>
   
-  
-    <a href="/2018/07/12/vue%E8%B7%AF%E7%94%B1%E9%92%A9%E5%AD%90/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">VUE路由钩子</div>
+    <a href="/2018/07/13/vue%E7%88%B6%E5%AD%90%E7%BB%84%E4%BB%B6/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">VUE父子组件</div>
       <i class="icon-circle-right"></i>
     </a>
   
