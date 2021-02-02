@@ -1,0 +1,77 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="format-detection" content="telephone=no"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black"><link rel="icon" href="https://gitee.com/BothSavage/PicGo/raw/master/image/favicon-16x16.png?v=2.6.2" type="image/png" sizes="16x16"><link rel="icon" href="https://gitee.com/BothSavage/PicGo/raw/master/image/favicon-32x32.png?v=2.6.2" type="image/png" sizes="32x32"><meta name="description" content="Redis提供了发布订阅功能，跟消息中间件是类似的，可以用于消息的传输，Redis提供了一组命令可以让开发者实现“发布&#x2F;订阅”模式 (publish&#x2F;subscribe) ，该模式同样可以实现进程间的消息传递。它的实现原理是发布&#x2F;订阅模式包含两种角色，分别是发布者和订阅者。订阅者可以订阅一个或多个频道，而发布者可以向指定的 频道发送消息，所有订阅此频道的订阅者都会收到该消息。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="redis发布订阅">
+<meta property="og:url" content="http://www.hr915.xyz/2018/07/18/redis%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/index.html">
+<meta property="og:site_name" content="I hope you&#39;re here for me">
+<meta property="og:description" content="Redis提供了发布订阅功能，跟消息中间件是类似的，可以用于消息的传输，Redis提供了一组命令可以让开发者实现“发布&#x2F;订阅”模式 (publish&#x2F;subscribe) ，该模式同样可以实现进程间的消息传递。它的实现原理是发布&#x2F;订阅模式包含两种角色，分别是发布者和订阅者。订阅者可以订阅一个或多个频道，而发布者可以向指定的 频道发送消息，所有订阅此频道的订阅者都会收到该消息。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://www.hr915.xyz/2018/07/18/redis%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/01.png">
+<meta property="og:image" content="http://www.hr915.xyz/2018/07/18/redis%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/02.png">
+<meta property="og:image" content="http://www.hr915.xyz/2018/07/18/redis%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/03.png">
+<meta property="og:image" content="http://www.hr915.xyz/2018/07/18/redis%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/04.png">
+<meta property="og:image" content="http://www.hr915.xyz/2018/07/18/redis%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/05.png">
+<meta property="article:published_time" content="2018-07-18T12:46:25.000Z">
+<meta property="article:modified_time" content="2021-02-02T08:46:20.297Z">
+<meta property="article:author" content="小刘同学">
+<meta property="article:tag" content="redis">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://www.hr915.xyz/2018/07/18/redis%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/01.png"><title>redis发布订阅 | I hope you're here for me</title><link ref="canonical" href="http://www.hr915.xyz/2018/07/18/redis%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/"><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.12.1/css/all.min.css" type="text/css"><link rel="stylesheet" href="/css/index.css?v=2.6.2"><script>var Stun = window.Stun || {};
+var CONFIG = {
+  root: '/',
+  algolia: undefined,
+  assistSearch: undefined,
+  fontIcon: {"prompt":{"success":"fas fa-check-circle","info":"fas fa-arrow-circle-right","warning":"fas fa-exclamation-circle","error":"fas fa-times-circle"},"copyBtn":"fas fa-copy"},
+  sidebar: {"offsetTop":"20px","tocMaxDepth":6},
+  header: {"enable":true,"showOnPost":true,"scrollDownIcon":false},
+  postWidget: {"endText":true},
+  nightMode: {"enable":true},
+  back2top: {"enable":true},
+  codeblock: {"style":"default","highlight":"light","wordWrap":false},
+  reward: false,
+  fancybox: false,
+  zoomImage: {"gapAside":"20px"},
+  galleryWaterfall: undefined,
+  lazyload: false,
+  pjax: undefined,
+  externalLink: {"icon":{"enable":true,"name":"fas fa-external-link-alt"}},
+  shortcuts: undefined,
+  prompt: {"copyButton":"复制","copySuccess":"复制成功","copyError":"复制失败"},
+  sourcePath: {"js":"js","css":"css","images":"images"},
+};
+
+window.CONFIG = CONFIG;</script><meta name="generator" content="Hexo 5.3.0"><link rel="alternate" href="/atom.xml" title="I hope you're here for me" type="application/atom+xml">
+</head><body><div class="container" id="container"><header class="header" id="header"><div class="header-inner"><nav class="header-nav header-nav--fixed"><div class="header-nav-inner"><div class="header-nav-menubtn"><i class="fas fa-bars"></i></div><div class="header-nav-menu"><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" href="/"><span class="header-nav-menu-item__icon"><i class="fas fa-home"></i></span><span class="header-nav-menu-item__text">首页</span></a></div><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" href="/archives/"><span class="header-nav-menu-item__icon"><i class="fas fa-folder-open"></i></span><span class="header-nav-menu-item__text">归档</span></a></div></div><div class="header-nav-mode"><div class="mode"><div class="mode-track"><span class="mode-track-moon"></span><span class="mode-track-sun"></span></div><div class="mode-thumb"></div></div></div></div></nav><div class="header-banner"><div class="header-banner-info"><div class="header-banner-info__title">I hope you're here for me</div><div class="header-banner-info__subtitle">欢迎来到Ran博客</div></div></div></div></header><main class="main" id="main"><div class="main-inner"><div class="content-wrap" id="content-wrap"><div class="content" id="content"><!-- Just used to judge whether it is an article page--><div id="is-post"></div><div class="post"><header class="post-header"><h1 class="post-title">redis发布订阅</h1><div class="post-meta"><span class="post-meta-item post-meta-item--createtime"><span class="post-meta-item__icon"><i class="far fa-calendar-plus"></i></span><span class="post-meta-item__info">发表于</span><span class="post-meta-item__value">2018-07-18</span></span></div></header><div class="post-body"><p>Redis提供了发布订阅功能，跟消息中间件是类似的，可以用于消息的传输，Redis提供了一组命令可以让开发者实现“发布/订阅”模式 (publish/subscribe) ，该模式同样可以实现进程间的消息传递。<br>它的实现原理是发布/订阅模式包含两种角色，分别是发布者和订阅者。订阅者可以订阅一个或多个频道，而发布者可以向指定的 频道发送消息，所有订阅此频道的订阅者都会收到该消息。</p>
+<a id="more"></a>
+
+        <h4 id="关系图">
+          <a href="#关系图" class="heading-link"><i class="fas fa-link"></i></a><a href="#关系图" class="headerlink" title="关系图"></a>关系图</h4>
+      <p><img src="/2018/07/18/redis%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/01.png" alt="发布订阅"></p>
+
+        <h4 id="redis-消息订阅和发布命令：">
+          <a href="#redis-消息订阅和发布命令：" class="heading-link"><i class="fas fa-link"></i></a><a href="#redis-消息订阅和发布命令：" class="headerlink" title="redis 消息订阅和发布命令："></a>redis 消息订阅和发布命令：</h4>
+      <ol>
+<li>psubscribe pattern [pattern…] ：订阅一个或多个给定模式的 频道</li>
+<li>punsubscribe [pattern [pttern…]]：退订所有频道给定模式的频道</li>
+<li>pubsub subcommand [argument [argument…]]：查看订阅与发布系统状态</li>
+<li>publish channel message：将信息发送到指定的频道</li>
+<li>subscribe channel [channel…]：订阅给定的一个或多个频道信息。</li>
+<li>unsubscribe [channel [channel…]]：指退订给定的频道。</li>
+</ol>
+
+        <h4 id="案例-for-example-：">
+          <a href="#案例-for-example-：" class="heading-link"><i class="fas fa-link"></i></a><a href="#案例-for-example-：" class="headerlink" title="案例 for example ："></a>案例 for example ：</h4>
+      <p><strong>注意</strong>：需要打开两个小黑窗口哦！</p>
+<ol>
+<li><p>一次订阅多个频道 c1,c2,c3 (subscribe c1 c2 c3)<br><img src="/2018/07/18/redis%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/02.png" alt="订阅多个频道"></p>
+</li>
+<li><p>消息发布，向c2频道发布消息 (publish c2 hello-redis)<br><img src="/2018/07/18/redis%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/03.png" alt="向指定频道发布消息"></p>
+</li>
+<li><p>订阅给定模式的频道，通配符* (psubscribe new*)<br><img src="/2018/07/18/redis%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/04.png" alt="订阅特定模式的频道"></p>
+</li>
+<li><p>发布消息 (publish new1 redis-hello)<br><img src="/2018/07/18/redis%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/05.png" alt="发布消息"></p>
+</li>
+</ol>
+</div><footer class="post-footer"><div class="post-ending ending"><div class="ending__text">------ 本文结束，感谢您的阅读 ------</div></div><div class="post-copyright copyright"><div class="copyright-author"><span class="copyright-author__name">本文作者: </span><span class="copyright-author__value"><a href="http://www.hr915.xyz">小刘同学</a></span></div><div class="copyright-link"><span class="copyright-link__name">本文链接: </span><span class="copyright-link__value"><a href="http://www.hr915.xyz/2018/07/18/redis%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/">http://www.hr915.xyz/2018/07/18/redis%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/</a></span></div><div class="copyright-notice"><span class="copyright-notice__name">版权声明: </span><span class="copyright-notice__value">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en" rel="external nofollow" target="_blank">BY-NC-SA</a> 许可协议。转载请注明出处！</span></div></div><div class="post-tags"><span class="post-tags-item"><span class="post-tags-item__icon"><i class="fas fa-tag"></i></span><a class="post-tags-item__link" href="http://www.hr915.xyz/tags/redis/">redis</a></span></div><nav class="post-paginator paginator"><div class="paginator-next"><a class="paginator-next__link" href="/2018/07/17/axios%E5%B0%81%E8%A3%85/"><span class="paginator-prev__text">axios封装</span><span class="paginator-next__icon"><i class="fas fa-angle-right"></i></span></a></div></nav></footer></div></div></div><div class="sidebar-wrap" id="sidebar-wrap"><aside class="sidebar" id="sidebar"><div class="sidebar-nav"><span class="sidebar-nav-toc current">文章目录</span><span class="sidebar-nav-ov">站点概览</span></div><section class="sidebar-toc"><ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B3%E7%B3%BB%E5%9B%BE"><span class="toc-number">1.</span> <span class="toc-text">
+          关系图</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#redis-%E6%B6%88%E6%81%AF%E8%AE%A2%E9%98%85%E5%92%8C%E5%8F%91%E5%B8%83%E5%91%BD%E4%BB%A4%EF%BC%9A"><span class="toc-number">2.</span> <span class="toc-text">
+          redis 消息订阅和发布命令：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A1%88%E4%BE%8B-for-example-%EF%BC%9A"><span class="toc-number">3.</span> <span class="toc-text">
+          案例 for example ：</span></a></li></ol></section><!-- ov = overview--><section class="sidebar-ov hide"><div class="sidebar-ov-author"><div class="sidebar-ov-author__avatar"><img class="sidebar-ov-author__avatar_img" src="/images/icons/123.jpg" alt="avatar"></div><p class="sidebar-ov-author__text">伸个懒腰吧</p></div><div class="sidebar-ov-state"><a class="sidebar-ov-state-item sidebar-ov-state-item--posts" href="/archives/"><div class="sidebar-ov-state-item__count">8</div><div class="sidebar-ov-state-item__name">归档</div></a></div><div class="sidebar-ov-cc"><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en" target="_blank" rel="noopener" data-popover="知识共享许可协议" data-popover-pos="up"><img src="/images/cc-by-nc-sa.svg"></a></div></section><div class="sidebar-reading"><div class="sidebar-reading-info"><span class="sidebar-reading-info__text">你已阅读了 </span><span class="sidebar-reading-info__num">0</span><span class="sidebar-reading-info__perc">%</span></div><div class="sidebar-reading-line"></div></div></aside></div><div class="clearfix"></div></div></main><footer class="footer" id="footer"><div class="footer-inner"><div><span>Copyright © 2021</span><span class="footer__icon"><i class="fas fa-heart"></i></span><span>小刘同学</span></div><div><span>由 <a href="http://hexo.io/" title="Hexo" target="_blank" rel="noopener">Hexo</a> 强力驱动</span><span> v5.3.0</span><span class="footer__devider">|</span><span>主题 - <a href="https://github.com/liuyib/hexo-theme-stun/" title="Stun" target="_blank" rel="noopener">Stun</a></span><span> v2.6.2</span></div></div></footer><div class="loading-bar" id="loading-bar"><div class="loading-bar__progress"></div></div><div class="back2top" id="back2top"><span class="back2top__icon"><i class="fas fa-rocket"></i></span></div></div><script src="https://cdn.jsdelivr.net/npm/jquery@v3.4.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@1.5.2/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@1.5.2/velocity.ui.min.js"></script><script src="/js/utils.js?v=2.6.2"></script><script src="/js/stun-boot.js?v=2.6.2"></script><script src="/js/scroll.js?v=2.6.2"></script><script src="/js/header.js?v=2.6.2"></script><script src="/js/sidebar.js?v=2.6.2"></script><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body></html>

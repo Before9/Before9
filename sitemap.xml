@@ -2,23 +2,37 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://www.hr915.xyz/2018/07/17/axios%E5%B0%81%E8%A3%85/</loc>
+    <loc>http://www.hr915.xyz/2018/07/18/redis%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/</loc>
     
-    <lastmod>2021-01-31</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://www.hr915.xyz/2018/07/16/celery%E5%BC%82%E6%AD%A5%E6%A1%86%E6%9E%B6/</loc>
-    
-    <lastmod>2021-01-31</lastmod>
+    <lastmod>2021-02-02</lastmod>
     
   </url>
   
   <url>
     <loc>http://www.hr915.xyz/2018/07/14/%E5%BE%AE%E5%8D%9A%E4%B8%89%E6%96%B9%E7%99%BB%E5%BD%95/</loc>
     
-    <lastmod>2021-01-31</lastmod>
+    <lastmod>2021-02-02</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.hr915.xyz/2018/07/15/%E4%B8%89%E6%96%B9%E6%94%AF%E4%BB%98/</loc>
+    
+    <lastmod>2021-02-02</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.hr915.xyz/2018/07/16/celery%E5%BC%82%E6%AD%A5%E6%A1%86%E6%9E%B6/</loc>
+    
+    <lastmod>2021-02-02</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.hr915.xyz/2018/07/17/axios%E5%B0%81%E8%A3%85/</loc>
+    
+    <lastmod>2021-02-02</lastmod>
     
   </url>
   
@@ -43,39 +57,67 @@
     
   </url>
   
-  <url>
-    <loc>http://www.hr915.xyz/2018/07/15/%E4%B8%89%E6%96%B9%E6%94%AF%E4%BB%98/</loc>
-    
-    <lastmod>2021-01-29</lastmod>
-    
-  </url>
-  
 
   <url>
     <loc>http://www.hr915.xyz/</loc>
-    <lastmod>2021-01-31</lastmod>
+    <lastmod>2021-02-02</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
 
   
   <url>
+    <loc>http://www.hr915.xyz/tags/axios/</loc>
+    <lastmod>2021-02-02</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.hr915.xyz/tags/django-celery/</loc>
+    <lastmod>2021-02-02</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.hr915.xyz/tags/redis/</loc>
+    <lastmod>2021-02-02</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://www.hr915.xyz/tags/vue/</loc>
-    <lastmod>2021-01-31</lastmod>
+    <lastmod>2021-02-02</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://www.hr915.xyz/tags/vue-Sjavascript/</loc>
-    <lastmod>2021-01-31</lastmod>
+    <lastmod>2021-02-02</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://www.hr915.xyz/tags/vue-%E7%BB%84%E4%BB%B6/</loc>
-    <lastmod>2021-01-31</lastmod>
+    <lastmod>2021-02-02</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.hr915.xyz/tags/django-%E4%B8%89%E6%96%B9%E6%94%AF%E4%BB%98/</loc>
+    <lastmod>2021-02-02</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.hr915.xyz/tags/django-%E4%B8%89%E6%96%B9%E7%99%BB%E5%BD%95/</loc>
+    <lastmod>2021-02-02</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
