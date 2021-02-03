@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://www.hr915.xyz/2018/07/15/%E4%B8%89%E6%96%B9%E6%94%AF%E4%BB%98/</loc>
+    
+    <lastmod>2021-02-03</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://www.hr915.xyz/2018/07/20/Webshell/</loc>
     
     <lastmod>2021-02-03</lastmod>
@@ -24,13 +31,6 @@
   
   <url>
     <loc>http://www.hr915.xyz/2018/07/14/%E5%BE%AE%E5%8D%9A%E4%B8%89%E6%96%B9%E7%99%BB%E5%BD%95/</loc>
-    
-    <lastmod>2021-02-02</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://www.hr915.xyz/2018/07/15/%E4%B8%89%E6%96%B9%E6%94%AF%E4%BB%98/</loc>
     
     <lastmod>2021-02-02</lastmod>
     
@@ -88,14 +88,14 @@
   </url>
   
   <url>
-    <loc>http://www.hr915.xyz/tags/django-celery/</loc>
+    <loc>http://www.hr915.xyz/tags/redis/</loc>
     <lastmod>2021-02-03</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>http://www.hr915.xyz/tags/redis/</loc>
+    <loc>http://www.hr915.xyz/tags/django-celery/</loc>
     <lastmod>2021-02-03</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -123,7 +123,14 @@
   </url>
   
   <url>
-    <loc>http://www.hr915.xyz/tags/django-%E4%B8%89%E6%96%B9%E6%94%AF%E4%BB%98/</loc>
+    <loc>http://www.hr915.xyz/tags/django/</loc>
+    <lastmod>2021-02-03</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.hr915.xyz/tags/%E4%B8%89%E6%96%B9%E6%94%AF%E4%BB%98/</loc>
     <lastmod>2021-02-03</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
