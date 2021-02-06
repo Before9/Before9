@@ -102,6 +102,13 @@
 
   
   <url>
+    <loc>http://www.hr915.xyz/tags/django-celery/</loc>
+    <lastmod>2021-02-06</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://www.hr915.xyz/tags/axios/</loc>
     <lastmod>2021-02-06</lastmod>
     <changefreq>daily</changefreq>
@@ -116,13 +123,6 @@
   </url>
   
   <url>
-    <loc>http://www.hr915.xyz/tags/django-celery/</loc>
-    <lastmod>2021-02-06</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>http://www.hr915.xyz/tags/redis/</loc>
     <lastmod>2021-02-06</lastmod>
     <changefreq>daily</changefreq>
@@ -130,14 +130,14 @@
   </url>
   
   <url>
-    <loc>http://www.hr915.xyz/tags/vue/</loc>
+    <loc>http://www.hr915.xyz/tags/vue-Sjavascript/</loc>
     <lastmod>2021-02-06</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>http://www.hr915.xyz/tags/vue-Sjavascript/</loc>
+    <loc>http://www.hr915.xyz/tags/vue/</loc>
     <lastmod>2021-02-06</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
