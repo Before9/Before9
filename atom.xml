@@ -6,7 +6,7 @@
   <link href="http://www.hr915.xyz/atom.xml" rel="self"/>
   
   <link href="http://www.hr915.xyz/"/>
-  <updated>2021-02-06T08:57:38.355Z</updated>
+  <updated>2021-02-19T09:10:07.608Z</updated>
   <id>http://www.hr915.xyz/</id>
   
   <author>
@@ -15,6 +15,26 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>docker打包镜像</title>
+    <link href="http://www.hr915.xyz/2018/08/16/docker%E6%89%93%E5%8C%85%E9%95%9C%E5%83%8F/"/>
+    <id>http://www.hr915.xyz/2018/08/16/docker%E6%89%93%E5%8C%85%E9%95%9C%E5%83%8F/</id>
+    <published>2018-08-16T08:58:35.000Z</published>
+    <updated>2021-02-19T09:10:07.608Z</updated>
+    
+    <content type="html"><![CDATA[<p>在docker hub上有时我们找不到想要的image,或自己想要打包纯净的image ( 怕投毒?? ).</p><p>所以自己制作docker image是一种不错的选择</p><a id="more"></a>        <h5 id="拉取镜像">          <a href="#拉取镜像" class="heading-link"><i class="fas fa-link"></i></a><a href="#拉取镜像" class="headerlink" title="拉取镜像"></a>拉取镜像</h5>      <blockquote><p>docker pull centos</p></blockquote>        <h5 id="查看镜像">          <a href="#查看镜像" class="heading-link"><i class="fas fa-link"></i></a><a href="#查看镜像" class="headerlink" title="查看镜像"></a>查看镜像</h5>      <blockquote><p>docker images</p></blockquote>        <h5 id="创建容器">          <a href="#创建容器" class="heading-link"><i class="fas fa-link"></i></a><a href="#创建容器" class="headerlink" title="创建容器"></a>创建容器</h5>      <blockquote><p>docker run -it –name=容器名  镜像名  /bin/bash</p></blockquote>        <h5 id="启动容器">          <a href="#启动容器" class="heading-link"><i class="fas fa-link"></i></a><a href="#启动容器" class="headerlink" title="启动容器"></a>启动容器</h5>      <blockquote><p>docker start 容器ID</p></blockquote>        <h5 id="进入容器">          <a href="#进入容器" class="heading-link"><i class="fas fa-link"></i></a><a href="#进入容器" class="headerlink" title="进入容器"></a>进入容器</h5>      <blockquote><p>docker exec -itd 容器名(容器ID) /bin/bash<br>docker attach 容器ID</p></blockquote>        <h5 id="安装ssh">          <a href="#安装ssh" class="heading-link"><i class="fas fa-link"></i></a><a href="#安装ssh" class="headerlink" title="安装ssh"></a>安装ssh</h5>      <blockquote><p>yum install openssh-server</p></blockquote><p>没有正常启动的话通常需要生成当前主机的ssh-key</p><blockquote><p>ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key<br>ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key<br>ssh-keygen -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key<br>ssh-keygen -t dsa -f /etc/ssh/ssh_host_ed25519_key</p></blockquote>        <h5 id="在容器中启动ssh服务，让外界可以连接">          <a href="#在容器中启动ssh服务，让外界可以连接" class="heading-link"><i class="fas fa-link"></i></a><a href="#在容器中启动ssh服务，让外界可以连接" class="headerlink" title="在容器中启动ssh服务，让外界可以连接"></a>在容器中启动ssh服务，让外界可以连接</h5>      <blockquote><p>/usr/sbin/sshd</p></blockquote>        <h5 id="修改密码">          <a href="#修改密码" class="heading-link"><i class="fas fa-link"></i></a><a href="#修改密码" class="headerlink" title="修改密码"></a>修改密码</h5>      <blockquote><p>修改密码需要安装passwd<br>yum install passwd.x86_64<br>修改密码<br>passwd root</p></blockquote>        <h5 id="退出容器">          <a href="#退出容器" class="heading-link"><i class="fas fa-link"></i></a><a href="#退出容器" class="headerlink" title="退出容器"></a>退出容器</h5>      <blockquote><p>exit</p></blockquote>        <h5 id="查看所有容器">          <a href="#查看所有容器" class="heading-link"><i class="fas fa-link"></i></a><a href="#查看所有容器" class="headerlink" title="查看所有容器"></a>查看所有容器</h5>      <blockquote><p>docker ps -a</p></blockquote>        <h5 id="制作镜像">          <a href="#制作镜像" class="heading-link"><i class="fas fa-link"></i></a><a href="#制作镜像" class="headerlink" title="制作镜像"></a>制作镜像</h5>      <blockquote><p>docker commit -a “作者” -m “简介”  被打包的容器ID  镜像名: 版本号</p></blockquote>        <h5 id="镜像导出">          <a href="#镜像导出" class="heading-link"><i class="fas fa-link"></i></a><a href="#镜像导出" class="headerlink" title="镜像导出"></a>镜像导出</h5>      <blockquote><p>docker save 镜像名 &gt; ./文件名<br>例如： docker save ssh_image &gt; ./ssh_image.tar.gz</p></blockquote>        <h5 id="加载镜像-解压">          <a href="#加载镜像-解压" class="heading-link"><i class="fas fa-link"></i></a><a href="#加载镜像-解压" class="headerlink" title="加载镜像(解压)"></a>加载镜像(解压)</h5>      <blockquote><p>docker load &lt; ./文件名<br>例如： docker load &lt; ./ssh_image.tar.gz</p></blockquote>        <h5 id="查看镜像是否存在">          <a href="#查看镜像是否存在" class="heading-link"><i class="fas fa-link"></i></a><a href="#查看镜像是否存在" class="headerlink" title="查看镜像是否存在"></a>查看镜像是否存在</h5>      <blockquote><p>docker images</p></blockquote>        <h5 id="创建容器把镜像跑起来">          <a href="#创建容器把镜像跑起来" class="heading-link"><i class="fas fa-link"></i></a><a href="#创建容器把镜像跑起来" class="headerlink" title="创建容器把镜像跑起来"></a>创建容器把镜像跑起来</h5>      <blockquote><p>docker run -itd -p 11111:22(映射的端口号)  镜像ID  /bin/bash</p></blockquote>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;在docker hub上有时我们找不到想要的image,或自己想要打包纯净的image ( 怕投毒?? ).&lt;/p&gt;
+&lt;p&gt;所以自己制作docker image是一种不错的选择&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="docker" scheme="http://www.hr915.xyz/tags/docker/"/>
+    
+  </entry>
   
   <entry>
     <title>docker操作 容器、镜像 &amp;&amp; dockerfile</title>
