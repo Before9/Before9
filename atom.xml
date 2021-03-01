@@ -6,7 +6,7 @@
   <link href="http://www.hr915.xyz/atom.xml" rel="self"/>
   
   <link href="http://www.hr915.xyz/"/>
-  <updated>2021-02-20T11:56:40.126Z</updated>
+  <updated>2021-03-01T12:32:54.601Z</updated>
   <id>http://www.hr915.xyz/</id>
   
   <author>
@@ -15,6 +15,26 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title></title>
+    <link href="http://www.hr915.xyz/2021/03/01/baidu_verify_code-SrRvLx3ypc/"/>
+    <id>http://www.hr915.xyz/2021/03/01/baidu_verify_code-SrRvLx3ypc/</id>
+    <published>2021-03-01T12:33:16.867Z</published>
+    <updated>2021-03-01T12:32:54.601Z</updated>
+    
+    <content type="html"><![CDATA[3f40d8e49fac81e2f2cd895034be5580]]></content>
+    
+    
+      
+      
+    <summary type="html">3f40d8e49fac81e2f2cd895034be5580</summary>
+      
+    
+    
+    
+    
+  </entry>
   
   <entry>
     <title>docker打包镜像</title>
@@ -316,28 +336,6 @@
     
     
     <category term="vue,Sjavascript" scheme="http://www.hr915.xyz/tags/vue-Sjavascript/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Hexo</title>
-    <link href="http://www.hr915.xyz/2018/06/15/hexo/"/>
-    <id>http://www.hr915.xyz/2018/06/15/hexo/</id>
-    <published>2018-06-15T08:26:15.000Z</published>
-    <updated>2021-03-01T12:21:53.738Z</updated>
-    
-    <content type="html"><![CDATA[<p>Hexo是一款基于Node.js的静态博客框架，依赖少易于安装使用，可以方便的生成静态网页托管在GitHub和Coding上，是搭建博客的首选框架。<br>Hexo官网：<span class="exturl"><a class="exturl__link" href="https://hexo.io/zh-cn/">https://hexo.io/zh-cn/</a><span class="exturl__icon"><i class="fas fa-external-link-alt"></i></span></span></p>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;p&gt;Hexo是一款基于Node.js的静态博客框架，依赖少易于安装使用，可以方便的生成静态网页托管在GitHub和Coding上，是搭建博客的首选框架。&lt;br&gt;Hexo官网：&lt;span class=&quot;exturl&quot;&gt;&lt;a class=&quot;exturl__link&quot; href=&quot;h</summary>
-      
-    
-    
-    
-    
-    <category term="hexo" scheme="http://www.hr915.xyz/tags/hexo/"/>
     
   </entry>
   
