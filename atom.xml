@@ -319,4 +319,26 @@
     
   </entry>
   
+  <entry>
+    <title>Hexo</title>
+    <link href="http://www.hr915.xyz/2018/06/15/hexo/"/>
+    <id>http://www.hr915.xyz/2018/06/15/hexo/</id>
+    <published>2018-06-14T16:00:00.000Z</published>
+    <updated>2021-03-01T12:11:45.115Z</updated>
+    
+    <content type="html"><![CDATA[<p>Hexo是一款基于Node.js的静态博客框架，依赖少易于安装使用，可以方便的生成静态网页托管在GitHub和Coding上，是搭建博客的首选框架。<br>Hexo官网：<span class="exturl"><a class="exturl__link" href="https://hexo.io/zh-cn/">https://hexo.io/zh-cn/</a><span class="exturl__icon"><i class="fas fa-external-link-alt"></i></span></span></p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;Hexo是一款基于Node.js的静态博客框架，依赖少易于安装使用，可以方便的生成静态网页托管在GitHub和Coding上，是搭建博客的首选框架。&lt;br&gt;Hexo官网：&lt;span class=&quot;exturl&quot;&gt;&lt;a class=&quot;exturl__link&quot; href=&quot;h</summary>
+      
+    
+    
+    
+    
+    <category term="hexo" scheme="http://www.hr915.xyz/tags/hexo/"/>
+    
+  </entry>
+  
 </feed>
