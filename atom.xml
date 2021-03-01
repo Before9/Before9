@@ -6,7 +6,7 @@
   <link href="https://www.hr915.xyz/atom.xml" rel="self"/>
   
   <link href="https://www.hr915.xyz/"/>
-  <updated>2021-02-20T11:56:40.126Z</updated>
+  <updated>2021-03-01T13:16:55.814Z</updated>
   <id>https://www.hr915.xyz/</id>
   
   <author>
@@ -17,9 +17,29 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>Git常用命令</title>
+    <link href="https://www.hr915.xyz/2018/08/23/git%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/"/>
+    <id>https://www.hr915.xyz/2018/08/23/git%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</id>
+    <published>2018-08-23T11:32:17.000Z</published>
+    <updated>2021-03-01T13:16:55.814Z</updated>
+    
+    <content type="html"><![CDATA[<p>Gitee 提供免费的 Git 仓库，还集成了代码质量检测、项目演示等功能。对于团队协作开发，Gitee 还提供了项目管理、代码托管、文档管理的服务，5 人以下小团队免费。</p><p>接下来我们学习一下如何使用 Gitee。</p><a id="more"></a>        <h3 id="首先登录Gitee">          <a href="#首先登录Gitee" class="heading-link"><i class="fas fa-link"></i></a><a href="#首先登录Gitee" class="headerlink" title="首先登录Gitee"></a>首先登录Gitee</h3>      <p><img src="/2018/08/23/git%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/1.png" alt="登录Git"></p>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;Gitee 提供免费的 Git 仓库，还集成了代码质量检测、项目演示等功能。对于团队协作开发，Gitee 还提供了项目管理、代码托管、文档管理的服务，5 人以下小团队免费。&lt;/p&gt;
+&lt;p&gt;接下来我们学习一下如何使用 Gitee。&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="git" scheme="https://www.hr915.xyz/tags/git/"/>
+    
+  </entry>
+  
+  <entry>
     <title>docker打包镜像</title>
-    <link href="https://www.hr915.xyz/docker%E6%89%93%E5%8C%85%E9%95%9C%E5%83%8F.html"/>
-    <id>https://www.hr915.xyz/docker%E6%89%93%E5%8C%85%E9%95%9C%E5%83%8F.html</id>
+    <link href="https://www.hr915.xyz/2018/08/16/docker%E6%89%93%E5%8C%85%E9%95%9C%E5%83%8F/"/>
+    <id>https://www.hr915.xyz/2018/08/16/docker%E6%89%93%E5%8C%85%E9%95%9C%E5%83%8F/</id>
     <published>2018-08-16T08:58:35.000Z</published>
     <updated>2021-02-20T11:56:40.126Z</updated>
     
@@ -38,8 +58,8 @@
   
   <entry>
     <title>docker操作 容器、镜像 &amp;&amp; dockerfile</title>
-    <link href="https://www.hr915.xyz/docker%E6%93%8D%E4%BD%9C%E5%AE%B9%E5%99%A8%E9%95%9C%E5%83%8F&amp;&amp;dockerfile.html"/>
-    <id>https://www.hr915.xyz/docker%E6%93%8D%E4%BD%9C%E5%AE%B9%E5%99%A8%E9%95%9C%E5%83%8F&amp;&amp;dockerfile.html</id>
+    <link href="https://www.hr915.xyz/2018/07/25/docker%E6%93%8D%E4%BD%9C%E5%AE%B9%E5%99%A8%E9%95%9C%E5%83%8F&amp;&amp;dockerfile/"/>
+    <id>https://www.hr915.xyz/2018/07/25/docker%E6%93%8D%E4%BD%9C%E5%AE%B9%E5%99%A8%E9%95%9C%E5%83%8F&amp;&amp;dockerfile/</id>
     <published>2018-07-25T12:46:25.000Z</published>
     <updated>2021-03-01T11:51:29.172Z</updated>
     
@@ -57,8 +77,8 @@
   
   <entry>
     <title>视频直播</title>
-    <link href="https://www.hr915.xyz/%E8%A7%86%E9%A2%91%E7%9B%B4%E6%92%AD.html"/>
-    <id>https://www.hr915.xyz/%E8%A7%86%E9%A2%91%E7%9B%B4%E6%92%AD.html</id>
+    <link href="https://www.hr915.xyz/2018/07/23/%E8%A7%86%E9%A2%91%E7%9B%B4%E6%92%AD/"/>
+    <id>https://www.hr915.xyz/2018/07/23/%E8%A7%86%E9%A2%91%E7%9B%B4%E6%92%AD/</id>
     <published>2018-07-23T12:46:25.000Z</published>
     <updated>2021-02-05T09:09:55.905Z</updated>
     
@@ -88,8 +108,8 @@
   
   <entry>
     <title>无限级递归分类</title>
-    <link href="https://www.hr915.xyz/%E6%97%A0%E9%99%90%E7%BA%A7%E9%80%92%E5%BD%92%E5%88%86%E7%B1%BB.html"/>
-    <id>https://www.hr915.xyz/%E6%97%A0%E9%99%90%E7%BA%A7%E9%80%92%E5%BD%92%E5%88%86%E7%B1%BB.html</id>
+    <link href="https://www.hr915.xyz/2018/07/22/%E6%97%A0%E9%99%90%E7%BA%A7%E9%80%92%E5%BD%92%E5%88%86%E7%B1%BB/"/>
+    <id>https://www.hr915.xyz/2018/07/22/%E6%97%A0%E9%99%90%E7%BA%A7%E9%80%92%E5%BD%92%E5%88%86%E7%B1%BB/</id>
     <published>2018-07-22T12:46:25.000Z</published>
     <updated>2021-02-04T08:22:47.217Z</updated>
     
@@ -105,8 +125,8 @@
   
   <entry>
     <title>WebShell</title>
-    <link href="https://www.hr915.xyz/Webshell.html"/>
-    <id>https://www.hr915.xyz/Webshell.html</id>
+    <link href="https://www.hr915.xyz/2018/07/20/Webshell/"/>
+    <id>https://www.hr915.xyz/2018/07/20/Webshell/</id>
     <published>2018-07-20T12:46:25.000Z</published>
     <updated>2021-02-04T06:51:19.242Z</updated>
     
@@ -124,8 +144,8 @@
   
   <entry>
     <title>redis键空间事件</title>
-    <link href="https://www.hr915.xyz/redis%E9%94%AE%E7%A9%BA%E9%97%B4%E4%BA%8B%E4%BB%B6.html"/>
-    <id>https://www.hr915.xyz/redis%E9%94%AE%E7%A9%BA%E9%97%B4%E4%BA%8B%E4%BB%B6.html</id>
+    <link href="https://www.hr915.xyz/2018/07/19/redis%E9%94%AE%E7%A9%BA%E9%97%B4%E4%BA%8B%E4%BB%B6/"/>
+    <id>https://www.hr915.xyz/2018/07/19/redis%E9%94%AE%E7%A9%BA%E9%97%B4%E4%BA%8B%E4%BB%B6/</id>
     <published>2018-07-19T12:46:25.000Z</published>
     <updated>2021-02-02T11:03:40.934Z</updated>
     
@@ -143,8 +163,8 @@
   
   <entry>
     <title>redis发布订阅</title>
-    <link href="https://www.hr915.xyz/redis%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85.html"/>
-    <id>https://www.hr915.xyz/redis%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85.html</id>
+    <link href="https://www.hr915.xyz/2018/07/18/redis%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/"/>
+    <id>https://www.hr915.xyz/2018/07/18/redis%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/</id>
     <published>2018-07-18T12:46:25.000Z</published>
     <updated>2021-02-02T08:50:06.427Z</updated>
     
@@ -162,8 +182,8 @@
   
   <entry>
     <title>axios封装</title>
-    <link href="https://www.hr915.xyz/axios%E5%B0%81%E8%A3%85.html"/>
-    <id>https://www.hr915.xyz/axios%E5%B0%81%E8%A3%85.html</id>
+    <link href="https://www.hr915.xyz/2018/07/17/axios%E5%B0%81%E8%A3%85/"/>
+    <id>https://www.hr915.xyz/2018/07/17/axios%E5%B0%81%E8%A3%85/</id>
     <published>2018-07-17T12:46:25.000Z</published>
     <updated>2021-02-02T06:07:30.619Z</updated>
     
@@ -181,8 +201,8 @@
   
   <entry>
     <title>celery异步框架</title>
-    <link href="https://www.hr915.xyz/celery%E5%BC%82%E6%AD%A5%E6%A1%86%E6%9E%B6.html"/>
-    <id>https://www.hr915.xyz/celery%E5%BC%82%E6%AD%A5%E6%A1%86%E6%9E%B6.html</id>
+    <link href="https://www.hr915.xyz/2018/07/16/celery%E5%BC%82%E6%AD%A5%E6%A1%86%E6%9E%B6/"/>
+    <id>https://www.hr915.xyz/2018/07/16/celery%E5%BC%82%E6%AD%A5%E6%A1%86%E6%9E%B6/</id>
     <published>2018-07-16T12:46:25.000Z</published>
     <updated>2021-02-02T06:07:30.630Z</updated>
     
@@ -200,8 +220,8 @@
   
   <entry>
     <title>三方支付</title>
-    <link href="https://www.hr915.xyz/%E4%B8%89%E6%96%B9%E6%94%AF%E4%BB%98.html"/>
-    <id>https://www.hr915.xyz/%E4%B8%89%E6%96%B9%E6%94%AF%E4%BB%98.html</id>
+    <link href="https://www.hr915.xyz/2018/07/15/%E4%B8%89%E6%96%B9%E6%94%AF%E4%BB%98/"/>
+    <id>https://www.hr915.xyz/2018/07/15/%E4%B8%89%E6%96%B9%E6%94%AF%E4%BB%98/</id>
     <published>2018-07-15T12:46:25.000Z</published>
     <updated>2021-02-05T07:17:42.277Z</updated>
     
@@ -232,8 +252,8 @@
   
   <entry>
     <title>微博三方登录</title>
-    <link href="https://www.hr915.xyz/%E5%BE%AE%E5%8D%9A%E4%B8%89%E6%96%B9%E7%99%BB%E5%BD%95.html"/>
-    <id>https://www.hr915.xyz/%E5%BE%AE%E5%8D%9A%E4%B8%89%E6%96%B9%E7%99%BB%E5%BD%95.html</id>
+    <link href="https://www.hr915.xyz/2018/07/14/%E5%BE%AE%E5%8D%9A%E4%B8%89%E6%96%B9%E7%99%BB%E5%BD%95/"/>
+    <id>https://www.hr915.xyz/2018/07/14/%E5%BE%AE%E5%8D%9A%E4%B8%89%E6%96%B9%E7%99%BB%E5%BD%95/</id>
     <published>2018-07-14T12:46:25.000Z</published>
     <updated>2021-02-02T06:08:05.779Z</updated>
     
@@ -262,8 +282,8 @@
   
   <entry>
     <title>VUE父子组件</title>
-    <link href="https://www.hr915.xyz/vue%E7%88%B6%E5%AD%90%E7%BB%84%E4%BB%B6.html"/>
-    <id>https://www.hr915.xyz/vue%E7%88%B6%E5%AD%90%E7%BB%84%E4%BB%B6.html</id>
+    <link href="https://www.hr915.xyz/2018/07/13/vue%E7%88%B6%E5%AD%90%E7%BB%84%E4%BB%B6/"/>
+    <id>https://www.hr915.xyz/2018/07/13/vue%E7%88%B6%E5%AD%90%E7%BB%84%E4%BB%B6/</id>
     <published>2018-07-13T12:46:25.000Z</published>
     <updated>2021-01-31T07:49:32.997Z</updated>
     
@@ -283,8 +303,8 @@
   
   <entry>
     <title>VUE路由钩子</title>
-    <link href="https://www.hr915.xyz/vue_%E8%B7%AF%E7%94%B1%E9%92%A9%E5%AD%90.html"/>
-    <id>https://www.hr915.xyz/vue_%E8%B7%AF%E7%94%B1%E9%92%A9%E5%AD%90.html</id>
+    <link href="https://www.hr915.xyz/2018/07/12/vue_%E8%B7%AF%E7%94%B1%E9%92%A9%E5%AD%90/"/>
+    <id>https://www.hr915.xyz/2018/07/12/vue_%E8%B7%AF%E7%94%B1%E9%92%A9%E5%AD%90/</id>
     <published>2018-07-12T12:46:25.000Z</published>
     <updated>2021-02-05T08:57:04.530Z</updated>
     
@@ -302,8 +322,8 @@
   
   <entry>
     <title>VUE拦截器</title>
-    <link href="https://www.hr915.xyz/vue%E6%8B%A6%E6%88%AA%E5%99%A8.html"/>
-    <id>https://www.hr915.xyz/vue%E6%8B%A6%E6%88%AA%E5%99%A8.html</id>
+    <link href="https://www.hr915.xyz/2018/07/11/vue%E6%8B%A6%E6%88%AA%E5%99%A8/"/>
+    <id>https://www.hr915.xyz/2018/07/11/vue%E6%8B%A6%E6%88%AA%E5%99%A8/</id>
     <published>2018-07-11T12:46:25.000Z</published>
     <updated>2021-01-31T07:49:32.991Z</updated>
     
