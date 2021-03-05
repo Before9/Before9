@@ -130,13 +130,6 @@
 
   
   <url>
-    <loc>https://www.hr915.xyz/tags/django-celery/</loc>
-    <lastmod>2021-03-05</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://www.hr915.xyz/tags/axios/</loc>
     <lastmod>2021-03-05</lastmod>
     <changefreq>daily</changefreq>
@@ -151,7 +144,7 @@
   </url>
   
   <url>
-    <loc>https://www.hr915.xyz/tags/git/</loc>
+    <loc>https://www.hr915.xyz/tags/django-celery/</loc>
     <lastmod>2021-03-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -159,6 +152,13 @@
   
   <url>
     <loc>https://www.hr915.xyz/tags/httpx/</loc>
+    <lastmod>2021-03-05</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.hr915.xyz/tags/git/</loc>
     <lastmod>2021-03-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -173,13 +173,6 @@
   
   <url>
     <loc>https://www.hr915.xyz/tags/vue/</loc>
-    <lastmod>2021-03-05</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.hr915.xyz/tags/vue-%E7%BB%84%E4%BB%B6/</loc>
     <lastmod>2021-03-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -208,6 +201,13 @@
   
   <url>
     <loc>https://www.hr915.xyz/tags/async-await-with/</loc>
+    <lastmod>2021-03-05</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.hr915.xyz/tags/vue-%E7%BB%84%E4%BB%B6/</loc>
     <lastmod>2021-03-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
