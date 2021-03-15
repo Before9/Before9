@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://www.hr915.xyz/2018/08/29/%E4%BD%8D%E8%BF%90%E7%AE%97/</loc>
+    
+    <lastmod>2021-03-15</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://www.hr915.xyz/2018/08/28/%E5%BC%82%E6%AD%A5%E6%B6%88%E8%B4%B9/</loc>
     
     <lastmod>2021-03-12</lastmod>
@@ -165,7 +172,7 @@
 
   <url>
     <loc>https://www.hr915.xyz/</loc>
-    <lastmod>2021-03-12</lastmod>
+    <lastmod>2021-03-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -173,98 +180,98 @@
   
   <url>
     <loc>https://www.hr915.xyz/tags/axios/</loc>
-    <lastmod>2021-03-12</lastmod>
+    <lastmod>2021-03-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.hr915.xyz/tags/django-celery/</loc>
-    <lastmod>2021-03-12</lastmod>
+    <lastmod>2021-03-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.hr915.xyz/tags/docker/</loc>
-    <lastmod>2021-03-12</lastmod>
+    <lastmod>2021-03-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.hr915.xyz/tags/git/</loc>
-    <lastmod>2021-03-12</lastmod>
+    <lastmod>2021-03-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.hr915.xyz/tags/httpx/</loc>
-    <lastmod>2021-03-12</lastmod>
+    <lastmod>2021-03-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.hr915.xyz/tags/redis/</loc>
-    <lastmod>2021-03-12</lastmod>
+    <lastmod>2021-03-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.hr915.xyz/tags/vue/</loc>
-    <lastmod>2021-03-12</lastmod>
+    <lastmod>2021-03-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.hr915.xyz/tags/vue-Sjavascript/</loc>
-    <lastmod>2021-03-12</lastmod>
+    <lastmod>2021-03-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.hr915.xyz/tags/vue-%E7%BB%84%E4%BB%B6/</loc>
-    <lastmod>2021-03-12</lastmod>
+    <lastmod>2021-03-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.hr915.xyz/tags/django/</loc>
-    <lastmod>2021-03-12</lastmod>
+    <lastmod>2021-03-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.hr915.xyz/tags/%E4%B8%89%E6%96%B9%E6%94%AF%E4%BB%98/</loc>
-    <lastmod>2021-03-12</lastmod>
+    <lastmod>2021-03-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.hr915.xyz/tags/async-await-with/</loc>
-    <lastmod>2021-03-12</lastmod>
+    <lastmod>2021-03-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.hr915.xyz/tags/django-%E4%B8%89%E6%96%B9%E7%99%BB%E5%BD%95/</loc>
-    <lastmod>2021-03-12</lastmod>
+    <lastmod>2021-03-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.hr915.xyz/tags/python/</loc>
-    <lastmod>2021-03-12</lastmod>
+    <lastmod>2021-03-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
