@@ -1,37 +1,94 @@
-{% extends '_layout.swig' %}
-{% import '_macro/post.swig' as post_template %}
-{% import '_macro/sidebar.swig' as sidebar_template %}
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="format-detection" content="telephone=no"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black"><link rel="icon" href="https://gitee.com/BothSavage/PicGo/raw/master/image/favicon-16x16.png?v=2.6.2" type="image/png" sizes="16x16"><link rel="icon" href="https://gitee.com/BothSavage/PicGo/raw/master/image/favicon-32x32.png?v=2.6.2" type="image/png" sizes="32x32"><meta name="description" content="在docker hub上有时我们找不到想要的image,或自己想要打包纯净的image ( 怕投毒?? ). 所以自己制作docker image是一种不错的选择">
+<meta property="og:type" content="article">
+<meta property="og:title" content="docker打包镜像">
+<meta property="og:url" content="https://www.hr915.xyz/2018/05/20/docker%E6%89%93%E5%8C%85%E9%95%9C%E5%83%8F/index.html">
+<meta property="og:site_name" content="I hope you&#39;re here for me">
+<meta property="og:description" content="在docker hub上有时我们找不到想要的image,或自己想要打包纯净的image ( 怕投毒?? ). 所以自己制作docker image是一种不错的选择">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-05-20T08:58:35.000Z">
+<meta property="article:modified_time" content="2021-03-12T06:58:44.548Z">
+<meta property="article:author" content="小刘同学">
+<meta property="article:tag" content="docker">
+<meta name="twitter:card" content="summary"><title>docker打包镜像 | I hope you're here for me</title><link ref="canonical" href="https://www.hr915.xyz/2018/05/20/docker%E6%89%93%E5%8C%85%E9%95%9C%E5%83%8F/"><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.12.1/css/all.min.css" type="text/css"><link rel="stylesheet" href="/css/index.css?v=2.6.2"><script>var Stun = window.Stun || {};
+var CONFIG = {
+  root: '/',
+  algolia: undefined,
+  assistSearch: undefined,
+  fontIcon: {"prompt":{"success":"fas fa-check-circle","info":"fas fa-arrow-circle-right","warning":"fas fa-exclamation-circle","error":"fas fa-times-circle"},"copyBtn":"fas fa-copy"},
+  sidebar: {"offsetTop":"20px","tocMaxDepth":6},
+  header: {"enable":true,"showOnPost":true,"scrollDownIcon":true},
+  postWidget: {"endText":true},
+  nightMode: {"enable":true},
+  back2top: {"enable":true},
+  codeblock: {"style":"default","highlight":"light","wordWrap":false},
+  reward: false,
+  fancybox: false,
+  zoomImage: {"gapAside":"20px"},
+  galleryWaterfall: {"colWidth":"220px","gapX":"10px"},
+  lazyload: false,
+  pjax: undefined,
+  externalLink: {"icon":{"enable":true,"name":"fas fa-external-link-alt"}},
+  shortcuts: undefined,
+  prompt: {"copyButton":"复制","copySuccess":"复制成功","copyError":"复制失败"},
+  sourcePath: {"js":"js","css":"css","images":"images"},
+};
 
-
-{% block title %}{{ page.title }} | {{ config.title }}{% endblock %}
-
-{% block page_class %}page-post-detail{% endblock %}
-
-
-{% block content %}
-
-  <div id="posts" class="posts-expand">
-    {{ post_template.render(page) }}
-
-    <div class="post-spread">
-      {% if theme.jiathis %}
-        {% include '_partials/share/jiathis.swig' %}
-      {% elseif theme.baidushare %}
-        {% include '_partials/share/baidushare.swig' %}
-      {% elseif theme.add_this_id %}
-        {% include '_partials/share/add-this.swig' %}
-      {% elseif theme.duoshuo_shortname and theme.duoshuo_share %}
-        {% include '_partials/share/duoshuo_share.swig' %}
-      {% endif %}
-    </div>
-  </div>
-
-{% endblock %}
-
-{% block sidebar %}
-  {{ sidebar_template.render(true) }}
-{% endblock %}
-
-{% block script_extra %}
-  {% include '_scripts/pages/post-details.swig' %}
-{% endblock %}
+window.CONFIG = CONFIG;</script><meta name="generator" content="Hexo 5.3.0">
+<style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+<link rel="alternate" href="/atom.xml" title="I hope you're here for me" type="application/atom+xml">
+</head><body><div class="container" id="container"><header class="header" id="header"><div class="header-inner"><nav class="header-nav header-nav--fixed"><div class="header-nav-inner"><div class="header-nav-menubtn"><i class="fas fa-bars"></i></div><div class="header-nav-menu"><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" href="/"><span class="header-nav-menu-item__icon"><i class="fas fa-home"></i></span><span class="header-nav-menu-item__text">首页</span></a></div><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" href="/archives/"><span class="header-nav-menu-item__icon"><i class="fas fa-folder-open"></i></span><span class="header-nav-menu-item__text">归档</span></a></div></div><div class="header-nav-mode"><div class="mode"><div class="mode-track"><span class="mode-track-moon"></span><span class="mode-track-sun"></span></div><div class="mode-thumb"></div></div></div></div></nav><div class="header-banner"><div class="header-banner-info"><div class="header-banner-info__title">I hope you're here for me</div><div class="header-banner-info__subtitle">贩卖日落</div></div><div class="header-banner-arrow"><div class="header-banner-arrow__icon"><i class="fas fa-angle-down"></i></div></div></div></div></header><main class="main" id="main"><div class="main-inner"><div class="content-wrap" id="content-wrap"><div class="content" id="content"><!-- Just used to judge whether it is an article page--><div id="is-post"></div><div class="post"><header class="post-header"><h1 class="post-title">docker打包镜像</h1><div class="post-meta"><span class="post-meta-item post-meta-item--createtime"><span class="post-meta-item__icon"><i class="far fa-calendar-plus"></i></span><span class="post-meta-item__info">发表于</span><span class="post-meta-item__value">2018-05-20</span></span></div></header><div class="post-body"><p>在docker hub上有时我们找不到想要的image,或自己想要打包纯净的image ( 怕投毒?? ).</p>
+<p>所以自己制作docker image是一种不错的选择</p>
+<a id="more"></a>
+<h5 id="拉取镜像"><a href="#拉取镜像" class="headerlink" title="拉取镜像"></a>拉取镜像</h5><blockquote>
+<p>docker pull centos</p>
+</blockquote>
+<h5 id="查看镜像"><a href="#查看镜像" class="headerlink" title="查看镜像"></a>查看镜像</h5><blockquote>
+<p>docker images</p>
+</blockquote>
+<h5 id="创建容器"><a href="#创建容器" class="headerlink" title="创建容器"></a>创建容器</h5><blockquote>
+<p>docker run -it –name=容器名  镜像名  /bin/bash</p>
+</blockquote>
+<h5 id="启动容器"><a href="#启动容器" class="headerlink" title="启动容器"></a>启动容器</h5><blockquote>
+<p>docker start 容器ID</p>
+</blockquote>
+<h5 id="进入容器"><a href="#进入容器" class="headerlink" title="进入容器"></a>进入容器</h5><blockquote>
+<p>docker exec -itd 容器名(容器ID) /bin/bash<br>docker attach 容器ID</p>
+</blockquote>
+<h5 id="安装ssh"><a href="#安装ssh" class="headerlink" title="安装ssh"></a>安装ssh</h5><blockquote>
+<p>yum install openssh-server</p>
+</blockquote>
+<p>没有正常启动的话通常需要生成当前主机的ssh-key</p>
+<blockquote>
+<p>ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key<br>ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key<br>ssh-keygen -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key<br>ssh-keygen -t dsa -f /etc/ssh/ssh_host_ed25519_key</p>
+</blockquote>
+<h5 id="在容器中启动ssh服务，让外界可以连接"><a href="#在容器中启动ssh服务，让外界可以连接" class="headerlink" title="在容器中启动ssh服务，让外界可以连接"></a>在容器中启动ssh服务，让外界可以连接</h5><blockquote>
+<p>/usr/sbin/sshd</p>
+</blockquote>
+<h5 id="修改容器内部密码"><a href="#修改容器内部密码" class="headerlink" title="修改容器内部密码"></a>修改容器内部密码</h5><blockquote>
+<p>修改密码需要安装passwd<br>yum install passwd.x86_64<br>修改密码<br>passwd root</p>
+</blockquote>
+<h5 id="退出容器"><a href="#退出容器" class="headerlink" title="退出容器"></a>退出容器</h5><blockquote>
+<p>exit</p>
+</blockquote>
+<h5 id="修改云主机密码"><a href="#修改云主机密码" class="headerlink" title="修改云主机密码"></a>修改云主机密码</h5><blockquote>
+<p>修改云主机密码需要退出容器在执行passwd</p>
+</blockquote>
+<h5 id="查看所有容器"><a href="#查看所有容器" class="headerlink" title="查看所有容器"></a>查看所有容器</h5><blockquote>
+<p>docker ps -a</p>
+</blockquote>
+<h5 id="制作镜像"><a href="#制作镜像" class="headerlink" title="制作镜像"></a>制作镜像</h5><blockquote>
+<p>docker commit -a “作者” -m “简介”  被打包的容器ID  镜像名: 版本号</p>
+</blockquote>
+<h5 id="镜像导出"><a href="#镜像导出" class="headerlink" title="镜像导出"></a>镜像导出</h5><blockquote>
+<p>docker save 镜像名 &gt; ./文件名<br>例如： docker save ssh_image &gt; ./文件名</p>
+</blockquote>
+<h5 id="加载镜像-解压"><a href="#加载镜像-解压" class="headerlink" title="加载镜像(解压)"></a>加载镜像(解压)</h5><blockquote>
+<p>docker load &lt; ./文件名<br>例如： docker load &lt; ./文件名</p>
+</blockquote>
+<h5 id="查看镜像是否存在"><a href="#查看镜像是否存在" class="headerlink" title="查看镜像是否存在"></a>查看镜像是否存在</h5><blockquote>
+<p>docker images</p>
+</blockquote>
+<h5 id="创建容器并映射端口把镜像跑起来"><a href="#创建容器并映射端口把镜像跑起来" class="headerlink" title="创建容器并映射端口把镜像跑起来"></a>创建容器并映射端口把镜像跑起来</h5><blockquote>
+<p>docker run -itd -p 11111:22(映射的端口号)  镜像ID  /bin/bash</p>
+</blockquote>
+</div><footer class="post-footer"><div class="post-ending ending"><div class="ending__text">------ 本文结束，感谢您的阅读 ------</div></div><div class="post-copyright copyright"><div class="copyright-author"><span class="copyright-author__name">本文作者: </span><span class="copyright-author__value"><a href="https://www.hr915.xyz">小刘同学</a></span></div><div class="copyright-link"><span class="copyright-link__name">本文链接: </span><span class="copyright-link__value"><a href="https://www.hr915.xyz/2018/05/20/docker%E6%89%93%E5%8C%85%E9%95%9C%E5%83%8F/">https://www.hr915.xyz/2018/05/20/docker%E6%89%93%E5%8C%85%E9%95%9C%E5%83%8F/</a></span></div><div class="copyright-notice"><span class="copyright-notice__name">版权声明: </span><span class="copyright-notice__value">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en" rel="external nofollow" target="_blank">BY-NC-SA</a> 许可协议。转载请注明出处！</span></div></div><div class="post-tags"><span class="post-tags-item"><span class="post-tags-item__icon"><i class="fas fa-tag"></i></span><a class="post-tags-item__link" href="https://www.hr915.xyz/tags/docker/">docker</a></span></div><nav class="post-paginator paginator"><div class="paginator-prev"><a class="paginator-prev__link" href="/2018/05/22/httpx/"><span class="paginator-prev__icon"><i class="fas fa-angle-left"></i></span><span class="paginator-prev__text">Httpx测试脚本</span></a></div><div class="paginator-next"><a class="paginator-next__link" href="/2018/05/19/docker%E6%93%8D%E4%BD%9C%E5%AE%B9%E5%99%A8%E9%95%9C%E5%83%8F&amp;&amp;dockerfile/"><span class="paginator-prev__text">docker操作 容器、镜像 &amp;&amp; dockerfile</span><span class="paginator-next__icon"><i class="fas fa-angle-right"></i></span></a></div></nav></footer></div></div></div><div class="sidebar-wrap" id="sidebar-wrap"><aside class="sidebar" id="sidebar"><div class="sidebar-nav"><span class="sidebar-nav-toc current">文章目录</span><span class="sidebar-nav-ov">站点概览</span></div><section class="sidebar-toc"><ol class="toc"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%8B%89%E5%8F%96%E9%95%9C%E5%83%8F"><span class="toc-number">1.</span> <span class="toc-text">拉取镜像</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E9%95%9C%E5%83%8F"><span class="toc-number">2.</span> <span class="toc-text">查看镜像</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%AE%B9%E5%99%A8"><span class="toc-number">3.</span> <span class="toc-text">创建容器</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8%E5%AE%B9%E5%99%A8"><span class="toc-number">4.</span> <span class="toc-text">启动容器</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%BF%9B%E5%85%A5%E5%AE%B9%E5%99%A8"><span class="toc-number">5.</span> <span class="toc-text">进入容器</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AE%89%E8%A3%85ssh"><span class="toc-number">6.</span> <span class="toc-text">安装ssh</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%9C%A8%E5%AE%B9%E5%99%A8%E4%B8%AD%E5%90%AF%E5%8A%A8ssh%E6%9C%8D%E5%8A%A1%EF%BC%8C%E8%AE%A9%E5%A4%96%E7%95%8C%E5%8F%AF%E4%BB%A5%E8%BF%9E%E6%8E%A5"><span class="toc-number">7.</span> <span class="toc-text">在容器中启动ssh服务，让外界可以连接</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9%E5%AE%B9%E5%99%A8%E5%86%85%E9%83%A8%E5%AF%86%E7%A0%81"><span class="toc-number">8.</span> <span class="toc-text">修改容器内部密码</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%80%80%E5%87%BA%E5%AE%B9%E5%99%A8"><span class="toc-number">9.</span> <span class="toc-text">退出容器</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9%E4%BA%91%E4%B8%BB%E6%9C%BA%E5%AF%86%E7%A0%81"><span class="toc-number">10.</span> <span class="toc-text">修改云主机密码</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E6%89%80%E6%9C%89%E5%AE%B9%E5%99%A8"><span class="toc-number">11.</span> <span class="toc-text">查看所有容器</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%88%B6%E4%BD%9C%E9%95%9C%E5%83%8F"><span class="toc-number">12.</span> <span class="toc-text">制作镜像</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%95%9C%E5%83%8F%E5%AF%BC%E5%87%BA"><span class="toc-number">13.</span> <span class="toc-text">镜像导出</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%8A%A0%E8%BD%BD%E9%95%9C%E5%83%8F-%E8%A7%A3%E5%8E%8B"><span class="toc-number">14.</span> <span class="toc-text">加载镜像(解压)</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E9%95%9C%E5%83%8F%E6%98%AF%E5%90%A6%E5%AD%98%E5%9C%A8"><span class="toc-number">15.</span> <span class="toc-text">查看镜像是否存在</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%AE%B9%E5%99%A8%E5%B9%B6%E6%98%A0%E5%B0%84%E7%AB%AF%E5%8F%A3%E6%8A%8A%E9%95%9C%E5%83%8F%E8%B7%91%E8%B5%B7%E6%9D%A5"><span class="toc-number">16.</span> <span class="toc-text">创建容器并映射端口把镜像跑起来</span></a></li></ol></section><!-- ov = overview--><section class="sidebar-ov hide"><div class="sidebar-ov-author"><div class="sidebar-ov-author__avatar"><img class="sidebar-ov-author__avatar_img" src="/images/icons/123.jpg" alt="avatar"></div><p class="sidebar-ov-author__text">伸个懒腰吧</p></div><div class="sidebar-ov-state"><a class="sidebar-ov-state-item sidebar-ov-state-item--posts" href="/archives/"><div class="sidebar-ov-state-item__count">31</div><div class="sidebar-ov-state-item__name">归档</div></a></div><div class="sidebar-ov-cc"><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en" target="_blank" rel="noopener" data-popover="知识共享许可协议" data-popover-pos="up"><img src="/images/cc-by-nc-sa.svg"></a></div></section><div class="sidebar-reading"><div class="sidebar-reading-info"><span class="sidebar-reading-info__text">你已阅读了 </span><span class="sidebar-reading-info__num">0</span><span class="sidebar-reading-info__perc">%</span></div><div class="sidebar-reading-line"></div></div></aside></div><div class="clearfix"></div></div></main><footer class="footer" id="footer"><div class="footer-inner"><div><span>Copyright © 2021</span><span class="footer__icon"><i class="fas fa-heart"></i></span><span>小刘同学</span></div><div><span>由 <a href="http://hexo.io/" title="Hexo" target="_blank" rel="noopener">Hexo</a> 强力驱动</span><span> v5.3.0</span><span class="footer__devider">|</span><span>主题 - <a href="https://github.com/liuyib/hexo-theme-stun/" title="Stun" target="_blank" rel="noopener">Stun</a></span><span> v2.6.2</span></div></div></footer><div class="loading-bar" id="loading-bar"><div class="loading-bar__progress"></div></div><div class="back2top" id="back2top"><span class="back2top__icon"><i class="fas fa-rocket"></i></span></div></div><script src="https://cdn.jsdelivr.net/npm/jquery@v3.4.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@1.5.2/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@1.5.2/velocity.ui.min.js"></script><script src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1.0.1/dist/canvas-nest.min.js" color="black" opacity="0.6" count="99" zIndex="-1"></script><script src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js"></script><script src="/js/utils.js?v=2.6.2"></script><script src="/js/stun-boot.js?v=2.6.2"></script><script src="/js/scroll.js?v=2.6.2"></script><script src="/js/header.js?v=2.6.2"></script><script src="/js/sidebar.js?v=2.6.2"></script><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body></html>
