@@ -6,7 +6,7 @@
   <link href="https://www.hr915.xyz/atom.xml" rel="self"/>
   
   <link href="https://www.hr915.xyz/"/>
-  <updated>2021-03-29T03:45:56.245Z</updated>
+  <updated>2021-03-29T06:23:43.444Z</updated>
   <id>https://www.hr915.xyz/</id>
   
   <author>
@@ -21,9 +21,9 @@
     <link href="https://www.hr915.xyz/id_30/"/>
     <id>https://www.hr915.xyz/id_30/</id>
     <published>2018-09-07T13:46:25.000Z</published>
-    <updated>2021-03-29T03:45:56.245Z</updated>
+    <updated>2021-03-29T06:23:43.444Z</updated>
     
-    <content type="html"><![CDATA[<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>转眼一个周期过去了，学了很多零碎的知识点。有遇到困难，有得到解惑。</p><a id="more"></a><p>day01: 在vue中使用ant_design<br>ant_design+vue官方文档：<a href="https://antdv.com/docs/vue/introduce-cn/">https://antdv.com/docs/vue/introduce-cn/</a></p><p>day02: IT新闻资讯<br>网址: <a href="https://www.cnbeta.com/">https://www.cnbeta.com/</a></p><p>day03: redis实现输入密码错误五次封禁账号<br>移步: <a href="https://www.hr915.xyz/2018/08/26/redis%E5%B0%81%E7%A6%81%E8%B4%A6%E5%8F%B7/">https://www.hr915.xyz/2018/08/26/redis%E5%B0%81%E7%A6%81%E8%B4%A6%E5%8F%B7/</a></p><p>day04: httpx编写测试脚本<br>移步<a href="https://www.hr915.xyz/2018/05/22/httpx/">https://www.hr915.xyz/2018/05/22/httpx/</a></p><p>day05: 异步任务队列<br>移步: <a href="https://www.hr915.xyz/2018/08/26/%E5%BC%82%E6%AD%A5%E8%B0%83%E7%94%A8/">https://www.hr915.xyz/2018/08/26/%E5%BC%82%E6%AD%A5%E8%B0%83%E7%94%A8/</a></p>]]></content>
+    <content type="html"><![CDATA[<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>转眼一个周期过去了，学了很多零碎的知识点。有遇到困难，有得到解惑。</p><a id="more"></a><p>day01: 在vue中使用ant_design<br>ant_design+vue官方文档：<a href="https://antdv.com/docs/vue/introduce-cn/">https://antdv.com/docs/vue/introduce-cn/</a></p><p>day02: IT新闻资讯<br>网址: <a href="https://www.cnbeta.com/">https://www.cnbeta.com/</a></p><p>day03: redis实现输入密码错误五次封禁账号<br>移步: <a href="https://www.hr915.xyz/id_20/">https://www.hr915.xyz/id_20/</a></p><p>day04: httpx编写测试脚本<br>移步: <a href="https://www.hr915.xyz/id_6/">https://www.hr915.xyz/id_6/</a></p><p>day05: 异步任务队列<br>移步: <a href="https://www.hr915.xyz/id_19/">https://www.hr915.xyz/id_19/</a></p><p>day06: 加权队列<br>移步: <a href="https://www.hr915.xyz/id_21/">https://www.hr915.xyz/id_21/</a></p><p>day07: 异步消费<br>移步: <a href="https://www.hr915.xyz/id_22/">https://www.hr915.xyz/id_22/</a></p><p>day08: 权限模型</p><p>day09: 三方登录<br>移步: <a href="https://www.hr915.xyz/id_13/">https://www.hr915.xyz/id_13/</a></p><p>day10: 位运算<br>移步: <a href="https://www.hr915.xyz/id_23/">https://www.hr915.xyz/id_23/</a></p><p>day11: 工单分类</p><p>day12: Mongodb<br>移步: <a href="https://www.hr915.xyz/id_24/">https://www.hr915.xyz/id_24/</a></p><p>day13: 审批流程</p><p>day14: 栈的使用<br>移步: <a href="https://www.hr915.xyz/id_25/">https://www.hr915.xyz/id_25/</a></p><p>day15: 设计模式<br>移步: <a href="https://www.hr915.xyz/id_26/">https://www.hr915.xyz/id_26/</a></p><p>day16: 消息盒子</p><p>day17: websocket<br>移步: <a href="https://www.hr915.xyz/id_10/">https://www.hr915.xyz/id_10/</a></p><p>day18: 客服系统</p><p>day19: 部署</p>]]></content>
     
     
     <summary type="html">&lt;h3 id=&quot;总结&quot;&gt;&lt;a href=&quot;#总结&quot; class=&quot;headerlink&quot; title=&quot;总结&quot;&gt;&lt;/a&gt;总结&lt;/h3&gt;&lt;p&gt;转眼一个周期过去了，学了很多零碎的知识点。有遇到困难，有得到解惑。&lt;/p&gt;</summary>
