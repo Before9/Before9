@@ -315,24 +315,6 @@
       </tags>
   </entry>
   <entry>
-    <title>用户注册</title>
-    <url>/id_18/</url>
-    <content><![CDATA[<h4 id="用户注册功能"><a href="#用户注册功能" class="headerlink" title="用户注册功能"></a>用户注册功能</h4><p>需求：实现用户注册功能，并将用户注册信息保存到磁盘文件中，用户注册时至少给定：用户名和密码<br>注意：用户名使用了唯一索引，不可重复</p>
-<a id="more"></a>
-<ul>
-<li>相关问题：</li>
-</ul>
-<p><strong>问</strong>：唯一索引干嘛用的 为什么用？<br><strong>答</strong>：指的是某个字段不能出现重复的值，比如身份证列，手机号。<br>使用唯一索引避免了注册时需要进数据库查询是否有重复的一次IO操作，节省时间，提高效率</p>
-<p>OK 上代码</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">register</span>(<span class="params">APIView</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">post</span>(<span class="params">self, request</span>):</span></span><br><span class="line">        username = request.data.get(<span class="string">"username"</span>)</span><br><span class="line">        password = request.data.get(<span class="string">"password"</span>)</span><br><span class="line">        leave = request.data.get(<span class="string">"leave"</span>)       <span class="comment"># 用户等级</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            UserModel.objects.create(username=username, password=password, leave=leave)</span><br><span class="line">            <span class="keyword">return</span> Response({<span class="string">"msg"</span>: <span class="string">"添加成功"</span>, <span class="string">"code"</span>: <span class="number">200</span>})</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            print(e)</span><br><span class="line">            <span class="keyword">return</span> Response({<span class="string">"msg"</span>: <span class="string">"该用户已存在"</span>, <span class="string">"code"</span>: <span class="number">400</span>})</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>]]></content>
-      <categories>
-        <category>后端</category>
-      </categories>
-      <tags>
-        <tag>django</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>redis键空间事件</title>
     <url>/id_17/</url>
     <content><![CDATA[<p>Redis的键空间通知(keyspace notifications)功能是自2.8.0版本开始加入的，客户端可以通过订阅/发布(Pub/Sub)机制，接收那些以某种方式改变了Redis数据空间的事件通知。比如：所有改变给定key的命令；所有经过lpush操作的key；所有在0号数据库中过期的key等等。<br>通知是通过Redis的订阅/发布机制发送的，因此，所有支持订阅/发布功能的客户端都可在无需调整的情况下，使用键空间通知功能。</p>
@@ -374,6 +356,78 @@
       </categories>
       <tags>
         <tag>redis</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>用户注册</title>
+    <url>/id_18/</url>
+    <content><![CDATA[<h4 id="用户注册功能"><a href="#用户注册功能" class="headerlink" title="用户注册功能"></a>用户注册功能</h4><p>需求：实现用户注册功能，并将用户注册信息保存到磁盘文件中，用户注册时至少给定：用户名和密码<br>注意：用户名使用了唯一索引，不可重复</p>
+<a id="more"></a>
+<ul>
+<li>相关问题：</li>
+</ul>
+<p><strong>问</strong>：唯一索引干嘛用的 为什么用？<br><strong>答</strong>：指的是某个字段不能出现重复的值，比如身份证列，手机号。<br>使用唯一索引避免了注册时需要进数据库查询是否有重复的一次IO操作，节省时间，提高效率</p>
+<p>OK 上代码</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">register</span>(<span class="params">APIView</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">post</span>(<span class="params">self, request</span>):</span></span><br><span class="line">        username = request.data.get(<span class="string">"username"</span>)</span><br><span class="line">        password = request.data.get(<span class="string">"password"</span>)</span><br><span class="line">        leave = request.data.get(<span class="string">"leave"</span>)       <span class="comment"># 用户等级</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            UserModel.objects.create(username=username, password=password, leave=leave)</span><br><span class="line">            <span class="keyword">return</span> Response({<span class="string">"msg"</span>: <span class="string">"添加成功"</span>, <span class="string">"code"</span>: <span class="number">200</span>})</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            print(e)</span><br><span class="line">            <span class="keyword">return</span> Response({<span class="string">"msg"</span>: <span class="string">"该用户已存在"</span>, <span class="string">"code"</span>: <span class="number">400</span>})</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>]]></content>
+      <categories>
+        <category>后端</category>
+      </categories>
+      <tags>
+        <tag>django</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>四大推导式(列表/字典/集合/生成器)</title>
+    <url>/id_2/</url>
+    <content><![CDATA[<p>推导式（又称解析式），是 python 的一种独有特性。推导式是可以从一个数据序列构建另一个新的数据序列。</p>
+<h3 id="Python-里有四种推导式："><a href="#Python-里有四种推导式：" class="headerlink" title="Python 里有四种推导式："></a>Python 里有四种推导式：</h3><ul>
+<li>列表推导式(List Comprehensions)</li>
+<li>字典推导式(Dictionary Comprehensions)</li>
+<li>集合推导式(Set Comprehensions)</li>
+<li>生成器推导式(Generator Comprehensions)<a id="more"></a>
+
+</li>
+</ul>
+<h4 id="列表推导式"><a href="#列表推导式" class="headerlink" title="列表推导式"></a>列表推导式</h4><p>语法：变量名 = [表达式 for 变量 in 列表 if 条件]<br>注意：这里的if不是必须的哦<br><strong>例</strong>：生成一个1-10的列表</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 普通生成</span></span><br><span class="line">x = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,<span class="number">11</span>):</span><br><span class="line">    x.append(i)</span><br><span class="line">print(x)</span><br><span class="line"><span class="comment"># 列表推导式生成</span></span><br><span class="line">[x.append(i) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,<span class="number">11</span>)]</span><br><span class="line">print(x)    </span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>结果同为 [1,2,3,4,5,6,7,8,9,10]</p>
+</blockquote>
+<h4 id="字典推导式"><a href="#字典推导式" class="headerlink" title="字典推导式"></a>字典推导式</h4><p>字典推导式和列表推导式是一样的，只不过把[]换成了{}<br>语法：变量名 = {表达式 for 变量 in 列表 if 条件}<br>注意：这里的if不是必须的哦<br><strong>例</strong>：生成一个只有偶数的字典</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 普通生成</span></span><br><span class="line">x = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>]</span><br><span class="line">y = {}</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> x:</span><br><span class="line">    <span class="keyword">if</span> i % <span class="number">2</span> == <span class="number">0</span>:</span><br><span class="line">        y[i] = <span class="built_in">str</span>(i)      </span><br><span class="line">print(y)</span><br><span class="line"><span class="comment"># 字典推导式生成</span></span><br><span class="line">z = {i: <span class="built_in">str</span>(i) <span class="keyword">for</span> i <span class="keyword">in</span> x <span class="keyword">if</span> i % <span class="number">2</span> == <span class="number">0</span>}</span><br><span class="line">print(z)   </span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>结果同为 {2:”2”,4:”4”,6:”6”,8:”8”}</p>
+</blockquote>
+<h4 id="集合推导式"><a href="#集合推导式" class="headerlink" title="集合推导式"></a>集合推导式</h4><p>集合推导式和列表推导式是一样的，同样也是把[]换成了{}<br>语法：变量名 = {表达式 for 变量 in 列表 if 条件}<br>注意：这里的if不是必须的哦<br><strong>例</strong>：生成一个只有奇数的集合</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 普通生成</span></span><br><span class="line">x = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>]</span><br><span class="line">y = <span class="built_in">set</span>()</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> x:</span><br><span class="line">    <span class="keyword">if</span> i % <span class="number">2</span> == <span class="number">1</span>:</span><br><span class="line">        y.add(i)   </span><br><span class="line">print(y)</span><br><span class="line"><span class="comment"># 集合推导式生成</span></span><br><span class="line">[y.add(i) <span class="keyword">for</span> i <span class="keyword">in</span> x <span class="keyword">if</span> i%<span class="number">2</span>==<span class="number">1</span>]</span><br><span class="line">print(y)    </span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>结果同为 {1, 3, 5, 7, 9}</p>
+</blockquote>
+<h4 id="生成器推导式"><a href="#生成器推导式" class="headerlink" title="生成器推导式"></a>生成器推导式</h4><p>生成器推导式(或叫生成器表达式)，其结构也跟列表表达式相似。<br>语法：变量名 = (表达式 for 变量 in 列表 if 条件)<br>调用方法：1)for循环<br>        2)next函数<br><strong>例</strong>：将数字列表中各项平方运算，只算偶数</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 普通生成</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">square_even</span>(<span class="params">numbers</span>):</span></span><br><span class="line">    <span class="keyword">for</span> number <span class="keyword">in</span> numbers:</span><br><span class="line">        <span class="keyword">if</span> number % <span class="number">2</span> == <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">yield</span> (number * number)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">numbers = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]</span><br><span class="line">square_numbers = square_even(numbers)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> number <span class="keyword">in</span> square_numbers:</span><br><span class="line">    print(number)</span><br><span class="line"><span class="comment"># 集合推导式生成</span></span><br><span class="line">numbers = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]</span><br><span class="line">square_numbers = (num * num <span class="keyword">for</span> num <span class="keyword">in</span> numbers <span class="keyword">if</span> num % <span class="number">2</span> == <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> number <span class="keyword">in</span> square_numbers:</span><br><span class="line">    print(number)   </span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>结果同为 4 16 36</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>后端</category>
+      </categories>
+      <tags>
+        <tag>python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>接口测试中的异步调用和异步写入文件</title>
+    <url>/id_19/</url>
+    <content><![CDATA[<p>异步调用：<br>异步方法必须async 关键字声明<br>所有其他方法，耗时任务都需要加上await关键字，await必须依靠async<br>with用来建立工作流和关闭流对象</p>
+<a id="more"></a>
+<h4 id="异步发送100次请求"><a href="#异步发送100次请求" class="headerlink" title="异步发送100次请求"></a>异步发送100次请求</h4><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 异步调用</span></span><br><span class="line"><span class="keyword">import</span> httpx</span><br><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line">url = <span class="string">'http://127.0.0.1:8000/p8/user'</span></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">request</span>(<span class="params">client</span>):</span></span><br><span class="line">    r = <span class="keyword">await</span> client.get(url)</span><br><span class="line">    print(r.json())</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">with</span> httpx.AsyncClient() <span class="keyword">as</span> client:</span><br><span class="line">        <span class="comment"># 100 次调用</span></span><br><span class="line">        task_list = []</span><br><span class="line">        <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">100</span>):</span><br><span class="line">            req = request(client)</span><br><span class="line">            task = asyncio.create_task(req)</span><br><span class="line">            task_list.append(task)</span><br><span class="line">        <span class="keyword">await</span> asyncio.gather(*task_list)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    <span class="comment">#开始</span></span><br><span class="line">    start = time.time()</span><br><span class="line">    asyncio.run(main())</span><br><span class="line">    <span class="comment"># 结束</span></span><br><span class="line">    end = time.time()</span><br><span class="line">    print(<span class="string">f'异步：发送100次请求，耗时：<span class="subst">{end - start}</span>'</span>)</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+<h4 id="异步写文件"><a href="#异步写文件" class="headerlink" title="异步写文件"></a>异步写文件</h4><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">write</span>(<span class="params">f</span>):</span></span><br><span class="line">    <span class="keyword">await</span> f.write(<span class="string">"欢迎来到缅甸北部\n"</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">fun</span>():</span></span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">with</span> aiofiles.<span class="built_in">open</span>(<span class="string">"10000.txt"</span>, <span class="string">'a'</span>) <span class="keyword">as</span> f:</span><br><span class="line">        <span class="comment"># 列表推导式调用，更快，效率更高 </span></span><br><span class="line">        task = [asyncio.create_task(write(f)) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10000</span>)]</span><br><span class="line">        <span class="comment"># 普通列表 相对于列表推导式要慢一点</span></span><br><span class="line">        <span class="comment"># test_list = []</span></span><br><span class="line">        <span class="comment"># for i in range(10000):</span></span><br><span class="line">        <span class="comment">#     w = write(f)</span></span><br><span class="line">        <span class="comment">#     task = asyncio.create_task(w)</span></span><br><span class="line">        <span class="comment">#     test_list.append(task)</span></span><br><span class="line">        <span class="keyword">await</span> asyncio.gather(*task)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    start = time.time()</span><br><span class="line">    asyncio.run(fun())</span><br><span class="line">    end = time.time()</span><br><span class="line">    print(<span class="string">"执行了%d秒"</span> % (end - start))</span><br></pre></td></tr></tbody></table></figure>]]></content>
+      <categories>
+        <category>后端</category>
+      </categories>
+      <tags>
+        <tag>异步</tag>
       </tags>
   </entry>
   <entry>
@@ -423,60 +477,6 @@
       </categories>
       <tags>
         <tag>redis</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>接口测试中的异步调用和异步写入文件</title>
-    <url>/id_19/</url>
-    <content><![CDATA[<p>异步调用：<br>异步方法必须async 关键字声明<br>所有其他方法，耗时任务都需要加上await关键字，await必须依靠async<br>with用来建立工作流和关闭流对象</p>
-<a id="more"></a>
-<h4 id="异步发送100次请求"><a href="#异步发送100次请求" class="headerlink" title="异步发送100次请求"></a>异步发送100次请求</h4><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 异步调用</span></span><br><span class="line"><span class="keyword">import</span> httpx</span><br><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line">url = <span class="string">'http://127.0.0.1:8000/p8/user'</span></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">request</span>(<span class="params">client</span>):</span></span><br><span class="line">    r = <span class="keyword">await</span> client.get(url)</span><br><span class="line">    print(r.json())</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">with</span> httpx.AsyncClient() <span class="keyword">as</span> client:</span><br><span class="line">        <span class="comment"># 100 次调用</span></span><br><span class="line">        task_list = []</span><br><span class="line">        <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">100</span>):</span><br><span class="line">            req = request(client)</span><br><span class="line">            task = asyncio.create_task(req)</span><br><span class="line">            task_list.append(task)</span><br><span class="line">        <span class="keyword">await</span> asyncio.gather(*task_list)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    <span class="comment">#开始</span></span><br><span class="line">    start = time.time()</span><br><span class="line">    asyncio.run(main())</span><br><span class="line">    <span class="comment"># 结束</span></span><br><span class="line">    end = time.time()</span><br><span class="line">    print(<span class="string">f'异步：发送100次请求，耗时：<span class="subst">{end - start}</span>'</span>)</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
-<h4 id="异步写文件"><a href="#异步写文件" class="headerlink" title="异步写文件"></a>异步写文件</h4><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">write</span>(<span class="params">f</span>):</span></span><br><span class="line">    <span class="keyword">await</span> f.write(<span class="string">"欢迎来到缅甸北部\n"</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">fun</span>():</span></span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">with</span> aiofiles.<span class="built_in">open</span>(<span class="string">"10000.txt"</span>, <span class="string">'a'</span>) <span class="keyword">as</span> f:</span><br><span class="line">        <span class="comment"># 列表推导式调用，更快，效率更高 </span></span><br><span class="line">        task = [asyncio.create_task(write(f)) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10000</span>)]</span><br><span class="line">        <span class="comment"># 普通列表 相对于列表推导式要慢一点</span></span><br><span class="line">        <span class="comment"># test_list = []</span></span><br><span class="line">        <span class="comment"># for i in range(10000):</span></span><br><span class="line">        <span class="comment">#     w = write(f)</span></span><br><span class="line">        <span class="comment">#     task = asyncio.create_task(w)</span></span><br><span class="line">        <span class="comment">#     test_list.append(task)</span></span><br><span class="line">        <span class="keyword">await</span> asyncio.gather(*task)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    start = time.time()</span><br><span class="line">    asyncio.run(fun())</span><br><span class="line">    end = time.time()</span><br><span class="line">    print(<span class="string">"执行了%d秒"</span> % (end - start))</span><br></pre></td></tr></tbody></table></figure>]]></content>
-      <categories>
-        <category>后端</category>
-      </categories>
-      <tags>
-        <tag>异步</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>四大推导式(列表/字典/集合/生成器)</title>
-    <url>/id_2/</url>
-    <content><![CDATA[<p>推导式（又称解析式），是 python 的一种独有特性。推导式是可以从一个数据序列构建另一个新的数据序列。</p>
-<h3 id="Python-里有四种推导式："><a href="#Python-里有四种推导式：" class="headerlink" title="Python 里有四种推导式："></a>Python 里有四种推导式：</h3><ul>
-<li>列表推导式(List Comprehensions)</li>
-<li>字典推导式(Dictionary Comprehensions)</li>
-<li>集合推导式(Set Comprehensions)</li>
-<li>生成器推导式(Generator Comprehensions)<a id="more"></a>
-
-</li>
-</ul>
-<h4 id="列表推导式"><a href="#列表推导式" class="headerlink" title="列表推导式"></a>列表推导式</h4><p>语法：变量名 = [表达式 for 变量 in 列表 if 条件]<br>注意：这里的if不是必须的哦<br><strong>例</strong>：生成一个1-10的列表</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 普通生成</span></span><br><span class="line">x = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,<span class="number">11</span>):</span><br><span class="line">    x.append(i)</span><br><span class="line">print(x)</span><br><span class="line"><span class="comment"># 列表推导式生成</span></span><br><span class="line">[x.append(i) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,<span class="number">11</span>)]</span><br><span class="line">print(x)    </span><br></pre></td></tr></tbody></table></figure>
-<blockquote>
-<p>结果同为 [1,2,3,4,5,6,7,8,9,10]</p>
-</blockquote>
-<h4 id="字典推导式"><a href="#字典推导式" class="headerlink" title="字典推导式"></a>字典推导式</h4><p>字典推导式和列表推导式是一样的，只不过把[]换成了{}<br>语法：变量名 = {表达式 for 变量 in 列表 if 条件}<br>注意：这里的if不是必须的哦<br><strong>例</strong>：生成一个只有偶数的字典</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 普通生成</span></span><br><span class="line">x = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>]</span><br><span class="line">y = {}</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> x:</span><br><span class="line">    <span class="keyword">if</span> i % <span class="number">2</span> == <span class="number">0</span>:</span><br><span class="line">        y[i] = <span class="built_in">str</span>(i)      </span><br><span class="line">print(y)</span><br><span class="line"><span class="comment"># 字典推导式生成</span></span><br><span class="line">z = {i: <span class="built_in">str</span>(i) <span class="keyword">for</span> i <span class="keyword">in</span> x <span class="keyword">if</span> i % <span class="number">2</span> == <span class="number">0</span>}</span><br><span class="line">print(z)   </span><br></pre></td></tr></tbody></table></figure>
-<blockquote>
-<p>结果同为 {2:”2”,4:”4”,6:”6”,8:”8”}</p>
-</blockquote>
-<h4 id="集合推导式"><a href="#集合推导式" class="headerlink" title="集合推导式"></a>集合推导式</h4><p>集合推导式和列表推导式是一样的，同样也是把[]换成了{}<br>语法：变量名 = {表达式 for 变量 in 列表 if 条件}<br>注意：这里的if不是必须的哦<br><strong>例</strong>：生成一个只有奇数的集合</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 普通生成</span></span><br><span class="line">x = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>]</span><br><span class="line">y = <span class="built_in">set</span>()</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> x:</span><br><span class="line">    <span class="keyword">if</span> i % <span class="number">2</span> == <span class="number">1</span>:</span><br><span class="line">        y.add(i)   </span><br><span class="line">print(y)</span><br><span class="line"><span class="comment"># 集合推导式生成</span></span><br><span class="line">[y.add(i) <span class="keyword">for</span> i <span class="keyword">in</span> x <span class="keyword">if</span> i%<span class="number">2</span>==<span class="number">1</span>]</span><br><span class="line">print(y)    </span><br></pre></td></tr></tbody></table></figure>
-<blockquote>
-<p>结果同为 {1, 3, 5, 7, 9}</p>
-</blockquote>
-<h4 id="生成器推导式"><a href="#生成器推导式" class="headerlink" title="生成器推导式"></a>生成器推导式</h4><p>生成器推导式(或叫生成器表达式)，其结构也跟列表表达式相似。<br>语法：变量名 = (表达式 for 变量 in 列表 if 条件)<br>调用方法：1)for循环<br>        2)next函数<br><strong>例</strong>：将数字列表中各项平方运算，只算偶数</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 普通生成</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">square_even</span>(<span class="params">numbers</span>):</span></span><br><span class="line">    <span class="keyword">for</span> number <span class="keyword">in</span> numbers:</span><br><span class="line">        <span class="keyword">if</span> number % <span class="number">2</span> == <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">yield</span> (number * number)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">numbers = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]</span><br><span class="line">square_numbers = square_even(numbers)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> number <span class="keyword">in</span> square_numbers:</span><br><span class="line">    print(number)</span><br><span class="line"><span class="comment"># 集合推导式生成</span></span><br><span class="line">numbers = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]</span><br><span class="line">square_numbers = (num * num <span class="keyword">for</span> num <span class="keyword">in</span> numbers <span class="keyword">if</span> num % <span class="number">2</span> == <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> number <span class="keyword">in</span> square_numbers:</span><br><span class="line">    print(number)   </span><br></pre></td></tr></tbody></table></figure>
-<blockquote>
-<p>结果同为 4 16 36</p>
-</blockquote>
-]]></content>
-      <categories>
-        <category>后端</category>
-      </categories>
-      <tags>
-        <tag>python</tag>
       </tags>
   </entry>
   <entry>
@@ -662,81 +662,6 @@
       </tags>
   </entry>
   <entry>
-    <title>引用计数</title>
-    <url>/id_27/</url>
-    <content><![CDATA[<h3 id="引用计数"><a href="#引用计数" class="headerlink" title="引用计数"></a>引用计数</h3><h5 id="问"><a href="#问" class="headerlink" title="问"></a>问</h5><p>引用计数这个问题是我们在面试中经常会遇到的。通常面试官会这样问：</p>
-<ol>
-<li>python中是如何管理内存的？</li>
-<li>你知道引用计数吗？<a id="more"></a>
-<h5 id="答"><a href="#答" class="headerlink" title="答"></a>答</h5></li>
-</ol>
-<p>引用计数是内存管理机制，将资源的使用次数保存起来，在引用次数变为<strong>零</strong>时进行释放</p>
-<p>比如说我们现在有一个变量a，指向内存中的字符 ‘x’ ，此时x在内存中的引用计数为1，然后又有一个变量b，b=a</p>
-<p>此时(b=a)和(a=’x’)是相等的，那这个时候x在内存中的引用计数就会+1变为2</p>
-<p><img src="/id_27/%E4%BE%8B.png" alt="案例"></p>
-<h4 id="引用计数的好处"><a href="#引用计数的好处" class="headerlink" title="引用计数的好处"></a>引用计数的好处</h4><p>我们可以举一些生活中的场景，比如说我们出去<strong>旅游</strong>，朋友提前抵达并开好了房间，这样我们就可以免费跟朋友住一间房，这样既节约了我们的时间，又节约了我们另外开房需要支付的资金。</p>
-<ul>
-<li>可知：减少了内存碎片的产生，</li>
-<li>并且可以对于我们在创建和释放内存中有一定的资源开销的节省。</li>
-<li>可以更快的进行资源管理</li>
-</ul>
-<p>那同样，当我们旅途结束，不需要再居住的时候，所有人离开酒店，那这个房间就会被酒店的人员进行清理，处理。</p>
-<ul>
-<li>这样就像引用计数中计数为0时，内存会被回收掉是一样的</li>
-</ul>
-<h4 id="查看引用计数"><a href="#查看引用计数" class="headerlink" title="查看引用计数"></a>查看引用计数</h4><p>查看引用计数我们是使用了sys模块中getrefcount方法</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">C:\Users\Lenovo&gt;python.exe</span><br><span class="line">Python <span class="number">3.7</span><span class="number">.0</span> (v3<span class="number">.7</span><span class="number">.0</span>:1bf9cc5093, Jun <span class="number">27</span> <span class="number">2018</span>, 04:<span class="number">59</span>:<span class="number">51</span>) [MSC v<span class="number">.1914</span> <span class="number">64</span> bit (AMD64)] on win32</span><br><span class="line">Type <span class="string">"help"</span>, <span class="string">"copyright"</span>, <span class="string">"credits"</span> <span class="keyword">or</span> <span class="string">"license"</span> <span class="keyword">for</span> more information.</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> sys</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sys.getrefcount(<span class="number">1</span>)</span><br><span class="line"><span class="number">119</span></span><br><span class="line"><span class="comment"># 得出常量1在内存中的引用计数为119</span></span><br></pre></td></tr></tbody></table></figure>
-<h4 id="那什么时候会用到引用计数呢"><a href="#那什么时候会用到引用计数呢" class="headerlink" title="那什么时候会用到引用计数呢"></a>那什么时候会用到引用计数呢</h4><p>有两点：</p>
-<p>1、 变量互相赋值的时候</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="string">'x'</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = a</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">id</span>(a)</span><br><span class="line"><span class="number">3242716434928</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">id</span>(b)</span><br><span class="line"><span class="number">3242716434928</span></span><br><span class="line"><span class="comment"># 此时我们可以看出两个变量指向的内存地址是完全一样的 。可得变量互相赋值的时候用到了引用计数</span></span><br></pre></td></tr></tbody></table></figure>
-<p>2、常用对象创建时</p>
-<p>python本身含有a-z,A-Z,0-9等常见值的引用</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>c = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>d = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">id</span>(a)</span><br><span class="line"><span class="number">140707666383904</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">id</span>(b)</span><br><span class="line"><span class="number">140707666383904</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">id</span>(c)</span><br><span class="line"><span class="number">140707666383904</span></span><br><span class="line"><span class="comment"># 此时我们可以看出a,b,c的内存地址都是完全一致的， 可得常用对象创建时用到了引用计数</span></span><br></pre></td></tr></tbody></table></figure>
-<h4 id="如何减少引用次数"><a href="#如何减少引用次数" class="headerlink" title="如何减少引用次数"></a>如何减少引用次数</h4><p>有两点</p>
-<p>1、变量被重新赋值为别的值</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>c = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>d = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sys.getrefcount(<span class="number">1</span>)</span><br><span class="line"><span class="number">123</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="string">'a'</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sys.getrefcount(<span class="number">1</span>)</span><br><span class="line"><span class="number">122</span></span><br><span class="line"><span class="comment"># 可以看出，当a被重新赋值后再次查看1的引用计数是减少了1的</span></span><br></pre></td></tr></tbody></table></figure>
-<p>2、del  删除变量</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>c = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>d = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sys.getrefcount(<span class="number">1</span>)</span><br><span class="line"><span class="number">123</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">del</span> a</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sys.getrefcount(<span class="number">1</span>)</span><br><span class="line"><span class="number">122</span></span><br><span class="line"><span class="comment"># 可以看出，当a被del删除后再次查看1的引用计数是减少了1的</span></span><br></pre></td></tr></tbody></table></figure>
-<h4 id="引用计数的缺点"><a href="#引用计数的缺点" class="headerlink" title="引用计数的缺点"></a>引用计数的缺点</h4><p>那引用计数真的这么完美吗，不占内存地址，用完即释放，nonono,当然不是</p>
-<p>引用计数最大的缺点就是<strong>循环引用</strong></p>
-<p>那循环引用是什么呢？</p>
-<p>循环引用就是两个变量互相引用时假设已经被释放，但引用计数不为0，那就会导致这两个变量无法被直接回收</p>
-<p><strong>那循环引用有什么解决办法吗？</strong></p>
-<p>那肯定是有的，python中解决循环引用的方法就是<strong>标记-清除</strong><br>请移步下一节：<a href="https://www.hr915.xyz/2018/09/05/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6/">https://www.hr915.xyz/2018/09/05/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6/</a></p>
-]]></content>
-      <categories>
-        <category>后端</category>
-      </categories>
-      <tags>
-        <tag>python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>垃圾回收机制之标记-清除</title>
-    <url>/id_28/</url>
-    <content><![CDATA[<h3 id="垃圾回收机制"><a href="#垃圾回收机制" class="headerlink" title="垃圾回收机制"></a>垃圾回收机制</h3><p>垃圾自动回收机制的出现使编程更加的简单，使得我们不需要再去考虑内存分配和释放的问题，而是更加的专注在我们产品功能的实现上</p>
-<p>目前最基本的垃圾收集算法有四种,标记-清除算法(mark-sweep),标记-压缩算法(mark-compact),复制算法(copying)以及引用计数算法(reference counting).而现代流行的垃圾收集算法一般是由这四种中的其中几种算法相互组合而成，比如说，对堆(heap)的一部分采用标记-清除算法，对堆(heap)的另外一部分则采用复制算法等等。今天我们主要来看下标记-清除算法的原理。</p>
-<a id="more"></a>
-<h4 id="标记-清除"><a href="#标记-清除" class="headerlink" title="标记-清除"></a>标记-清除</h4><p>标记-清除算法分为两个阶段，标记(mark)和清除(sweep)</p>
-<h5 id="标记："><a href="#标记：" class="headerlink" title="标记："></a>标记：</h5><p>在内存中对每一个被使用到的变量来进行标记</p>
-<p>标记是从根对象开始工作，所有能够和根对象联系的变量我们都会有相应的标记。</p>
-<h5 id="标记举例"><a href="#标记举例" class="headerlink" title="标记举例"></a>标记举例</h5><p><img src="/id_28/01.png" alt="标记"></p>
-<p><img src="/id_28/02.png" alt="标记"></p>
-<p><img src="/id_28/03.png" alt="标记"></p>
-<h5 id="清除"><a href="#清除" class="headerlink" title="清除:"></a>清除:</h5><p>清除主要是将内存中无关联根对象的并且没有被标记的变量给杀死，释放掉</p>
-<p><img src="/id_28/04.png" alt="image-20210324190403266"></p>
-<p>图中a和b已经和根对象没有关系了，而且并没有被标记，所以就会被清除掉</p>
-<h4 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h4><p>总的来说，在标记-清除过程中,他会扫描整个内存空间，扫描过程中python程序会暂停，被标记的对象不会被回收，没有标记的对象会被回收掉。<br>但是我们整个python程序暂停，暂停会导致程序无法正常运行，让程序运行时出现一些问题从而造成程序阻塞问题<br>那python呢就引入了<strong>分代回收</strong>来避免标记-清除，由于每一次过程都需要去大量的遍历整块内存而造成的程序阻塞问题</p>
-<p>分代回收参考下一篇文章：<a href="https://www.hr915.xyz/2018/09/05/%E5%88%86%E4%BB%A3%E5%9B%9E%E6%94%B6/">https://www.hr915.xyz/2018/09/05/%E5%88%86%E4%BB%A3%E5%9B%9E%E6%94%B6/</a></p>
-]]></content>
-      <categories>
-        <category>后端</category>
-      </categories>
-      <tags>
-        <tag>python</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>设计模式</title>
     <url>/id_26/</url>
     <content><![CDATA[<h4 id="设计模式简介"><a href="#设计模式简介" class="headerlink" title="设计模式简介"></a>设计模式简介</h4><p>设计模式是一套被反复使用的、多数人知晓的、经过分类编目的、代码设计经验的总结。使用设计模式是为了重用代码、让代码更容易被他人理解、保证代码可靠性。</p>
@@ -833,6 +758,81 @@
       </tags>
   </entry>
   <entry>
+    <title>引用计数</title>
+    <url>/id_27/</url>
+    <content><![CDATA[<h3 id="引用计数"><a href="#引用计数" class="headerlink" title="引用计数"></a>引用计数</h3><h5 id="问"><a href="#问" class="headerlink" title="问"></a>问</h5><p>引用计数这个问题是我们在面试中经常会遇到的。通常面试官会这样问：</p>
+<ol>
+<li>python中是如何管理内存的？</li>
+<li>你知道引用计数吗？<a id="more"></a>
+<h5 id="答"><a href="#答" class="headerlink" title="答"></a>答</h5></li>
+</ol>
+<p>引用计数是内存管理机制，将资源的使用次数保存起来，在引用次数变为<strong>零</strong>时进行释放</p>
+<p>比如说我们现在有一个变量a，指向内存中的字符 ‘x’ ，此时x在内存中的引用计数为1，然后又有一个变量b，b=a</p>
+<p>此时(b=a)和(a=’x’)是相等的，那这个时候x在内存中的引用计数就会+1变为2</p>
+<p><img src="/id_27/%E4%BE%8B.png" alt="案例"></p>
+<h4 id="引用计数的好处"><a href="#引用计数的好处" class="headerlink" title="引用计数的好处"></a>引用计数的好处</h4><p>我们可以举一些生活中的场景，比如说我们出去<strong>旅游</strong>，朋友提前抵达并开好了房间，这样我们就可以免费跟朋友住一间房，这样既节约了我们的时间，又节约了我们另外开房需要支付的资金。</p>
+<ul>
+<li>可知：减少了内存碎片的产生，</li>
+<li>并且可以对于我们在创建和释放内存中有一定的资源开销的节省。</li>
+<li>可以更快的进行资源管理</li>
+</ul>
+<p>那同样，当我们旅途结束，不需要再居住的时候，所有人离开酒店，那这个房间就会被酒店的人员进行清理，处理。</p>
+<ul>
+<li>这样就像引用计数中计数为0时，内存会被回收掉是一样的</li>
+</ul>
+<h4 id="查看引用计数"><a href="#查看引用计数" class="headerlink" title="查看引用计数"></a>查看引用计数</h4><p>查看引用计数我们是使用了sys模块中getrefcount方法</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">C:\Users\Lenovo&gt;python.exe</span><br><span class="line">Python <span class="number">3.7</span><span class="number">.0</span> (v3<span class="number">.7</span><span class="number">.0</span>:1bf9cc5093, Jun <span class="number">27</span> <span class="number">2018</span>, 04:<span class="number">59</span>:<span class="number">51</span>) [MSC v<span class="number">.1914</span> <span class="number">64</span> bit (AMD64)] on win32</span><br><span class="line">Type <span class="string">"help"</span>, <span class="string">"copyright"</span>, <span class="string">"credits"</span> <span class="keyword">or</span> <span class="string">"license"</span> <span class="keyword">for</span> more information.</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> sys</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sys.getrefcount(<span class="number">1</span>)</span><br><span class="line"><span class="number">119</span></span><br><span class="line"><span class="comment"># 得出常量1在内存中的引用计数为119</span></span><br></pre></td></tr></tbody></table></figure>
+<h4 id="那什么时候会用到引用计数呢"><a href="#那什么时候会用到引用计数呢" class="headerlink" title="那什么时候会用到引用计数呢"></a>那什么时候会用到引用计数呢</h4><p>有两点：</p>
+<p>1、 变量互相赋值的时候</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="string">'x'</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = a</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">id</span>(a)</span><br><span class="line"><span class="number">3242716434928</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">id</span>(b)</span><br><span class="line"><span class="number">3242716434928</span></span><br><span class="line"><span class="comment"># 此时我们可以看出两个变量指向的内存地址是完全一样的 。可得变量互相赋值的时候用到了引用计数</span></span><br></pre></td></tr></tbody></table></figure>
+<p>2、常用对象创建时</p>
+<p>python本身含有a-z,A-Z,0-9等常见值的引用</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>c = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>d = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">id</span>(a)</span><br><span class="line"><span class="number">140707666383904</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">id</span>(b)</span><br><span class="line"><span class="number">140707666383904</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">id</span>(c)</span><br><span class="line"><span class="number">140707666383904</span></span><br><span class="line"><span class="comment"># 此时我们可以看出a,b,c的内存地址都是完全一致的， 可得常用对象创建时用到了引用计数</span></span><br></pre></td></tr></tbody></table></figure>
+<h4 id="如何减少引用次数"><a href="#如何减少引用次数" class="headerlink" title="如何减少引用次数"></a>如何减少引用次数</h4><p>有两点</p>
+<p>1、变量被重新赋值为别的值</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>c = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>d = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sys.getrefcount(<span class="number">1</span>)</span><br><span class="line"><span class="number">123</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="string">'a'</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sys.getrefcount(<span class="number">1</span>)</span><br><span class="line"><span class="number">122</span></span><br><span class="line"><span class="comment"># 可以看出，当a被重新赋值后再次查看1的引用计数是减少了1的</span></span><br></pre></td></tr></tbody></table></figure>
+<p>2、del  删除变量</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>c = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>d = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sys.getrefcount(<span class="number">1</span>)</span><br><span class="line"><span class="number">123</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">del</span> a</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sys.getrefcount(<span class="number">1</span>)</span><br><span class="line"><span class="number">122</span></span><br><span class="line"><span class="comment"># 可以看出，当a被del删除后再次查看1的引用计数是减少了1的</span></span><br></pre></td></tr></tbody></table></figure>
+<h4 id="引用计数的缺点"><a href="#引用计数的缺点" class="headerlink" title="引用计数的缺点"></a>引用计数的缺点</h4><p>那引用计数真的这么完美吗，不占内存地址，用完即释放，nonono,当然不是</p>
+<p>引用计数最大的缺点就是<strong>循环引用</strong></p>
+<p>那循环引用是什么呢？</p>
+<p>循环引用就是两个变量互相引用时假设已经被释放，但引用计数不为0，那就会导致这两个变量无法被直接回收</p>
+<p><strong>那循环引用有什么解决办法吗？</strong></p>
+<p>那肯定是有的，python中解决循环引用的方法就是<strong>标记-清除</strong><br>请移步下一节：<a href="https://www.hr915.xyz/2018/09/05/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6/">https://www.hr915.xyz/2018/09/05/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6/</a></p>
+]]></content>
+      <categories>
+        <category>后端</category>
+      </categories>
+      <tags>
+        <tag>python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>垃圾回收机制之标记-清除</title>
+    <url>/id_28/</url>
+    <content><![CDATA[<h3 id="垃圾回收机制"><a href="#垃圾回收机制" class="headerlink" title="垃圾回收机制"></a>垃圾回收机制</h3><p>垃圾自动回收机制的出现使编程更加的简单，使得我们不需要再去考虑内存分配和释放的问题，而是更加的专注在我们产品功能的实现上</p>
+<p>目前最基本的垃圾收集算法有四种,标记-清除算法(mark-sweep),标记-压缩算法(mark-compact),复制算法(copying)以及引用计数算法(reference counting).而现代流行的垃圾收集算法一般是由这四种中的其中几种算法相互组合而成，比如说，对堆(heap)的一部分采用标记-清除算法，对堆(heap)的另外一部分则采用复制算法等等。今天我们主要来看下标记-清除算法的原理。</p>
+<a id="more"></a>
+<h4 id="标记-清除"><a href="#标记-清除" class="headerlink" title="标记-清除"></a>标记-清除</h4><p>标记-清除算法分为两个阶段，标记(mark)和清除(sweep)</p>
+<h5 id="标记："><a href="#标记：" class="headerlink" title="标记："></a>标记：</h5><p>在内存中对每一个被使用到的变量来进行标记</p>
+<p>标记是从根对象开始工作，所有能够和根对象联系的变量我们都会有相应的标记。</p>
+<h5 id="标记举例"><a href="#标记举例" class="headerlink" title="标记举例"></a>标记举例</h5><p><img src="/id_28/01.png" alt="标记"></p>
+<p><img src="/id_28/02.png" alt="标记"></p>
+<p><img src="/id_28/03.png" alt="标记"></p>
+<h5 id="清除"><a href="#清除" class="headerlink" title="清除:"></a>清除:</h5><p>清除主要是将内存中无关联根对象的并且没有被标记的变量给杀死，释放掉</p>
+<p><img src="/id_28/04.png" alt="image-20210324190403266"></p>
+<p>图中a和b已经和根对象没有关系了，而且并没有被标记，所以就会被清除掉</p>
+<h4 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h4><p>总的来说，在标记-清除过程中,他会扫描整个内存空间，扫描过程中python程序会暂停，被标记的对象不会被回收，没有标记的对象会被回收掉。<br>但是我们整个python程序暂停，暂停会导致程序无法正常运行，让程序运行时出现一些问题从而造成程序阻塞问题<br>那python呢就引入了<strong>分代回收</strong>来避免标记-清除，由于每一次过程都需要去大量的遍历整块内存而造成的程序阻塞问题</p>
+<p>分代回收参考下一篇文章：<a href="https://www.hr915.xyz/2018/09/05/%E5%88%86%E4%BB%A3%E5%9B%9E%E6%94%B6/">https://www.hr915.xyz/2018/09/05/%E5%88%86%E4%BB%A3%E5%9B%9E%E6%94%B6/</a></p>
+]]></content>
+      <categories>
+        <category>后端</category>
+      </categories>
+      <tags>
+        <tag>python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>分代回收</title>
     <url>/id_29/</url>
     <content><![CDATA[<h3 id="分代回收"><a href="#分代回收" class="headerlink" title="分代回收"></a>分代回收</h3><p>标记-清除会在大规模遍历内存中会使程序暂停 ，程序暂停会导致我们程序出现很多我们意想不到的错误和问题出现，所以pyt hon引入了我们的分代回收来解决这个问题，分代回收也应该是我们在面试过程中主动向面试官阐述出来的。</p>
@@ -893,6 +893,51 @@
       </categories>
       <tags>
         <tag>python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>axios封装</title>
+    <url>/id_31/</url>
+    <content><![CDATA[<p>在vue项目中，和后台交互获取数据这块，我们通常使用的是axios库，它是基于promise的http库，可运行在浏览器端和node.js中。<br>他有很多优秀的特性，例如拦截请求和响应、取消请求、转换json、客户端防御CSRF等。<br>axios文档：<a href="https://www.npmjs.com/package/axios">https://www.npmjs.com/package/axios</a></p>
+<a id="more"></a>
+
+<h4 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h4><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">npm install axios</span><br></pre></td></tr></tbody></table></figure>
+<h4 id="引入"><a href="#引入" class="headerlink" title="引入"></a>引入</h4><p>通常我们会在src中，新建一个http文件夹，里边新建index.js和api.js文件，index.js文件用来封装我们的axios，api.js用来统一管理我们的接口</p>
+<hr>
+<p>我们需要在index.js中做如下操作：</p>
+<ul>
+<li>首先需要引入axios</li>
+</ul>
+<figure class="highlight js"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> axios <span class="keyword">from</span> <span class="string">"axios"</span>;</span><br><span class="line"><span class="comment">// 设置默认请求地址</span></span><br><span class="line">axios.defaults.baseURL = <span class="string">'http://127.0.0.1:8000/'</span></span><br><span class="line"><span class="comment">// 设置请求超时时限</span></span><br><span class="line">axios.defaults.timeout = <span class="number">10000</span></span><br></pre></td></tr></tbody></table></figure>
+<ul>
+<li><p>请求拦截<br>我们在发送请求前可以进行一个请求的拦截，为什么要拦截呢，我们拦截请求是用来做什么的呢？<br>比如，有些请求是需要用户登录之后才能访问的，或者post请求的时候，我们需要序列化我们提交的数据。<br>这时候，我们可以在请求被发送之前进行一个拦截，从而进行我们想要的操作。</p>
+<figure class="highlight js"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment">// 请求拦截器 当请求被发送之前进行我们想要的操作</span></span><br><span class="line">axios.interceptors.request.use(<span class="function"><span class="params">config</span> =&gt;</span> {</span><br><span class="line">  <span class="comment">// 从localStorage中获取token</span></span><br><span class="line">  <span class="keyword">let</span> token = <span class="built_in">localStorage</span>.getItem(<span class="string">'token'</span>);</span><br><span class="line">  <span class="comment">// 如果有token, 就把token设置到请求头中Authorization字段中</span></span><br><span class="line">  <span class="keyword">if</span> (token) {</span><br><span class="line">    axios.defaults.headers[<span class="string">'Authorization'</span>] = token</span><br><span class="line">  }</span><br><span class="line">  <span class="comment">// token &amp;&amp; (config.headers.Authorization = token);</span></span><br><span class="line">  <span class="keyword">return</span> config;</span><br><span class="line">}, <span class="function"><span class="params">error</span> =&gt;</span> {</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">Promise</span>.reject(error);</span><br><span class="line">});</span><br></pre></td></tr></tbody></table></figure></li>
+<li><p>响应拦截<br>响应拦截器很好理解，就是服务器返回给我们的数据，我们在拿到之前可以对他进行一些处理。<br>例如下面的思想：如果后台返回的状态码是200，则正常返回数据，否则的根据错误的状态码类型进行一些我们需要的错误，<br>其实这里主要就是进行了错误的统一处理和没登录或登录过期后调整登录页的一个操作。</p>
+<figure class="highlight js"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment">// 响应拦截器（当后端返回数据的时候进行拦截）</span></span><br><span class="line">axios.interceptors.response.use(<span class="function"><span class="params">response</span> =&gt;</span> {</span><br><span class="line">  <span class="comment">// 当响应码是 2xx 的情况, 进入这里</span></span><br><span class="line">  <span class="comment">// debugger</span></span><br><span class="line">  <span class="keyword">return</span> response.data;</span><br><span class="line">}, <span class="function"><span class="params">error</span> =&gt;</span> {</span><br><span class="line">  <span class="built_in">console</span>.log(error.response)</span><br><span class="line">  <span class="comment">// 当响应码不是 2xx 的情况, 进入这里</span></span><br><span class="line">  <span class="comment">// debugger</span></span><br><span class="line">  <span class="keyword">return</span> error</span><br><span class="line">});</span><br></pre></td></tr></tbody></table></figure></li>
+<li><p>根据上面封装好的axios对象，封装 get、post、put、delete请求</p>
+<ul>
+<li>封装get方法,对应get请求<figure class="highlight js"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">get</span>(<span class="params">url, params, headers</span>) </span>{</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> {</span><br><span class="line">    axios.get(url, {params, headers}).then(<span class="function"><span class="params">res</span> =&gt;</span> {</span><br><span class="line">      resolve(res)</span><br><span class="line">    }).catch(<span class="function"><span class="params">err</span> =&gt;</span> {</span><br><span class="line">      reject(err)</span><br><span class="line">    })</span><br><span class="line">  })</span><br><span class="line"> }</span><br></pre></td></tr></tbody></table></figure></li>
+<li>封装post方法,对应post请求<figure class="highlight js"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">post</span>(<span class="params">url, params</span>) </span>{</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> {</span><br><span class="line">    axios.post(url, params).then(<span class="function">(<span class="params">res</span>) =&gt;</span> {</span><br><span class="line">      resolve(res)</span><br><span class="line">    }).catch(<span class="function">(<span class="params">err</span>) =&gt;</span> {</span><br><span class="line">      <span class="comment">// debugger</span></span><br><span class="line">      reject(err)</span><br><span class="line">    })</span><br><span class="line">  })</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure></li>
+<li>封装put方法,对应put请求<figure class="highlight js"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">put</span>(<span class="params">url, params, headers</span>) </span>{</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> {</span><br><span class="line">    axios.put(url, params, headers).then(<span class="function">(<span class="params">res</span>) =&gt;</span> {</span><br><span class="line">      resolve(res)</span><br><span class="line">    }).catch(<span class="function">(<span class="params">err</span>) =&gt;</span> {</span><br><span class="line">      <span class="comment">// debugger</span></span><br><span class="line">      reject(err)</span><br><span class="line">    })</span><br><span class="line">  })</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure></li>
+<li>封装delete方法,对应delete请求<figure class="highlight js"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">del</span>(<span class="params">url, params, headers</span>) </span>{</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> {</span><br><span class="line">    axios.delete(url, {<span class="attr">data</span>: params, headers}).then(<span class="function">(<span class="params">res</span>) =&gt;</span> {</span><br><span class="line">      resolve(res)</span><br><span class="line">    }).catch(<span class="function">(<span class="params">err</span>) =&gt;</span> {</span><br><span class="line">      <span class="comment">// debugger</span></span><br><span class="line">      reject(err)</span><br><span class="line">    })</span><br><span class="line">  })</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="到这里axios的封装基本就完成了，下面还有api的统一管理"><a href="#到这里axios的封装基本就完成了，下面还有api的统一管理" class="headerlink" title="到这里axios的封装基本就完成了，下面还有api的统一管理"></a>到这里axios的封装基本就完成了，下面还有api的统一管理</h4><ul>
+<li>首先在api.js里面导入我们封装的方法<figure class="highlight js"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> {get, post, put, del} <span class="keyword">from</span> <span class="string">'./index'</span></span><br></pre></td></tr></tbody></table></figure></li>
+<li>现在比如我们要注册一个账号，是post请求,我们可以再api中这样封装<figure class="highlight js"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> signUp = <span class="function"><span class="params">parameter</span> =&gt;</span> {</span><br><span class="line">  <span class="comment">// 注册</span></span><br><span class="line">  <span class="keyword">return</span> post(</span><br><span class="line">    <span class="comment">// baseURL后拼接的路由 </span></span><br><span class="line">    <span class="string">'signup/'</span>,</span><br><span class="line">    <span class="comment">// post携带的data数据</span></span><br><span class="line">    parameter</span><br><span class="line">  )</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure></li>
+<li>然后我们可以在页面中这样调用我们的api接口<figure class="highlight js"><table><tbody><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">signUp</span>(<span class="params"></span>)</span>{</span><br><span class="line">      <span class="keyword">let</span> params = {</span><br><span class="line">        <span class="string">"email"</span>: <span class="built_in">this</span>.signup_email,</span><br><span class="line">        <span class="string">"username"</span>: <span class="built_in">this</span>.signup_username,</span><br><span class="line">        <span class="string">"phone"</span>: <span class="built_in">this</span>.signup_phone,</span><br><span class="line">        <span class="string">'password'</span>: <span class="built_in">this</span>.signup_password,</span><br><span class="line">      }</span><br><span class="line">      signUp(params).then(<span class="function"><span class="params">res</span> =&gt;</span> {</span><br><span class="line">        <span class="keyword">if</span> (res.code == <span class="number">10004</span>) {</span><br><span class="line">          <span class="built_in">this</span>.signup_errors = res.msg  <span class="comment">//10004注册失败</span></span><br><span class="line">          <span class="built_in">console</span>.log(<span class="built_in">this</span>.signup_errors.email[<span class="number">0</span>])</span><br><span class="line">        }</span><br><span class="line">        <span class="keyword">if</span> (res.code == <span class="number">10001</span>) {</span><br><span class="line">          <span class="built_in">this</span>.signup_errors = <span class="string">''</span>  <span class="comment">//初始化错误信息</span></span><br><span class="line">          <span class="built_in">this</span>.message = res.msg  <span class="comment">//10001注册成功</span></span><br><span class="line">        }</span><br><span class="line">      }).catch(<span class="function"><span class="params">error</span> =&gt;</span> {</span><br><span class="line">        <span class="built_in">console</span>.log(error)</span><br><span class="line">      })</span><br><span class="line">    }</span><br></pre></td></tr></tbody></table></figure></li>
+<li>其他的api接口，就在api.js中继续往下面扩展就可以了,但是一定要注意写好注释<h4 id="OK-这样一个axios封装就做好啦"><a href="#OK-这样一个axios封装就做好啦" class="headerlink" title="OK 这样一个axios封装就做好啦"></a>OK 这样一个axios封装就做好啦</h4></li>
+</ul>
+<p>vue-git地址：<a href="https://gitee.com/before-l/vue-project.git">https://gitee.com/before-l/vue-project.git</a></p>
+]]></content>
+      <categories>
+        <category>前端</category>
+      </categories>
+      <tags>
+        <tag>axios</tag>
       </tags>
   </entry>
   <entry>
@@ -958,51 +1003,6 @@
       </categories>
       <tags>
         <tag>git</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>axios封装</title>
-    <url>/id_31/</url>
-    <content><![CDATA[<p>在vue项目中，和后台交互获取数据这块，我们通常使用的是axios库，它是基于promise的http库，可运行在浏览器端和node.js中。<br>他有很多优秀的特性，例如拦截请求和响应、取消请求、转换json、客户端防御CSRF等。<br>axios文档：<a href="https://www.npmjs.com/package/axios">https://www.npmjs.com/package/axios</a></p>
-<a id="more"></a>
-
-<h4 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h4><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">npm install axios</span><br></pre></td></tr></tbody></table></figure>
-<h4 id="引入"><a href="#引入" class="headerlink" title="引入"></a>引入</h4><p>通常我们会在src中，新建一个http文件夹，里边新建index.js和api.js文件，index.js文件用来封装我们的axios，api.js用来统一管理我们的接口</p>
-<hr>
-<p>我们需要在index.js中做如下操作：</p>
-<ul>
-<li>首先需要引入axios</li>
-</ul>
-<figure class="highlight js"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> axios <span class="keyword">from</span> <span class="string">"axios"</span>;</span><br><span class="line"><span class="comment">// 设置默认请求地址</span></span><br><span class="line">axios.defaults.baseURL = <span class="string">'http://127.0.0.1:8000/'</span></span><br><span class="line"><span class="comment">// 设置请求超时时限</span></span><br><span class="line">axios.defaults.timeout = <span class="number">10000</span></span><br></pre></td></tr></tbody></table></figure>
-<ul>
-<li><p>请求拦截<br>我们在发送请求前可以进行一个请求的拦截，为什么要拦截呢，我们拦截请求是用来做什么的呢？<br>比如，有些请求是需要用户登录之后才能访问的，或者post请求的时候，我们需要序列化我们提交的数据。<br>这时候，我们可以在请求被发送之前进行一个拦截，从而进行我们想要的操作。</p>
-<figure class="highlight js"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment">// 请求拦截器 当请求被发送之前进行我们想要的操作</span></span><br><span class="line">axios.interceptors.request.use(<span class="function"><span class="params">config</span> =&gt;</span> {</span><br><span class="line">  <span class="comment">// 从localStorage中获取token</span></span><br><span class="line">  <span class="keyword">let</span> token = <span class="built_in">localStorage</span>.getItem(<span class="string">'token'</span>);</span><br><span class="line">  <span class="comment">// 如果有token, 就把token设置到请求头中Authorization字段中</span></span><br><span class="line">  <span class="keyword">if</span> (token) {</span><br><span class="line">    axios.defaults.headers[<span class="string">'Authorization'</span>] = token</span><br><span class="line">  }</span><br><span class="line">  <span class="comment">// token &amp;&amp; (config.headers.Authorization = token);</span></span><br><span class="line">  <span class="keyword">return</span> config;</span><br><span class="line">}, <span class="function"><span class="params">error</span> =&gt;</span> {</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">Promise</span>.reject(error);</span><br><span class="line">});</span><br></pre></td></tr></tbody></table></figure></li>
-<li><p>响应拦截<br>响应拦截器很好理解，就是服务器返回给我们的数据，我们在拿到之前可以对他进行一些处理。<br>例如下面的思想：如果后台返回的状态码是200，则正常返回数据，否则的根据错误的状态码类型进行一些我们需要的错误，<br>其实这里主要就是进行了错误的统一处理和没登录或登录过期后调整登录页的一个操作。</p>
-<figure class="highlight js"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment">// 响应拦截器（当后端返回数据的时候进行拦截）</span></span><br><span class="line">axios.interceptors.response.use(<span class="function"><span class="params">response</span> =&gt;</span> {</span><br><span class="line">  <span class="comment">// 当响应码是 2xx 的情况, 进入这里</span></span><br><span class="line">  <span class="comment">// debugger</span></span><br><span class="line">  <span class="keyword">return</span> response.data;</span><br><span class="line">}, <span class="function"><span class="params">error</span> =&gt;</span> {</span><br><span class="line">  <span class="built_in">console</span>.log(error.response)</span><br><span class="line">  <span class="comment">// 当响应码不是 2xx 的情况, 进入这里</span></span><br><span class="line">  <span class="comment">// debugger</span></span><br><span class="line">  <span class="keyword">return</span> error</span><br><span class="line">});</span><br></pre></td></tr></tbody></table></figure></li>
-<li><p>根据上面封装好的axios对象，封装 get、post、put、delete请求</p>
-<ul>
-<li>封装get方法,对应get请求<figure class="highlight js"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">get</span>(<span class="params">url, params, headers</span>) </span>{</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> {</span><br><span class="line">    axios.get(url, {params, headers}).then(<span class="function"><span class="params">res</span> =&gt;</span> {</span><br><span class="line">      resolve(res)</span><br><span class="line">    }).catch(<span class="function"><span class="params">err</span> =&gt;</span> {</span><br><span class="line">      reject(err)</span><br><span class="line">    })</span><br><span class="line">  })</span><br><span class="line"> }</span><br></pre></td></tr></tbody></table></figure></li>
-<li>封装post方法,对应post请求<figure class="highlight js"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">post</span>(<span class="params">url, params</span>) </span>{</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> {</span><br><span class="line">    axios.post(url, params).then(<span class="function">(<span class="params">res</span>) =&gt;</span> {</span><br><span class="line">      resolve(res)</span><br><span class="line">    }).catch(<span class="function">(<span class="params">err</span>) =&gt;</span> {</span><br><span class="line">      <span class="comment">// debugger</span></span><br><span class="line">      reject(err)</span><br><span class="line">    })</span><br><span class="line">  })</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure></li>
-<li>封装put方法,对应put请求<figure class="highlight js"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">put</span>(<span class="params">url, params, headers</span>) </span>{</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> {</span><br><span class="line">    axios.put(url, params, headers).then(<span class="function">(<span class="params">res</span>) =&gt;</span> {</span><br><span class="line">      resolve(res)</span><br><span class="line">    }).catch(<span class="function">(<span class="params">err</span>) =&gt;</span> {</span><br><span class="line">      <span class="comment">// debugger</span></span><br><span class="line">      reject(err)</span><br><span class="line">    })</span><br><span class="line">  })</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure></li>
-<li>封装delete方法,对应delete请求<figure class="highlight js"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">del</span>(<span class="params">url, params, headers</span>) </span>{</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> {</span><br><span class="line">    axios.delete(url, {<span class="attr">data</span>: params, headers}).then(<span class="function">(<span class="params">res</span>) =&gt;</span> {</span><br><span class="line">      resolve(res)</span><br><span class="line">    }).catch(<span class="function">(<span class="params">err</span>) =&gt;</span> {</span><br><span class="line">      <span class="comment">// debugger</span></span><br><span class="line">      reject(err)</span><br><span class="line">    })</span><br><span class="line">  })</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
-</li>
-</ul>
-</li>
-</ul>
-<hr>
-<h4 id="到这里axios的封装基本就完成了，下面还有api的统一管理"><a href="#到这里axios的封装基本就完成了，下面还有api的统一管理" class="headerlink" title="到这里axios的封装基本就完成了，下面还有api的统一管理"></a>到这里axios的封装基本就完成了，下面还有api的统一管理</h4><ul>
-<li>首先在api.js里面导入我们封装的方法<figure class="highlight js"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> {get, post, put, del} <span class="keyword">from</span> <span class="string">'./index'</span></span><br></pre></td></tr></tbody></table></figure></li>
-<li>现在比如我们要注册一个账号，是post请求,我们可以再api中这样封装<figure class="highlight js"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> signUp = <span class="function"><span class="params">parameter</span> =&gt;</span> {</span><br><span class="line">  <span class="comment">// 注册</span></span><br><span class="line">  <span class="keyword">return</span> post(</span><br><span class="line">    <span class="comment">// baseURL后拼接的路由 </span></span><br><span class="line">    <span class="string">'signup/'</span>,</span><br><span class="line">    <span class="comment">// post携带的data数据</span></span><br><span class="line">    parameter</span><br><span class="line">  )</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure></li>
-<li>然后我们可以在页面中这样调用我们的api接口<figure class="highlight js"><table><tbody><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">signUp</span>(<span class="params"></span>)</span>{</span><br><span class="line">      <span class="keyword">let</span> params = {</span><br><span class="line">        <span class="string">"email"</span>: <span class="built_in">this</span>.signup_email,</span><br><span class="line">        <span class="string">"username"</span>: <span class="built_in">this</span>.signup_username,</span><br><span class="line">        <span class="string">"phone"</span>: <span class="built_in">this</span>.signup_phone,</span><br><span class="line">        <span class="string">'password'</span>: <span class="built_in">this</span>.signup_password,</span><br><span class="line">      }</span><br><span class="line">      signUp(params).then(<span class="function"><span class="params">res</span> =&gt;</span> {</span><br><span class="line">        <span class="keyword">if</span> (res.code == <span class="number">10004</span>) {</span><br><span class="line">          <span class="built_in">this</span>.signup_errors = res.msg  <span class="comment">//10004注册失败</span></span><br><span class="line">          <span class="built_in">console</span>.log(<span class="built_in">this</span>.signup_errors.email[<span class="number">0</span>])</span><br><span class="line">        }</span><br><span class="line">        <span class="keyword">if</span> (res.code == <span class="number">10001</span>) {</span><br><span class="line">          <span class="built_in">this</span>.signup_errors = <span class="string">''</span>  <span class="comment">//初始化错误信息</span></span><br><span class="line">          <span class="built_in">this</span>.message = res.msg  <span class="comment">//10001注册成功</span></span><br><span class="line">        }</span><br><span class="line">      }).catch(<span class="function"><span class="params">error</span> =&gt;</span> {</span><br><span class="line">        <span class="built_in">console</span>.log(error)</span><br><span class="line">      })</span><br><span class="line">    }</span><br></pre></td></tr></tbody></table></figure></li>
-<li>其他的api接口，就在api.js中继续往下面扩展就可以了,但是一定要注意写好注释<h4 id="OK-这样一个axios封装就做好啦"><a href="#OK-这样一个axios封装就做好啦" class="headerlink" title="OK 这样一个axios封装就做好啦"></a>OK 这样一个axios封装就做好啦</h4></li>
-</ul>
-<p>vue-git地址：<a href="https://gitee.com/before-l/vue-project.git">https://gitee.com/before-l/vue-project.git</a></p>
-]]></content>
-      <categories>
-        <category>前端</category>
-      </categories>
-      <tags>
-        <tag>axios</tag>
       </tags>
   </entry>
   <entry>
@@ -1264,31 +1264,6 @@
       </tags>
   </entry>
   <entry>
-    <title>VUE父子组件</title>
-    <url>/id_7/</url>
-    <content><![CDATA[<h4 id="VUE父子组件使用"><a href="#VUE父子组件使用" class="headerlink" title="VUE父子组件使用"></a>VUE父子组件使用</h4><p>在vue组件通信中其中最常见通信方式就是父子组件之中的通信，而父子组件的设定方式在不同情况下又各有不同。<br>最常见的就是父组件为控制组件，子组件为视图组件。<br>父组件传递数据给子组件使用，遇到业务逻辑操作时子组件触发父组件的自定义事件。<br>但是，无论哪种组织方式父子组件的通信方式都是大同小异</p>
-<a id="more"></a>
-
-<h4 id="父组件向子组件传参"><a href="#父组件向子组件传参" class="headerlink" title="父组件向子组件传参"></a>父组件向子组件传参</h4><p><strong>通过 [props]传递数据 (推荐)</strong></p>
-<p>父子通讯中最常见的数据传递方式就是通过props传递数据，就好像方法的传参一样，父组件调用子组件并传入数据，子组件接受到父组件传递的数据进行验证<br>使用props 可以是数组或对象，用于接收来自父组件的数据。<br>props 可以是简单的数组，或者使用对象作为替代，对象允许配置高级选项，如类型检测、自定义校验和设置默认值prop 的定义应该尽量详细，至少需要指定其类型</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;!-- 父组件  Father --&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;Son :parentMessage="parentMessage"&gt;&lt;/Son&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">import Son from "./Son";</span><br><span class="line"></span><br><span class="line">export default {</span><br><span class="line">  components: {</span><br><span class="line">    Son</span><br><span class="line">  },</span><br><span class="line">  data() {</span><br><span class="line">    return {</span><br><span class="line">      parentMessage: "我是来自父组件的消息，借用一下子组件的地方渲染一下"</span><br><span class="line">    }</span><br><span class="line">  }</span><br><span class="line">}</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;style&gt;&lt;/style&gt;</span><br></pre></td></tr></tbody></table></figure>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;!-- 子组件 Son  --&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;h1&gt;你好哇&lt;/h1&gt;</span><br><span class="line">    &lt;span&gt;{{ parentMessage }}&lt;/span&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">export default {</span><br><span class="line">  mounted() {</span><br><span class="line">    console.log(this.parentMessage)</span><br><span class="line">  },</span><br><span class="line">  //第一种方法  </span><br><span class="line">  // props: ['parentMessage']</span><br><span class="line">  //第二种方法</span><br><span class="line">    props: {</span><br><span class="line">      parentMessage: {</span><br><span class="line">        type: String,</span><br><span class="line">        default: '子组件默认显示的信息',</span><br><span class="line">        require: true</span><br><span class="line">      }</span><br><span class="line">    }  </span><br><span class="line"></span><br><span class="line">}</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;style&gt;&lt;/style&gt;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
-<p>效果：<br><img src="/id_7/01.png" alt="父子组件传参"></p>
-<h4 id="子组件向父组件传参"><a href="#子组件向父组件传参" class="headerlink" title="子组件向父组件传参"></a>子组件向父组件传参</h4><p><strong>通过 [$emit]传递数据 (推荐)</strong><br>通过 $emit 传递父组件数据与父组件到子组件通讯中的$on配套使用，可以向父组件中触发的方法传递参数供父组件使用。</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;!-- 父组件  Father --&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    </span><br><span class="line">    &lt;h1&gt;{{data}}&lt;/h1&gt;</span><br><span class="line"></span><br><span class="line">    &lt;Son @event="change"&gt;&lt;/Son&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">import Son from "./Son";</span><br><span class="line"></span><br><span class="line">export default {</span><br><span class="line">  components: {</span><br><span class="line">    Son</span><br><span class="line">  },</span><br><span class="line">  data() {</span><br><span class="line">    return {</span><br><span class="line">      data:"我是父组件"</span><br><span class="line">    }</span><br><span class="line">  },</span><br><span class="line">    methods: {</span><br><span class="line">      change(event) {</span><br><span class="line">        this.data = event</span><br><span class="line">          console.log(event)</span><br><span class="line">      }</span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;style&gt;&lt;/style&gt;</span><br></pre></td></tr></tbody></table></figure>
-
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;!-- 子组件 Son  --&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">    &lt;div&gt;</span><br><span class="line">      &lt;button @click="toFather"&gt;向父组件传值&lt;/button&gt;</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">export default {</span><br><span class="line">  data(){</span><br><span class="line">    return{</span><br><span class="line">      data:"我是子组件"</span><br><span class="line">    }</span><br><span class="line">  },</span><br><span class="line">  methods:{</span><br><span class="line">      toFather(){</span><br><span class="line">        this.$emit('event', this.data)</span><br><span class="line">      }</span><br><span class="line">  },</span><br><span class="line">}</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;style&gt;&lt;/style&gt;</span><br></pre></td></tr></tbody></table></figure>
-<p>效果：<br><img src="/id_7/02.png" alt="子父组件传参"></p>
-]]></content>
-      <categories>
-        <category>前端</category>
-      </categories>
-      <tags>
-        <tag>vue</tag>
-        <tag>组件</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Httpx测试脚本</title>
     <url>/id_6/</url>
     <content><![CDATA[<p>在 Python 众多的 HTTP 客户端中，最有名的莫过于<strong>requests</strong>、<strong>aiohttp</strong>和<strong>httpx</strong>。<br>在不借助其他第三方库的情况下，<strong>requests</strong>只能发送同步请求；<strong>aiohttp</strong>只能发送异步请求；<br><strong>httpx</strong>既能发送同步请求，又能发送异步请求</p>
@@ -1314,27 +1289,28 @@
       </tags>
   </entry>
   <entry>
-    <title>VUE路由钩子</title>
-    <url>/id_9/</url>
-    <content><![CDATA[<p>描述：通常我们在跳转页面时会遇到各种各样的要求，比如没有登录不能查看，比如跳转需要验证，各种各样的要求。如果分开写代码的话就会显得很乱，代码很繁重，此时就用到了我们的路由钩子<br>路由钩子主要是给使用者在路由发生变化时进行一些特殊的处理而定义的</p>
+    <title>VUE父子组件</title>
+    <url>/id_7/</url>
+    <content><![CDATA[<h4 id="VUE父子组件使用"><a href="#VUE父子组件使用" class="headerlink" title="VUE父子组件使用"></a>VUE父子组件使用</h4><p>在vue组件通信中其中最常见通信方式就是父子组件之中的通信，而父子组件的设定方式在不同情况下又各有不同。<br>最常见的就是父组件为控制组件，子组件为视图组件。<br>父组件传递数据给子组件使用，遇到业务逻辑操作时子组件触发父组件的自定义事件。<br>但是，无论哪种组织方式父子组件的通信方式都是大同小异</p>
 <a id="more"></a>
-<h4 id="路由钩子主要分三种"><a href="#路由钩子主要分三种" class="headerlink" title="路由钩子主要分三种"></a><strong>路由钩子</strong>主要分三种</h4><p>全局路由钩子：beforeEach<br>单个路由钩子：beforeEnter<br>路由组件钩子：beforeEachEnter</p>
-<h4 id="三种路由钩子中都涉及到了三个参数"><a href="#三种路由钩子中都涉及到了三个参数" class="headerlink" title="三种路由钩子中都涉及到了三个参数:"></a>三种路由钩子中都涉及到了三个参数:</h4><p>to: Route: 即将要进入的目标 路由对象<br>from: Route: 当前导航正要离开的路由<br>next: Function: 通过这个方法来调用下一个钩子函数</p>
-<h4 id="使用："><a href="#使用：" class="headerlink" title="使用："></a>使用：</h4><p>beforeEach(跳转前)  &amp;&amp;  afterEach(跳转后)<br>需要通过main.js配置</p>
-<hr>
-<figure class="highlight js"><table><tbody><tr><td class="code"><pre><span class="line">router.beforeEach(<span class="function">(<span class="params">to, <span class="keyword">from</span>, next</span>) =&gt;</span> {</span><br><span class="line">    <span class="comment">//会在任意路由跳转前执行，next一定要记着执行，不然路由不能跳转了</span></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"我要跳转啦"</span>)</span><br><span class="line">  <span class="built_in">console</span>.log(to,<span class="keyword">from</span>)</span><br><span class="line">  <span class="comment">//调用下一个钩子函数</span></span><br><span class="line">  next()</span><br><span class="line">})</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">router.afterEach(<span class="function">(<span class="params">to, <span class="keyword">from</span></span>) =&gt;</span> {</span><br><span class="line">    <span class="comment">//会在任意路由跳转后执行</span></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'我跳过来了'</span>)</span><br><span class="line">})</span><br></pre></td></tr></tbody></table></figure>
-<p>beforeEnter(写在router-index.js里面)</p>
-<hr>
-<figure class="highlight js"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="keyword">new</span> Router({</span><br><span class="line">  routes: [</span><br><span class="line">    {</span><br><span class="line">      path: <span class="string">'/index'</span>,</span><br><span class="line">      name: <span class="string">'Index'</span>,</span><br><span class="line">      component: Index,</span><br><span class="line">      <span class="function"><span class="title">beforeEnter</span>(<span class="params">to, <span class="keyword">from</span>, next</span>)</span> {</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">"我是只守护Index的beforeEnter"</span>)</span><br><span class="line">        next()</span><br><span class="line">      }</span><br><span class="line">    }</span><br><span class="line">  ]</span><br><span class="line">})</span><br></pre></td></tr></tbody></table></figure>
-<p>beforeRouteEnter(到达之后)   &amp;&amp;   beforeRouteUpdate(到达子路由)   &amp;&amp;   beforeRouteLeave(离开之前)<br>写在具体页面里</p>
-<hr>
-<figure class="highlight js"><table><tbody><tr><td class="code"><pre><span class="line"><span class="function"><span class="title">beforeRouteEnter</span>(<span class="params">to, <span class="keyword">from</span>, next</span>)</span> {</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"****************Test1****我来啦**************"</span>);</span><br><span class="line">  next(<span class="function"><span class="params">vm</span> =&gt;</span> {</span><br><span class="line">    <span class="comment">//因为当钩子执行前，组件实例还没被创建</span></span><br><span class="line">    <span class="comment">// vm 就是当前组件的实例相当于上面的 this，所以在 next 方法里你就可以把 vm 当 this 来用了。</span></span><br><span class="line">    <span class="built_in">console</span>.log(vm);<span class="comment">//当前组件的实例</span></span><br><span class="line">  });</span><br><span class="line">},</span><br><span class="line"><span class="function"><span class="title">beforeRouteUpdate</span>(<span class="params">to, <span class="keyword">from</span>, next</span>)</span> {</span><br><span class="line">  <span class="comment">//在当前路由改变，但是该组件被复用时调用</span></span><br><span class="line">  <span class="comment">//对于一个带有动态参数的路径 /good/:id，在 /good/1 和 /good/2 之间跳转的时候，</span></span><br><span class="line">  <span class="comment">// 由于会渲染同样的good组件，因此组件实例会被复用。而这个钩子就会在这个情况下被调用。</span></span><br><span class="line">  <span class="comment">// 可以访问组件实例 `this`</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">//简单来说就是在跳转子路由的时候可以获取query和params</span></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"****************Test1*******Update***********"</span>);</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="built_in">this</span>, <span class="string">'Update'</span>); <span class="comment">//当前组件实例</span></span><br><span class="line">  next();</span><br><span class="line">}</span><br><span class="line"><span class="function"><span class="title">beforeRouteLeave</span>(<span class="params">to, <span class="keyword">from</span>, next</span>)</span> {</span><br><span class="line">  <span class="comment">// 导航离开该组件的对应路由时调用</span></span><br><span class="line">  <span class="comment">// 可以访问组件实例 `this`</span></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"****************Test1****我走啦**************"</span>);</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="built_in">this</span>, <span class="string">'Leave'</span>); <span class="comment">//当前组件实例</span></span><br><span class="line">  next();</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<h4 id="父组件向子组件传参"><a href="#父组件向子组件传参" class="headerlink" title="父组件向子组件传参"></a>父组件向子组件传参</h4><p><strong>通过 [props]传递数据 (推荐)</strong></p>
+<p>父子通讯中最常见的数据传递方式就是通过props传递数据，就好像方法的传参一样，父组件调用子组件并传入数据，子组件接受到父组件传递的数据进行验证<br>使用props 可以是数组或对象，用于接收来自父组件的数据。<br>props 可以是简单的数组，或者使用对象作为替代，对象允许配置高级选项，如类型检测、自定义校验和设置默认值prop 的定义应该尽量详细，至少需要指定其类型</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;!-- 父组件  Father --&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;Son :parentMessage="parentMessage"&gt;&lt;/Son&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">import Son from "./Son";</span><br><span class="line"></span><br><span class="line">export default {</span><br><span class="line">  components: {</span><br><span class="line">    Son</span><br><span class="line">  },</span><br><span class="line">  data() {</span><br><span class="line">    return {</span><br><span class="line">      parentMessage: "我是来自父组件的消息，借用一下子组件的地方渲染一下"</span><br><span class="line">    }</span><br><span class="line">  }</span><br><span class="line">}</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;style&gt;&lt;/style&gt;</span><br></pre></td></tr></tbody></table></figure>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;!-- 子组件 Son  --&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;h1&gt;你好哇&lt;/h1&gt;</span><br><span class="line">    &lt;span&gt;{{ parentMessage }}&lt;/span&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">export default {</span><br><span class="line">  mounted() {</span><br><span class="line">    console.log(this.parentMessage)</span><br><span class="line">  },</span><br><span class="line">  //第一种方法  </span><br><span class="line">  // props: ['parentMessage']</span><br><span class="line">  //第二种方法</span><br><span class="line">    props: {</span><br><span class="line">      parentMessage: {</span><br><span class="line">        type: String,</span><br><span class="line">        default: '子组件默认显示的信息',</span><br><span class="line">        require: true</span><br><span class="line">      }</span><br><span class="line">    }  </span><br><span class="line"></span><br><span class="line">}</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;style&gt;&lt;/style&gt;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+<p>效果：<br><img src="/id_7/01.png" alt="父子组件传参"></p>
+<h4 id="子组件向父组件传参"><a href="#子组件向父组件传参" class="headerlink" title="子组件向父组件传参"></a>子组件向父组件传参</h4><p><strong>通过 [$emit]传递数据 (推荐)</strong><br>通过 $emit 传递父组件数据与父组件到子组件通讯中的$on配套使用，可以向父组件中触发的方法传递参数供父组件使用。</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;!-- 父组件  Father --&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    </span><br><span class="line">    &lt;h1&gt;{{data}}&lt;/h1&gt;</span><br><span class="line"></span><br><span class="line">    &lt;Son @event="change"&gt;&lt;/Son&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">import Son from "./Son";</span><br><span class="line"></span><br><span class="line">export default {</span><br><span class="line">  components: {</span><br><span class="line">    Son</span><br><span class="line">  },</span><br><span class="line">  data() {</span><br><span class="line">    return {</span><br><span class="line">      data:"我是父组件"</span><br><span class="line">    }</span><br><span class="line">  },</span><br><span class="line">    methods: {</span><br><span class="line">      change(event) {</span><br><span class="line">        this.data = event</span><br><span class="line">          console.log(event)</span><br><span class="line">      }</span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;style&gt;&lt;/style&gt;</span><br></pre></td></tr></tbody></table></figure>
+
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;!-- 子组件 Son  --&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">    &lt;div&gt;</span><br><span class="line">      &lt;button @click="toFather"&gt;向父组件传值&lt;/button&gt;</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">export default {</span><br><span class="line">  data(){</span><br><span class="line">    return{</span><br><span class="line">      data:"我是子组件"</span><br><span class="line">    }</span><br><span class="line">  },</span><br><span class="line">  methods:{</span><br><span class="line">      toFather(){</span><br><span class="line">        this.$emit('event', this.data)</span><br><span class="line">      }</span><br><span class="line">  },</span><br><span class="line">}</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;style&gt;&lt;/style&gt;</span><br></pre></td></tr></tbody></table></figure>
+<p>效果：<br><img src="/id_7/02.png" alt="子父组件传参"></p>
 ]]></content>
       <categories>
         <category>前端</category>
       </categories>
       <tags>
         <tag>vue</tag>
+        <tag>组件</tag>
       </tags>
   </entry>
   <entry>
@@ -1354,6 +1330,30 @@
 <li>比如每次发送网络请求的时候，都希望在界面中显示一个动态加载的请求图标，就是一直在转圈圈，让用户知道当前页面正在加载数据，准备渲染视图。</li>
 <li>比如某些网络请求（比如登录token）,必须携带一些特殊的信息。</li>
 </ul>
+]]></content>
+      <categories>
+        <category>前端</category>
+      </categories>
+      <tags>
+        <tag>vue</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>VUE路由钩子</title>
+    <url>/id_9/</url>
+    <content><![CDATA[<p>描述：通常我们在跳转页面时会遇到各种各样的要求，比如没有登录不能查看，比如跳转需要验证，各种各样的要求。如果分开写代码的话就会显得很乱，代码很繁重，此时就用到了我们的路由钩子<br>路由钩子主要是给使用者在路由发生变化时进行一些特殊的处理而定义的</p>
+<a id="more"></a>
+<h4 id="路由钩子主要分三种"><a href="#路由钩子主要分三种" class="headerlink" title="路由钩子主要分三种"></a><strong>路由钩子</strong>主要分三种</h4><p>全局路由钩子：beforeEach<br>单个路由钩子：beforeEnter<br>路由组件钩子：beforeEachEnter</p>
+<h4 id="三种路由钩子中都涉及到了三个参数"><a href="#三种路由钩子中都涉及到了三个参数" class="headerlink" title="三种路由钩子中都涉及到了三个参数:"></a>三种路由钩子中都涉及到了三个参数:</h4><p>to: Route: 即将要进入的目标 路由对象<br>from: Route: 当前导航正要离开的路由<br>next: Function: 通过这个方法来调用下一个钩子函数</p>
+<h4 id="使用："><a href="#使用：" class="headerlink" title="使用："></a>使用：</h4><p>beforeEach(跳转前)  &amp;&amp;  afterEach(跳转后)<br>需要通过main.js配置</p>
+<hr>
+<figure class="highlight js"><table><tbody><tr><td class="code"><pre><span class="line">router.beforeEach(<span class="function">(<span class="params">to, <span class="keyword">from</span>, next</span>) =&gt;</span> {</span><br><span class="line">    <span class="comment">//会在任意路由跳转前执行，next一定要记着执行，不然路由不能跳转了</span></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"我要跳转啦"</span>)</span><br><span class="line">  <span class="built_in">console</span>.log(to,<span class="keyword">from</span>)</span><br><span class="line">  <span class="comment">//调用下一个钩子函数</span></span><br><span class="line">  next()</span><br><span class="line">})</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">router.afterEach(<span class="function">(<span class="params">to, <span class="keyword">from</span></span>) =&gt;</span> {</span><br><span class="line">    <span class="comment">//会在任意路由跳转后执行</span></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'我跳过来了'</span>)</span><br><span class="line">})</span><br></pre></td></tr></tbody></table></figure>
+<p>beforeEnter(写在router-index.js里面)</p>
+<hr>
+<figure class="highlight js"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="keyword">new</span> Router({</span><br><span class="line">  routes: [</span><br><span class="line">    {</span><br><span class="line">      path: <span class="string">'/index'</span>,</span><br><span class="line">      name: <span class="string">'Index'</span>,</span><br><span class="line">      component: Index,</span><br><span class="line">      <span class="function"><span class="title">beforeEnter</span>(<span class="params">to, <span class="keyword">from</span>, next</span>)</span> {</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">"我是只守护Index的beforeEnter"</span>)</span><br><span class="line">        next()</span><br><span class="line">      }</span><br><span class="line">    }</span><br><span class="line">  ]</span><br><span class="line">})</span><br></pre></td></tr></tbody></table></figure>
+<p>beforeRouteEnter(到达之后)   &amp;&amp;   beforeRouteUpdate(到达子路由)   &amp;&amp;   beforeRouteLeave(离开之前)<br>写在具体页面里</p>
+<hr>
+<figure class="highlight js"><table><tbody><tr><td class="code"><pre><span class="line"><span class="function"><span class="title">beforeRouteEnter</span>(<span class="params">to, <span class="keyword">from</span>, next</span>)</span> {</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"****************Test1****我来啦**************"</span>);</span><br><span class="line">  next(<span class="function"><span class="params">vm</span> =&gt;</span> {</span><br><span class="line">    <span class="comment">//因为当钩子执行前，组件实例还没被创建</span></span><br><span class="line">    <span class="comment">// vm 就是当前组件的实例相当于上面的 this，所以在 next 方法里你就可以把 vm 当 this 来用了。</span></span><br><span class="line">    <span class="built_in">console</span>.log(vm);<span class="comment">//当前组件的实例</span></span><br><span class="line">  });</span><br><span class="line">},</span><br><span class="line"><span class="function"><span class="title">beforeRouteUpdate</span>(<span class="params">to, <span class="keyword">from</span>, next</span>)</span> {</span><br><span class="line">  <span class="comment">//在当前路由改变，但是该组件被复用时调用</span></span><br><span class="line">  <span class="comment">//对于一个带有动态参数的路径 /good/:id，在 /good/1 和 /good/2 之间跳转的时候，</span></span><br><span class="line">  <span class="comment">// 由于会渲染同样的good组件，因此组件实例会被复用。而这个钩子就会在这个情况下被调用。</span></span><br><span class="line">  <span class="comment">// 可以访问组件实例 `this`</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">//简单来说就是在跳转子路由的时候可以获取query和params</span></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"****************Test1*******Update***********"</span>);</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="built_in">this</span>, <span class="string">'Update'</span>); <span class="comment">//当前组件实例</span></span><br><span class="line">  next();</span><br><span class="line">}</span><br><span class="line"><span class="function"><span class="title">beforeRouteLeave</span>(<span class="params">to, <span class="keyword">from</span>, next</span>)</span> {</span><br><span class="line">  <span class="comment">// 导航离开该组件的对应路由时调用</span></span><br><span class="line">  <span class="comment">// 可以访问组件实例 `this`</span></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"****************Test1****我走啦**************"</span>);</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="built_in">this</span>, <span class="string">'Leave'</span>); <span class="comment">//当前组件实例</span></span><br><span class="line">  next();</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
 ]]></content>
       <categories>
         <category>前端</category>
