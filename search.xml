@@ -1,36 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>WebShell</title>
-    <url>/id_10/</url>
-    <content><![CDATA[<h3 id="什么是Webshell"><a href="#什么是Webshell" class="headerlink" title="什么是Webshell?"></a>什么是Webshell?</h3><p>顾名思义，”web” - 显然需要服务器开放web服务,”shell” - 取得对服务器某种程度上操作权限。<br>webshell常常被称为匿名用户(入侵者)通过WEB服务端口对WEB服务器有某种程度上操作的权限,由于其大多是以网页脚本的形式出现，也有人称之为网站后门工具。</p>
-<a id="more"></a>
-
-<h3 id="Webshell有什么作用？"><a href="#Webshell有什么作用？" class="headerlink" title="Webshell有什么作用？"></a>Webshell有什么作用？</h3><ul>
-<li>一方面，webshell被站长常常用于网站管理、服务器管理等等，根据FSO权限的不同，作用有在线编辑网页脚本、上传下载文件、查看数据库、执行任意程序命令等。</li>
-<li>另一方面，被入侵者利用，从而达到控制网站服务器的目的。这些网页脚本常称为WEB脚本木马，目前比较流行的asp或php木马，也有基于.NET的脚本木马。</li>
-</ul>
-<h3 id="使用VUE-Django-实现Webshell"><a href="#使用VUE-Django-实现Webshell" class="headerlink" title="使用VUE+Django 实现Webshell"></a>使用VUE+Django 实现Webshell</h3><p>web端使用Xterm.js或者其他的WebShell组件和websocket<br>后端只需要支持WebSocket和SSH协议的远程登录模块即可</p>
-<h4 id="Web-VUE-端实现"><a href="#Web-VUE-端实现" class="headerlink" title="Web(VUE)端实现"></a>Web(VUE)端实现</h4><ul>
-<li>安装<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">npm install xterm@3.1.0 --save  # 指定版本安装，最新版的xterm文件的改动很大，使用下面的方法会报错</span><br></pre></td></tr></tbody></table></figure></li>
-<li>导包<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">import 'xterm/dist/xterm.css'</span><br><span class="line">import {Terminal} from 'xterm'</span><br><span class="line">import * as attach from 'xterm/lib/addons/attach/attach' // 安装插件时，可以使用attach去添加</span><br><span class="line">Terminal.applyAddon(attach) // 添加插件</span><br></pre></td></tr></tbody></table></figure></li>
-<li>在页面中渲染<figure class="highlight html"><table><tbody><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"terminal"</span> <span class="attr">style</span>=<span class="string">"width: 500px;height:300px;"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br></pre></td></tr></tbody></table></figure></li>
-<li>数据操作<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">mounted() {</span><br><span class="line">		    // 获取到了div标签</span><br><span class="line">            let terminalContainer = document.getElementById('terminal')</span><br><span class="line">            // 初始化黑窗口对象</span><br><span class="line">            this.term = new Terminal(this.terminal)</span><br><span class="line">            // 打开这个对象</span><br><span class="line">            this.term.open(terminalContainer)</span><br><span class="line">            // this.term.write("$ ")</span><br><span class="line">            // this.term.fit()</span><br><span class="line">            // open websocket</span><br><span class="line">        </span><br><span class="line">            this.terminalSocket = new WebSocket('ws://127.0.0.1:8000/webssh/')</span><br><span class="line">            this.terminalSocket.onopen = function () { // 连接成功触发该方法</span><br><span class="line">              // this.term_isconnect = true</span><br><span class="line">              console.log('websocket is Connected...')</span><br><span class="line">            }</span><br><span class="line">            this.terminalSocket.onclose = function () { // 连接关闭适触发的方法</span><br><span class="line">              console.log('websocket is Closed...')</span><br><span class="line">            }</span><br><span class="line">            this.terminalSocket.onerror = function () { // 连接出错触发的方法</span><br><span class="line">              console.log('damn Websocket is broken!')</span><br><span class="line">            }</span><br><span class="line">            this.term.attach(this.terminalSocket)</span><br><span class="line">            // 绑定xterm到ws流中</span><br><span class="line">    }</span><br></pre></td></tr></tbody></table></figure></li>
-<li>web端完整代码<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div id="terminal" style="width: 500px;height:300px;"&gt;&lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line">import 'xterm/dist/xterm.css';</span><br><span class="line">import {Terminal} from 'xterm';</span><br><span class="line">import * as fit from 'xterm/lib/addons/fit/fit';</span><br><span class="line"></span><br><span class="line">Terminal.applyAddon(fit);</span><br><span class="line">export default {</span><br><span class="line">  name: 'Webshell',</span><br><span class="line">  data() {</span><br><span class="line">    return {</span><br><span class="line"></span><br><span class="line">      term: null,</span><br><span class="line">      terminalSocket: null,</span><br><span class="line">      order: ''</span><br><span class="line">    }</span><br><span class="line">  },</span><br><span class="line">  methods: {},</span><br><span class="line">  mounted () {</span><br><span class="line">       // 获取到了div标签</span><br><span class="line">       let terminalContainer = document.getElementById('terminal')</span><br><span class="line">       // 初始化黑窗口对象</span><br><span class="line">       this.term = new Terminal(this.terminal)</span><br><span class="line">       // 打开这个对象</span><br><span class="line">       this.term.open(terminalContainer)</span><br><span class="line">       // open websocket</span><br><span class="line">   </span><br><span class="line">       this.terminalSocket = new WebSocket('ws://127.0.0.1:8000/webssh/')</span><br><span class="line">       this.terminalSocket.onopen = function () { // 连接成功触发该方法</span><br><span class="line">         // this.term_isconnect = true</span><br><span class="line">         console.log('websocket is Connected...')</span><br><span class="line">       }</span><br><span class="line">       this.terminalSocket.onclose = function () { // 连接关闭适触发的方法</span><br><span class="line">         console.log('websocket is Closed...')</span><br><span class="line">       }</span><br><span class="line">       this.terminalSocket.onerror = function () { // 连接出错触发的方法</span><br><span class="line">         console.log('damn Websocket is broken!')</span><br><span class="line">       }</span><br><span class="line">       this.term.attach(this.terminalSocket)</span><br><span class="line">       // 绑定xterm到ws流中</span><br><span class="line">  }</span><br><span class="line">}</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;style&gt;</span><br><span class="line"></span><br><span class="line">&lt;/style&gt;</span><br></pre></td></tr></tbody></table></figure>
-<h4 id="服务器端-Django-实现-使用paramiko与服务器建立交互"><a href="#服务器端-Django-实现-使用paramiko与服务器建立交互" class="headerlink" title="服务器端(Django)实现         使用paramiko与服务器建立交互"></a>服务器端(Django)实现         使用paramiko与服务器建立交互</h4>  ssh是一个协议，OpenSSH是其中一个开源实现，paramiko是Python的一个库，实现了SSHv2协议(底层使用cryptography)。<br>  有了Paramiko以后，我们就可以在Python代码中直接使用SSH协议对远程服务器执行操作，而不是通过ssh命令对远程服务器进行操作</li>
-<li>安装<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">pip install paramiko</span><br></pre></td></tr></tbody></table></figure></li>
-<li>利用paramiko进行ssh远程登录<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> paramiko</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">make_ssh</span>(<span class="params">host=<span class="string">"********"</span>, username=<span class="string">"***"</span>, password=<span class="string">"****"</span>, port=<span class="number">22</span></span>):</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    :host 主机地址</span></span><br><span class="line"><span class="string">    :username 用户名，一般是root</span></span><br><span class="line"><span class="string">    :password 密码</span></span><br><span class="line"><span class="string">    :port ssh协议的端口,22</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="comment"># 初始化一个ssh对象</span></span><br><span class="line">    sh = paramiko.SSHClient()</span><br><span class="line">    <span class="comment"># 设置对象连接密钥规则</span></span><br><span class="line">    sh.set_missing_host_key_policy(paramiko.AutoAddPolicy())</span><br><span class="line">    <span class="comment"># 连接</span></span><br><span class="line">    sh.connect(host, username=username, password=password, port=port)</span><br><span class="line">    <span class="comment"># 生成shell对象</span></span><br><span class="line">    channle = sh.invoke_shell(term=<span class="string">'xterm'</span>)</span><br><span class="line">    <span class="keyword">return</span> channle</span><br></pre></td></tr></tbody></table></figure></li>
-<li>编写子线程方法，专注接收web端发送的命令<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">recv_ssh_msg</span>(<span class="params">channle, ws</span>):</span></span><br><span class="line">    <span class="string">'''</span></span><br><span class="line"><span class="string">        只管接收</span></span><br><span class="line"><span class="string">    '''</span></span><br><span class="line">    <span class="comment"># 判断shell连接对象是否没有退出</span></span><br><span class="line">    <span class="keyword">while</span> <span class="keyword">not</span> channle.exit_status_ready():</span><br><span class="line">        <span class="comment"># 接收过程可能会因为没有任何返回而报错</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            buf = channle.recv(<span class="number">1024</span>)  <span class="comment"># 接收命令的执行结果</span></span><br><span class="line">            ws.send(buf)  <span class="comment"># 向Websocket通道返回</span></span><br><span class="line">        <span class="comment"># 接收不到会报错，但是报错没关系，继续重新尝试接受</span></span><br><span class="line">        <span class="keyword">except</span>:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure></li>
-<li>结合websocket实现实时操作<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> threading <span class="keyword">import</span> Thread</span><br><span class="line"><span class="meta">@accept_websocket</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">webssh</span>(<span class="params">request</span>):</span></span><br><span class="line">    print(<span class="string">"来人了"</span>)</span><br><span class="line">    <span class="keyword">if</span> request.is_websocket:</span><br><span class="line">        <span class="comment"># 1. 获取到连接对象</span></span><br><span class="line">        ws = request.websocket</span><br><span class="line">        <span class="comment"># 2. 初始化linux连接</span></span><br><span class="line">        channel = make_ssh()</span><br><span class="line">        <span class="comment"># 3. 初始化linux数据接收线程，并开启</span></span><br><span class="line">        recv_thread = Thread(target=recv_ssh_msg, args=(channel, ws))</span><br><span class="line">        recv_thread.start()</span><br><span class="line">        <span class="keyword">while</span> <span class="number">1</span>:  <span class="comment"># 主线程: 只管发送</span></span><br><span class="line">            <span class="comment"># 2. 阻塞ws接收发来的数据</span></span><br><span class="line">            cmd = ws.wait()</span><br><span class="line">            <span class="comment"># cmd = ws.recv()</span></span><br><span class="line">            <span class="keyword">if</span> cmd:</span><br><span class="line">                channel.send(cmd)  <span class="comment"># 发送到linux 去执行</span></span><br><span class="line">            <span class="keyword">else</span>:  <span class="comment"># 如果连接断开，那么cmd将会发一个空包</span></span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">        recv_thread.join()  <span class="comment"># 回收子线程</span></span><br><span class="line">        ws.close()  <span class="comment"># 关闭ws连接</span></span><br></pre></td></tr></tbody></table></figure></li>
-<li>这样一个webShell就完成了<h3 id="OK-本文到此结束"><a href="#OK-本文到此结束" class="headerlink" title="OK 本文到此结束"></a>OK 本文到此结束</h3>django-git地址：<a href="https://gitee.com/before-l/celery-demo.git">https://gitee.com/before-l/celery-demo.git</a> </li>
-</ul>
-]]></content>
-      <tags>
-        <tag>websocket</tag>
-        <tag>shell</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>python数据类型常用操作方式</title>
     <url>/id_1/</url>
     <content><![CDATA[<h3 id="python常用数据类型"><a href="#python常用数据类型" class="headerlink" title="python常用数据类型"></a>python常用数据类型</h3><ul>
@@ -57,8 +27,43 @@
 <p>set：去重<br>intersection：交集<br>union：并集<br>difference：差集</p>
 <h4 id="元祖常用方法"><a href="#元祖常用方法" class="headerlink" title="元祖常用方法"></a>元祖常用方法</h4><p>cmp(tuple1, tuple2)：比较两个元组元素。<br>len(tuple)：计算元组元素个数。<br>max(tuple)：返回元组中元素最大值。<br>min(tuple)：返回元组中元素最小值。<br>tuple(seq)：将列表转换为元组。</p>
 ]]></content>
+      <categories>
+        <category>后端</category>
+      </categories>
       <tags>
         <tag>python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>WebShell</title>
+    <url>/id_10/</url>
+    <content><![CDATA[<h3 id="什么是Webshell"><a href="#什么是Webshell" class="headerlink" title="什么是Webshell?"></a>什么是Webshell?</h3><p>顾名思义，”web” - 显然需要服务器开放web服务,”shell” - 取得对服务器某种程度上操作权限。<br>webshell常常被称为匿名用户(入侵者)通过WEB服务端口对WEB服务器有某种程度上操作的权限,由于其大多是以网页脚本的形式出现，也有人称之为网站后门工具。</p>
+<a id="more"></a>
+
+<h3 id="Webshell有什么作用？"><a href="#Webshell有什么作用？" class="headerlink" title="Webshell有什么作用？"></a>Webshell有什么作用？</h3><ul>
+<li>一方面，webshell被站长常常用于网站管理、服务器管理等等，根据FSO权限的不同，作用有在线编辑网页脚本、上传下载文件、查看数据库、执行任意程序命令等。</li>
+<li>另一方面，被入侵者利用，从而达到控制网站服务器的目的。这些网页脚本常称为WEB脚本木马，目前比较流行的asp或php木马，也有基于.NET的脚本木马。</li>
+</ul>
+<h3 id="使用VUE-Django-实现Webshell"><a href="#使用VUE-Django-实现Webshell" class="headerlink" title="使用VUE+Django 实现Webshell"></a>使用VUE+Django 实现Webshell</h3><p>web端使用Xterm.js或者其他的WebShell组件和websocket<br>后端只需要支持WebSocket和SSH协议的远程登录模块即可</p>
+<h4 id="Web-VUE-端实现"><a href="#Web-VUE-端实现" class="headerlink" title="Web(VUE)端实现"></a>Web(VUE)端实现</h4><ul>
+<li>安装<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">npm install xterm@3.1.0 --save  # 指定版本安装，最新版的xterm文件的改动很大，使用下面的方法会报错</span><br></pre></td></tr></tbody></table></figure></li>
+<li>导包<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">import 'xterm/dist/xterm.css'</span><br><span class="line">import {Terminal} from 'xterm'</span><br><span class="line">import * as attach from 'xterm/lib/addons/attach/attach' // 安装插件时，可以使用attach去添加</span><br><span class="line">Terminal.applyAddon(attach) // 添加插件</span><br></pre></td></tr></tbody></table></figure></li>
+<li>在页面中渲染<figure class="highlight html"><table><tbody><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"terminal"</span> <span class="attr">style</span>=<span class="string">"width: 500px;height:300px;"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br></pre></td></tr></tbody></table></figure></li>
+<li>数据操作<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">mounted() {</span><br><span class="line">		    // 获取到了div标签</span><br><span class="line">            let terminalContainer = document.getElementById('terminal')</span><br><span class="line">            // 初始化黑窗口对象</span><br><span class="line">            this.term = new Terminal(this.terminal)</span><br><span class="line">            // 打开这个对象</span><br><span class="line">            this.term.open(terminalContainer)</span><br><span class="line">            // this.term.write("$ ")</span><br><span class="line">            // this.term.fit()</span><br><span class="line">            // open websocket</span><br><span class="line">        </span><br><span class="line">            this.terminalSocket = new WebSocket('ws://127.0.0.1:8000/webssh/')</span><br><span class="line">            this.terminalSocket.onopen = function () { // 连接成功触发该方法</span><br><span class="line">              // this.term_isconnect = true</span><br><span class="line">              console.log('websocket is Connected...')</span><br><span class="line">            }</span><br><span class="line">            this.terminalSocket.onclose = function () { // 连接关闭适触发的方法</span><br><span class="line">              console.log('websocket is Closed...')</span><br><span class="line">            }</span><br><span class="line">            this.terminalSocket.onerror = function () { // 连接出错触发的方法</span><br><span class="line">              console.log('damn Websocket is broken!')</span><br><span class="line">            }</span><br><span class="line">            this.term.attach(this.terminalSocket)</span><br><span class="line">            // 绑定xterm到ws流中</span><br><span class="line">    }</span><br></pre></td></tr></tbody></table></figure></li>
+<li>web端完整代码<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div id="terminal" style="width: 500px;height:300px;"&gt;&lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line">import 'xterm/dist/xterm.css';</span><br><span class="line">import {Terminal} from 'xterm';</span><br><span class="line">import * as fit from 'xterm/lib/addons/fit/fit';</span><br><span class="line"></span><br><span class="line">Terminal.applyAddon(fit);</span><br><span class="line">export default {</span><br><span class="line">  name: 'Webshell',</span><br><span class="line">  data() {</span><br><span class="line">    return {</span><br><span class="line"></span><br><span class="line">      term: null,</span><br><span class="line">      terminalSocket: null,</span><br><span class="line">      order: ''</span><br><span class="line">    }</span><br><span class="line">  },</span><br><span class="line">  methods: {},</span><br><span class="line">  mounted () {</span><br><span class="line">       // 获取到了div标签</span><br><span class="line">       let terminalContainer = document.getElementById('terminal')</span><br><span class="line">       // 初始化黑窗口对象</span><br><span class="line">       this.term = new Terminal(this.terminal)</span><br><span class="line">       // 打开这个对象</span><br><span class="line">       this.term.open(terminalContainer)</span><br><span class="line">       // open websocket</span><br><span class="line">   </span><br><span class="line">       this.terminalSocket = new WebSocket('ws://127.0.0.1:8000/webssh/')</span><br><span class="line">       this.terminalSocket.onopen = function () { // 连接成功触发该方法</span><br><span class="line">         // this.term_isconnect = true</span><br><span class="line">         console.log('websocket is Connected...')</span><br><span class="line">       }</span><br><span class="line">       this.terminalSocket.onclose = function () { // 连接关闭适触发的方法</span><br><span class="line">         console.log('websocket is Closed...')</span><br><span class="line">       }</span><br><span class="line">       this.terminalSocket.onerror = function () { // 连接出错触发的方法</span><br><span class="line">         console.log('damn Websocket is broken!')</span><br><span class="line">       }</span><br><span class="line">       this.term.attach(this.terminalSocket)</span><br><span class="line">       // 绑定xterm到ws流中</span><br><span class="line">  }</span><br><span class="line">}</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;style&gt;</span><br><span class="line"></span><br><span class="line">&lt;/style&gt;</span><br></pre></td></tr></tbody></table></figure>
+<h4 id="服务器端-Django-实现-使用paramiko与服务器建立交互"><a href="#服务器端-Django-实现-使用paramiko与服务器建立交互" class="headerlink" title="服务器端(Django)实现         使用paramiko与服务器建立交互"></a>服务器端(Django)实现         使用paramiko与服务器建立交互</h4>  ssh是一个协议，OpenSSH是其中一个开源实现，paramiko是Python的一个库，实现了SSHv2协议(底层使用cryptography)。<br>  有了Paramiko以后，我们就可以在Python代码中直接使用SSH协议对远程服务器执行操作，而不是通过ssh命令对远程服务器进行操作</li>
+<li>安装<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">pip install paramiko</span><br></pre></td></tr></tbody></table></figure></li>
+<li>利用paramiko进行ssh远程登录<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> paramiko</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">make_ssh</span>(<span class="params">host=<span class="string">"********"</span>, username=<span class="string">"***"</span>, password=<span class="string">"****"</span>, port=<span class="number">22</span></span>):</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    :host 主机地址</span></span><br><span class="line"><span class="string">    :username 用户名，一般是root</span></span><br><span class="line"><span class="string">    :password 密码</span></span><br><span class="line"><span class="string">    :port ssh协议的端口,22</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="comment"># 初始化一个ssh对象</span></span><br><span class="line">    sh = paramiko.SSHClient()</span><br><span class="line">    <span class="comment"># 设置对象连接密钥规则</span></span><br><span class="line">    sh.set_missing_host_key_policy(paramiko.AutoAddPolicy())</span><br><span class="line">    <span class="comment"># 连接</span></span><br><span class="line">    sh.connect(host, username=username, password=password, port=port)</span><br><span class="line">    <span class="comment"># 生成shell对象</span></span><br><span class="line">    channle = sh.invoke_shell(term=<span class="string">'xterm'</span>)</span><br><span class="line">    <span class="keyword">return</span> channle</span><br></pre></td></tr></tbody></table></figure></li>
+<li>编写子线程方法，专注接收web端发送的命令<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">recv_ssh_msg</span>(<span class="params">channle, ws</span>):</span></span><br><span class="line">    <span class="string">'''</span></span><br><span class="line"><span class="string">        只管接收</span></span><br><span class="line"><span class="string">    '''</span></span><br><span class="line">    <span class="comment"># 判断shell连接对象是否没有退出</span></span><br><span class="line">    <span class="keyword">while</span> <span class="keyword">not</span> channle.exit_status_ready():</span><br><span class="line">        <span class="comment"># 接收过程可能会因为没有任何返回而报错</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            buf = channle.recv(<span class="number">1024</span>)  <span class="comment"># 接收命令的执行结果</span></span><br><span class="line">            ws.send(buf)  <span class="comment"># 向Websocket通道返回</span></span><br><span class="line">        <span class="comment"># 接收不到会报错，但是报错没关系，继续重新尝试接受</span></span><br><span class="line">        <span class="keyword">except</span>:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure></li>
+<li>结合websocket实现实时操作<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> threading <span class="keyword">import</span> Thread</span><br><span class="line"><span class="meta">@accept_websocket</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">webssh</span>(<span class="params">request</span>):</span></span><br><span class="line">    print(<span class="string">"来人了"</span>)</span><br><span class="line">    <span class="keyword">if</span> request.is_websocket:</span><br><span class="line">        <span class="comment"># 1. 获取到连接对象</span></span><br><span class="line">        ws = request.websocket</span><br><span class="line">        <span class="comment"># 2. 初始化linux连接</span></span><br><span class="line">        channel = make_ssh()</span><br><span class="line">        <span class="comment"># 3. 初始化linux数据接收线程，并开启</span></span><br><span class="line">        recv_thread = Thread(target=recv_ssh_msg, args=(channel, ws))</span><br><span class="line">        recv_thread.start()</span><br><span class="line">        <span class="keyword">while</span> <span class="number">1</span>:  <span class="comment"># 主线程: 只管发送</span></span><br><span class="line">            <span class="comment"># 2. 阻塞ws接收发来的数据</span></span><br><span class="line">            cmd = ws.wait()</span><br><span class="line">            <span class="comment"># cmd = ws.recv()</span></span><br><span class="line">            <span class="keyword">if</span> cmd:</span><br><span class="line">                channel.send(cmd)  <span class="comment"># 发送到linux 去执行</span></span><br><span class="line">            <span class="keyword">else</span>:  <span class="comment"># 如果连接断开，那么cmd将会发一个空包</span></span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">        recv_thread.join()  <span class="comment"># 回收子线程</span></span><br><span class="line">        ws.close()  <span class="comment"># 关闭ws连接</span></span><br></pre></td></tr></tbody></table></figure></li>
+<li>这样一个webShell就完成了<h3 id="OK-本文到此结束"><a href="#OK-本文到此结束" class="headerlink" title="OK 本文到此结束"></a>OK 本文到此结束</h3>django-git地址：<a href="https://gitee.com/before-l/celery-demo.git">https://gitee.com/before-l/celery-demo.git</a> </li>
+</ul>
+]]></content>
+      <categories>
+        <category>前端</category>
+      </categories>
+      <tags>
+        <tag>websocket</tag>
       </tags>
   </entry>
   <entry>
@@ -129,6 +134,12 @@
 <h3 id="OK-这样一个直播就做好了"><a href="#OK-这样一个直播就做好了" class="headerlink" title="OK,这样一个直播就做好了"></a>OK,这样一个直播就做好了</h3></li>
 </ul>
 ]]></content>
+      <categories>
+        <category>前端</category>
+      </categories>
+      <tags>
+        <tag>vue</tag>
+      </tags>
   </entry>
   <entry>
     <title>无限级递归分类</title>
@@ -149,6 +160,9 @@
 <h3 id="这样我们的Web端就写好了"><a href="#这样我们的Web端就写好了" class="headerlink" title="这样我们的Web端就写好了"></a>这样我们的Web端就写好了</h3><h4 id="最后我们来看一下页面效果"><a href="#最后我们来看一下页面效果" class="headerlink" title="最后我们来看一下页面效果"></a>最后我们来看一下页面效果</h4><p><img src="/id_12/03.png" alt="最终效果"></p>
 <p>django-git地址：<a href="https://gitee.com/before-l/celery-demo.git">https://gitee.com/before-l/celery-demo.git</a><br>vue-git地址：<a href="https://gitee.com/before-l/annual-leave-vue.git">https://gitee.com/before-l/annual-leave-vue.git</a></p>
 ]]></content>
+      <categories>
+        <category>后端</category>
+      </categories>
       <tags>
         <tag>django</tag>
       </tags>
@@ -182,6 +196,9 @@
 </ul>
 <h4 id="5-在后端写一个接口用来进行网络请求-使用requests三方模块"><a href="#5-在后端写一个接口用来进行网络请求-使用requests三方模块" class="headerlink" title="5.在后端写一个接口用来进行网络请求(使用requests三方模块)"></a>5.在后端写一个接口用来进行网络请求(使用requests三方模块)</h4><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">WeiboView</span>(<span class="params">APIView</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">self, request</span>):</span></span><br><span class="line">        code = request.GET.get(<span class="string">"code"</span>)</span><br><span class="line">        <span class="comment"># 通过python进行网络请求 requests</span></span><br><span class="line">        r = requests.post(<span class="string">"https://api.weibo.com/oauth2/access_token"</span>, {</span><br><span class="line">            <span class="comment"># App Key</span></span><br><span class="line">            <span class="string">"client_id"</span>: xxxx,</span><br><span class="line">            <span class="comment"># 密钥  App Secret</span></span><br><span class="line">            <span class="string">"client_secret"</span>: <span class="string">""</span>,</span><br><span class="line">            <span class="comment"># 请求的类型</span></span><br><span class="line">            <span class="string">"grant_type"</span>: <span class="string">"authorization_code"</span>,</span><br><span class="line">            <span class="comment"># 调用authorize获得的code值。</span></span><br><span class="line">            <span class="string">"code"</span>: code,</span><br><span class="line">            <span class="comment"># 回调地址</span></span><br><span class="line">            <span class="string">"redirect_uri"</span>: <span class="string">"http://127.0.0.1:8000/weibo/"</span></span><br><span class="line">        })</span><br><span class="line">        access_token = r.json()[<span class="string">'access_token'</span>]</span><br><span class="line">        uid = r.json()[<span class="string">'uid'</span>]</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 先判断微博账号是否登录过，没有登录过则把账号添加到第三方表中，登陆过则返回登录信息</span></span><br><span class="line">        open_user = OpenUser.objects.<span class="built_in">filter</span>(uid=uid).first()</span><br><span class="line">        <span class="keyword">if</span> open_user:</span><br><span class="line">            <span class="comment"># 已经登录过了</span></span><br><span class="line">            user = open_user.user</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            user = User.objects.create(username=uid, password=uid)</span><br><span class="line">            <span class="comment"># 没有登录</span></span><br><span class="line">            OpenUser.objects.create(uid=uid, cate=<span class="string">"微博"</span>, user=user)</span><br><span class="line">        <span class="comment"># 生成令牌</span></span><br><span class="line">        token = jwt.encode({<span class="string">"uid"</span>:user.<span class="built_in">id</span>},<span class="string">'123'</span>)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 跳转到前端首页</span></span><br><span class="line">        <span class="keyword">return</span> HttpResponse(<span class="string">"登录成功,点击跳转&lt;a href='http://127.0.0.1:8080/#/index?token=%s&amp;username=%s'&gt;跳转&lt;/a&gt;"</span>%(token.decode(),uid))</span><br></pre></td></tr></tbody></table></figure>
 <h4 id="6-OK-这样一个微博三方登录就做好啦"><a href="#6-OK-这样一个微博三方登录就做好啦" class="headerlink" title="6.OK 这样一个微博三方登录就做好啦"></a>6.OK 这样一个微博三方登录就做好啦</h4><h5 id="vue-git地址：https-gitee-com-before-l-annual-leave-vue-git"><a href="#vue-git地址：https-gitee-com-before-l-annual-leave-vue-git" class="headerlink" title="vue-git地址：https://gitee.com/before-l/annual-leave-vue.git"></a>vue-git地址：<a href="https://gitee.com/before-l/annual-leave-vue.git">https://gitee.com/before-l/annual-leave-vue.git</a></h5><h5 id="django-git地址-https-gitee-com-before-l-annual-leave-git"><a href="#django-git地址-https-gitee-com-before-l-annual-leave-git" class="headerlink" title="django-git地址:https://gitee.com/before-l/annual-leave.git"></a>django-git地址:<a href="https://gitee.com/before-l/annual-leave.git">https://gitee.com/before-l/annual-leave.git</a></h5>]]></content>
+      <categories>
+        <category>后端</category>
+      </categories>
       <tags>
         <tag>django</tag>
         <tag>三方</tag>
@@ -211,6 +228,9 @@
 
 <h4 id="4-最后附上流程图："><a href="#4-最后附上流程图：" class="headerlink" title="4.最后附上流程图："></a>4.最后附上流程图：</h4><p><img src="/id_14/01.png" alt="三方支付流程图"></p>
 ]]></content>
+      <categories>
+        <category>后端</category>
+      </categories>
       <tags>
         <tag>django</tag>
         <tag>三方</tag>
@@ -253,6 +273,9 @@
 </ul>
 <p>django-git地址：<a href="https://gitee.com/before-l/celery-demo.git">https://gitee.com/before-l/celery-demo.git</a><br>好文：<a href="https://blog.csdn.net/u010339879/article/details/97691231">https://blog.csdn.net/u010339879/article/details/97691231</a></p>
 ]]></content>
+      <categories>
+        <category>后端</category>
+      </categories>
       <tags>
         <tag>django</tag>
         <tag>celery</tag>
@@ -284,8 +307,29 @@
 </li>
 </ol>
 <h4 id="OK-本文到此结束"><a href="#OK-本文到此结束" class="headerlink" title="OK 本文到此结束"></a>OK 本文到此结束</h4>]]></content>
+      <categories>
+        <category>数据库</category>
+      </categories>
       <tags>
         <tag>redis</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>用户注册</title>
+    <url>/id_18/</url>
+    <content><![CDATA[<h4 id="用户注册功能"><a href="#用户注册功能" class="headerlink" title="用户注册功能"></a>用户注册功能</h4><p>需求：实现用户注册功能，并将用户注册信息保存到磁盘文件中，用户注册时至少给定：用户名和密码<br>注意：用户名使用了唯一索引，不可重复</p>
+<a id="more"></a>
+<ul>
+<li>相关问题：</li>
+</ul>
+<p><strong>问</strong>：唯一索引干嘛用的 为什么用？<br><strong>答</strong>：指的是某个字段不能出现重复的值，比如身份证列，手机号。<br>使用唯一索引避免了注册时需要进数据库查询是否有重复的一次IO操作，节省时间，提高效率</p>
+<p>OK 上代码</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">register</span>(<span class="params">APIView</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">post</span>(<span class="params">self, request</span>):</span></span><br><span class="line">        username = request.data.get(<span class="string">"username"</span>)</span><br><span class="line">        password = request.data.get(<span class="string">"password"</span>)</span><br><span class="line">        leave = request.data.get(<span class="string">"leave"</span>)       <span class="comment"># 用户等级</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            UserModel.objects.create(username=username, password=password, leave=leave)</span><br><span class="line">            <span class="keyword">return</span> Response({<span class="string">"msg"</span>: <span class="string">"添加成功"</span>, <span class="string">"code"</span>: <span class="number">200</span>})</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            print(e)</span><br><span class="line">            <span class="keyword">return</span> Response({<span class="string">"msg"</span>: <span class="string">"该用户已存在"</span>, <span class="string">"code"</span>: <span class="number">400</span>})</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>]]></content>
+      <categories>
+        <category>后端</category>
+      </categories>
+      <tags>
+        <tag>django</tag>
       </tags>
   </entry>
   <entry>
@@ -325,73 +369,11 @@
 </ol>
 <h4 id="OK-本文到此结束"><a href="#OK-本文到此结束" class="headerlink" title="OK,本文到此结束"></a>OK,本文到此结束</h4><p>要查看所有有可能的时间，请参考文档：<a href="https://redis.io/topics/notifications">https://redis.io/topics/notifications</a></p>
 ]]></content>
+      <categories>
+        <category>数据库</category>
+      </categories>
       <tags>
         <tag>redis</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>用户注册</title>
-    <url>/id_18/</url>
-    <content><![CDATA[<h4 id="用户注册功能"><a href="#用户注册功能" class="headerlink" title="用户注册功能"></a>用户注册功能</h4><p>需求：实现用户注册功能，并将用户注册信息保存到磁盘文件中，用户注册时至少给定：用户名和密码<br>注意：用户名使用了唯一索引，不可重复</p>
-<a id="more"></a>
-<ul>
-<li>相关问题：</li>
-</ul>
-<p><strong>问</strong>：唯一索引干嘛用的 为什么用？<br><strong>答</strong>：指的是某个字段不能出现重复的值，比如身份证列，手机号。<br>使用唯一索引避免了注册时需要进数据库查询是否有重复的一次IO操作，节省时间，提高效率</p>
-<p>OK 上代码</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">register</span>(<span class="params">APIView</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">post</span>(<span class="params">self, request</span>):</span></span><br><span class="line">        username = request.data.get(<span class="string">"username"</span>)</span><br><span class="line">        password = request.data.get(<span class="string">"password"</span>)</span><br><span class="line">        leave = request.data.get(<span class="string">"leave"</span>)       <span class="comment"># 用户等级</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            UserModel.objects.create(username=username, password=password, leave=leave)</span><br><span class="line">            <span class="keyword">return</span> Response({<span class="string">"msg"</span>: <span class="string">"添加成功"</span>, <span class="string">"code"</span>: <span class="number">200</span>})</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            print(e)</span><br><span class="line">            <span class="keyword">return</span> Response({<span class="string">"msg"</span>: <span class="string">"该用户已存在"</span>, <span class="string">"code"</span>: <span class="number">400</span>})</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>]]></content>
-      <tags>
-        <tag>python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>接口测试中的异步调用和异步写入文件</title>
-    <url>/id_19/</url>
-    <content><![CDATA[<p>异步调用：<br>异步方法必须async 关键字声明<br>所有其他方法，耗时任务都需要加上await关键字，await必须依靠async<br>with用来建立工作流和关闭流对象</p>
-<a id="more"></a>
-<h4 id="异步发送100次请求"><a href="#异步发送100次请求" class="headerlink" title="异步发送100次请求"></a>异步发送100次请求</h4><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 异步调用</span></span><br><span class="line"><span class="keyword">import</span> httpx</span><br><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line">url = <span class="string">'http://127.0.0.1:8000/p8/user'</span></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">request</span>(<span class="params">client</span>):</span></span><br><span class="line">    r = <span class="keyword">await</span> client.get(url)</span><br><span class="line">    print(r.json())</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">with</span> httpx.AsyncClient() <span class="keyword">as</span> client:</span><br><span class="line">        <span class="comment"># 100 次调用</span></span><br><span class="line">        task_list = []</span><br><span class="line">        <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">100</span>):</span><br><span class="line">            req = request(client)</span><br><span class="line">            task = asyncio.create_task(req)</span><br><span class="line">            task_list.append(task)</span><br><span class="line">        <span class="keyword">await</span> asyncio.gather(*task_list)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    <span class="comment">#开始</span></span><br><span class="line">    start = time.time()</span><br><span class="line">    asyncio.run(main())</span><br><span class="line">    <span class="comment"># 结束</span></span><br><span class="line">    end = time.time()</span><br><span class="line">    print(<span class="string">f'异步：发送100次请求，耗时：<span class="subst">{end - start}</span>'</span>)</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
-<h4 id="异步写文件"><a href="#异步写文件" class="headerlink" title="异步写文件"></a>异步写文件</h4><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">write</span>(<span class="params">f</span>):</span></span><br><span class="line">    <span class="keyword">await</span> f.write(<span class="string">"欢迎来到缅甸北部\n"</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">fun</span>():</span></span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">with</span> aiofiles.<span class="built_in">open</span>(<span class="string">"10000.txt"</span>, <span class="string">'a'</span>) <span class="keyword">as</span> f:</span><br><span class="line">        <span class="comment"># 列表推导式调用，更快，效率更高 </span></span><br><span class="line">        task = [asyncio.create_task(write(f)) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10000</span>)]</span><br><span class="line">        <span class="comment"># 普通列表 相对于列表推导式要慢一点</span></span><br><span class="line">        <span class="comment"># test_list = []</span></span><br><span class="line">        <span class="comment"># for i in range(10000):</span></span><br><span class="line">        <span class="comment">#     w = write(f)</span></span><br><span class="line">        <span class="comment">#     task = asyncio.create_task(w)</span></span><br><span class="line">        <span class="comment">#     test_list.append(task)</span></span><br><span class="line">        <span class="keyword">await</span> asyncio.gather(*task)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    start = time.time()</span><br><span class="line">    asyncio.run(fun())</span><br><span class="line">    end = time.time()</span><br><span class="line">    print(<span class="string">"执行了%d秒"</span> % (end - start))</span><br></pre></td></tr></tbody></table></figure>]]></content>
-      <tags>
-        <tag>async</tag>
-        <tag>await</tag>
-        <tag>with</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>四大推导式(列表/字典/集合/生成器)</title>
-    <url>/id_2/</url>
-    <content><![CDATA[<p>推导式（又称解析式），是 python 的一种独有特性。推导式是可以从一个数据序列构建另一个新的数据序列。</p>
-<h3 id="Python-里有四种推导式："><a href="#Python-里有四种推导式：" class="headerlink" title="Python 里有四种推导式："></a>Python 里有四种推导式：</h3><ul>
-<li>列表推导式(List Comprehensions)</li>
-<li>字典推导式(Dictionary Comprehensions)</li>
-<li>集合推导式(Set Comprehensions)</li>
-<li>生成器推导式(Generator Comprehensions)<a id="more"></a>
-
-</li>
-</ul>
-<h4 id="列表推导式"><a href="#列表推导式" class="headerlink" title="列表推导式"></a>列表推导式</h4><p>语法：变量名 = [表达式 for 变量 in 列表 if 条件]<br>注意：这里的if不是必须的哦<br><strong>例</strong>：生成一个1-10的列表</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 普通生成</span></span><br><span class="line">x = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,<span class="number">11</span>):</span><br><span class="line">    x.append(i)</span><br><span class="line">print(x)</span><br><span class="line"><span class="comment"># 列表推导式生成</span></span><br><span class="line">[x.append(i) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,<span class="number">11</span>)]</span><br><span class="line">print(x)    </span><br></pre></td></tr></tbody></table></figure>
-<blockquote>
-<p>结果同为 [1,2,3,4,5,6,7,8,9,10]</p>
-</blockquote>
-<h4 id="字典推导式"><a href="#字典推导式" class="headerlink" title="字典推导式"></a>字典推导式</h4><p>字典推导式和列表推导式是一样的，只不过把[]换成了{}<br>语法：变量名 = {表达式 for 变量 in 列表 if 条件}<br>注意：这里的if不是必须的哦<br><strong>例</strong>：生成一个只有偶数的字典</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 普通生成</span></span><br><span class="line">x = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>]</span><br><span class="line">y = {}</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> x:</span><br><span class="line">    <span class="keyword">if</span> i % <span class="number">2</span> == <span class="number">0</span>:</span><br><span class="line">        y[i] = <span class="built_in">str</span>(i)      </span><br><span class="line">print(y)</span><br><span class="line"><span class="comment"># 字典推导式生成</span></span><br><span class="line">z = {i: <span class="built_in">str</span>(i) <span class="keyword">for</span> i <span class="keyword">in</span> x <span class="keyword">if</span> i % <span class="number">2</span> == <span class="number">0</span>}</span><br><span class="line">print(z)   </span><br></pre></td></tr></tbody></table></figure>
-<blockquote>
-<p>结果同为 {2:”2”,4:”4”,6:”6”,8:”8”}</p>
-</blockquote>
-<h4 id="集合推导式"><a href="#集合推导式" class="headerlink" title="集合推导式"></a>集合推导式</h4><p>集合推导式和列表推导式是一样的，同样也是把[]换成了{}<br>语法：变量名 = {表达式 for 变量 in 列表 if 条件}<br>注意：这里的if不是必须的哦<br><strong>例</strong>：生成一个只有奇数的集合</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 普通生成</span></span><br><span class="line">x = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>]</span><br><span class="line">y = <span class="built_in">set</span>()</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> x:</span><br><span class="line">    <span class="keyword">if</span> i % <span class="number">2</span> == <span class="number">1</span>:</span><br><span class="line">        y.add(i)   </span><br><span class="line">print(y)</span><br><span class="line"><span class="comment"># 集合推导式生成</span></span><br><span class="line">[y.add(i) <span class="keyword">for</span> i <span class="keyword">in</span> x <span class="keyword">if</span> i%<span class="number">2</span>==<span class="number">1</span>]</span><br><span class="line">print(y)    </span><br></pre></td></tr></tbody></table></figure>
-<blockquote>
-<p>结果同为 {1, 3, 5, 7, 9}</p>
-</blockquote>
-<h4 id="生成器推导式"><a href="#生成器推导式" class="headerlink" title="生成器推导式"></a>生成器推导式</h4><p>生成器推导式(或叫生成器表达式)，其结构也跟列表表达式相似。<br>语法：变量名 = (表达式 for 变量 in 列表 if 条件)<br>调用方法：1)for循环<br>        2)next函数<br><strong>例</strong>：将数字列表中各项平方运算，只算偶数</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 普通生成</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">square_even</span>(<span class="params">numbers</span>):</span></span><br><span class="line">    <span class="keyword">for</span> number <span class="keyword">in</span> numbers:</span><br><span class="line">        <span class="keyword">if</span> number % <span class="number">2</span> == <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">yield</span> (number * number)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">numbers = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]</span><br><span class="line">square_numbers = square_even(numbers)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> number <span class="keyword">in</span> square_numbers:</span><br><span class="line">    print(number)</span><br><span class="line"><span class="comment"># 集合推导式生成</span></span><br><span class="line">numbers = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]</span><br><span class="line">square_numbers = (num * num <span class="keyword">for</span> num <span class="keyword">in</span> numbers <span class="keyword">if</span> num % <span class="number">2</span> == <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> number <span class="keyword">in</span> square_numbers:</span><br><span class="line">    print(number)   </span><br></pre></td></tr></tbody></table></figure>
-<blockquote>
-<p>结果同为 4 16 36</p>
-</blockquote>
-]]></content>
-      <tags>
-        <tag>python</tag>
       </tags>
   </entry>
   <entry>
@@ -436,8 +418,65 @@
 <h3 id="首先-对redis命令进行封装"><a href="#首先-对redis命令进行封装" class="headerlink" title="首先 对redis命令进行封装"></a>首先 对redis命令进行封装</h3><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 封装redis</span></span><br><span class="line"><span class="keyword">import</span> redis</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyRedis</span>:</span></span><br><span class="line">    <span class="comment"># 用来定义属性和变量</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, key, **redis_kwargs</span>):</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># self.__变量名：使用双下划线开头的变量是私有变量，在类外不可以被调用</span></span><br><span class="line">        <span class="comment"># **kwarys不定长参数  用于可传可不传的参数</span></span><br><span class="line">        <span class="comment"># kwargs是用来传键值对，args 用来传列表和元祖</span></span><br><span class="line"></span><br><span class="line">        self.__db = redis.Redis(**redis_kwargs)</span><br><span class="line"></span><br><span class="line">        self.key = key</span><br><span class="line">    <span class="comment"># 向redis存储数据</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">set</span>(<span class="params">self, value</span>):</span></span><br><span class="line">        self.__db.<span class="built_in">set</span>(self.key, value)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 从redis取出数据</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">return</span> self.__db.get(self.key)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># redis 自动累加</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">incrby</span>(<span class="params">self, value</span>):</span></span><br><span class="line">        self.__db.incrby(self.key, value)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># redis设置键过期时间</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">expire</span>(<span class="params">self, value</span>):</span></span><br><span class="line">        self.__db.expire(self.key, value)</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
 <h3 id="然后写登录视图"><a href="#然后写登录视图" class="headerlink" title="然后写登录视图"></a>然后写登录视图</h3><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Login</span>(<span class="params">APIView</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">post</span>(<span class="params">self, request</span>):</span></span><br><span class="line">        username = request.data.get(<span class="string">"username"</span>)</span><br><span class="line">        password = request.data.get(<span class="string">"password"</span>)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 第一步 先判断 用户名+balck 这个key 是否存在</span></span><br><span class="line">        <span class="comment"># 存在 意味着已经被锁定 所以直接返回</span></span><br><span class="line">        r = redis.Redis()</span><br><span class="line">        <span class="keyword">if</span> r.get(username + <span class="string">'black'</span>):</span><br><span class="line">            print(r.get(username + <span class="string">'black'</span>))</span><br><span class="line">            <span class="keyword">return</span> Response({<span class="string">"msg"</span>: <span class="string">"账户已锁定，请等待30分钟后重试"</span>})</span><br><span class="line">        <span class="comment"># 不存在 登录</span></span><br><span class="line">        user = UserModel.objects.<span class="built_in">filter</span>(username=username, password=password).first()</span><br><span class="line">        <span class="keyword">if</span> user:</span><br><span class="line">            <span class="keyword">return</span> Response({<span class="string">"msg"</span>: <span class="string">"登录成功"</span>, <span class="string">"code"</span>: <span class="number">200</span>})</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="comment"># 判断是否输入错误过</span></span><br><span class="line">            <span class="comment"># 没有</span></span><br><span class="line">            <span class="keyword">if</span> r.get(username) == <span class="literal">None</span>:</span><br><span class="line">                r.incrby(username, <span class="number">1</span>)</span><br><span class="line">                print(<span class="string">"第一次输入错误"</span>)</span><br><span class="line">                r.expire(username, <span class="number">300</span>)</span><br><span class="line">                <span class="keyword">return</span> Response({<span class="string">"msg"</span>: <span class="string">"第一次输入错误"</span>, <span class="string">"code"</span>: <span class="number">400</span>})</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                value = <span class="built_in">int</span>(r.get(username))</span><br><span class="line">                <span class="comment"># 输入错误五次，加入黑名单</span></span><br><span class="line">                <span class="keyword">if</span> value == <span class="number">5</span>:</span><br><span class="line">                    r.<span class="built_in">set</span>(username + <span class="string">'black'</span>, <span class="number">30</span>)</span><br><span class="line">                    r.expire(username + <span class="string">'black'</span>, <span class="number">1800</span>)</span><br><span class="line">                    <span class="keyword">return</span> Response({<span class="string">"msg"</span>: <span class="string">"输入次数以上限，请30分钟后重试"</span>, <span class="string">'code'</span>: <span class="number">200</span>})</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    r.<span class="built_in">set</span>(username, value + <span class="number">1</span>)</span><br><span class="line">                    print(r.get(username))</span><br><span class="line">                    <span class="keyword">return</span> Response({<span class="string">"msg"</span>: <span class="string">"用户名或密码错误，请重新输入"</span>, <span class="string">'code'</span>: <span class="number">400</span>})</span><br></pre></td></tr></tbody></table></figure>
 <h3 id="OK-问题解决了。"><a href="#OK-问题解决了。" class="headerlink" title="OK,问题解决了。"></a>OK,问题解决了。</h3>]]></content>
+      <categories>
+        <category>数据库</category>
+      </categories>
       <tags>
         <tag>redis</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>接口测试中的异步调用和异步写入文件</title>
+    <url>/id_19/</url>
+    <content><![CDATA[<p>异步调用：<br>异步方法必须async 关键字声明<br>所有其他方法，耗时任务都需要加上await关键字，await必须依靠async<br>with用来建立工作流和关闭流对象</p>
+<a id="more"></a>
+<h4 id="异步发送100次请求"><a href="#异步发送100次请求" class="headerlink" title="异步发送100次请求"></a>异步发送100次请求</h4><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 异步调用</span></span><br><span class="line"><span class="keyword">import</span> httpx</span><br><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line">url = <span class="string">'http://127.0.0.1:8000/p8/user'</span></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">request</span>(<span class="params">client</span>):</span></span><br><span class="line">    r = <span class="keyword">await</span> client.get(url)</span><br><span class="line">    print(r.json())</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">with</span> httpx.AsyncClient() <span class="keyword">as</span> client:</span><br><span class="line">        <span class="comment"># 100 次调用</span></span><br><span class="line">        task_list = []</span><br><span class="line">        <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">100</span>):</span><br><span class="line">            req = request(client)</span><br><span class="line">            task = asyncio.create_task(req)</span><br><span class="line">            task_list.append(task)</span><br><span class="line">        <span class="keyword">await</span> asyncio.gather(*task_list)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    <span class="comment">#开始</span></span><br><span class="line">    start = time.time()</span><br><span class="line">    asyncio.run(main())</span><br><span class="line">    <span class="comment"># 结束</span></span><br><span class="line">    end = time.time()</span><br><span class="line">    print(<span class="string">f'异步：发送100次请求，耗时：<span class="subst">{end - start}</span>'</span>)</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+<h4 id="异步写文件"><a href="#异步写文件" class="headerlink" title="异步写文件"></a>异步写文件</h4><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">write</span>(<span class="params">f</span>):</span></span><br><span class="line">    <span class="keyword">await</span> f.write(<span class="string">"欢迎来到缅甸北部\n"</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">fun</span>():</span></span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">with</span> aiofiles.<span class="built_in">open</span>(<span class="string">"10000.txt"</span>, <span class="string">'a'</span>) <span class="keyword">as</span> f:</span><br><span class="line">        <span class="comment"># 列表推导式调用，更快，效率更高 </span></span><br><span class="line">        task = [asyncio.create_task(write(f)) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10000</span>)]</span><br><span class="line">        <span class="comment"># 普通列表 相对于列表推导式要慢一点</span></span><br><span class="line">        <span class="comment"># test_list = []</span></span><br><span class="line">        <span class="comment"># for i in range(10000):</span></span><br><span class="line">        <span class="comment">#     w = write(f)</span></span><br><span class="line">        <span class="comment">#     task = asyncio.create_task(w)</span></span><br><span class="line">        <span class="comment">#     test_list.append(task)</span></span><br><span class="line">        <span class="keyword">await</span> asyncio.gather(*task)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    start = time.time()</span><br><span class="line">    asyncio.run(fun())</span><br><span class="line">    end = time.time()</span><br><span class="line">    print(<span class="string">"执行了%d秒"</span> % (end - start))</span><br></pre></td></tr></tbody></table></figure>]]></content>
+      <categories>
+        <category>后端</category>
+      </categories>
+      <tags>
+        <tag>异步</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>四大推导式(列表/字典/集合/生成器)</title>
+    <url>/id_2/</url>
+    <content><![CDATA[<p>推导式（又称解析式），是 python 的一种独有特性。推导式是可以从一个数据序列构建另一个新的数据序列。</p>
+<h3 id="Python-里有四种推导式："><a href="#Python-里有四种推导式：" class="headerlink" title="Python 里有四种推导式："></a>Python 里有四种推导式：</h3><ul>
+<li>列表推导式(List Comprehensions)</li>
+<li>字典推导式(Dictionary Comprehensions)</li>
+<li>集合推导式(Set Comprehensions)</li>
+<li>生成器推导式(Generator Comprehensions)<a id="more"></a>
+
+</li>
+</ul>
+<h4 id="列表推导式"><a href="#列表推导式" class="headerlink" title="列表推导式"></a>列表推导式</h4><p>语法：变量名 = [表达式 for 变量 in 列表 if 条件]<br>注意：这里的if不是必须的哦<br><strong>例</strong>：生成一个1-10的列表</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 普通生成</span></span><br><span class="line">x = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,<span class="number">11</span>):</span><br><span class="line">    x.append(i)</span><br><span class="line">print(x)</span><br><span class="line"><span class="comment"># 列表推导式生成</span></span><br><span class="line">[x.append(i) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,<span class="number">11</span>)]</span><br><span class="line">print(x)    </span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>结果同为 [1,2,3,4,5,6,7,8,9,10]</p>
+</blockquote>
+<h4 id="字典推导式"><a href="#字典推导式" class="headerlink" title="字典推导式"></a>字典推导式</h4><p>字典推导式和列表推导式是一样的，只不过把[]换成了{}<br>语法：变量名 = {表达式 for 变量 in 列表 if 条件}<br>注意：这里的if不是必须的哦<br><strong>例</strong>：生成一个只有偶数的字典</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 普通生成</span></span><br><span class="line">x = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>]</span><br><span class="line">y = {}</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> x:</span><br><span class="line">    <span class="keyword">if</span> i % <span class="number">2</span> == <span class="number">0</span>:</span><br><span class="line">        y[i] = <span class="built_in">str</span>(i)      </span><br><span class="line">print(y)</span><br><span class="line"><span class="comment"># 字典推导式生成</span></span><br><span class="line">z = {i: <span class="built_in">str</span>(i) <span class="keyword">for</span> i <span class="keyword">in</span> x <span class="keyword">if</span> i % <span class="number">2</span> == <span class="number">0</span>}</span><br><span class="line">print(z)   </span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>结果同为 {2:”2”,4:”4”,6:”6”,8:”8”}</p>
+</blockquote>
+<h4 id="集合推导式"><a href="#集合推导式" class="headerlink" title="集合推导式"></a>集合推导式</h4><p>集合推导式和列表推导式是一样的，同样也是把[]换成了{}<br>语法：变量名 = {表达式 for 变量 in 列表 if 条件}<br>注意：这里的if不是必须的哦<br><strong>例</strong>：生成一个只有奇数的集合</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 普通生成</span></span><br><span class="line">x = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>]</span><br><span class="line">y = <span class="built_in">set</span>()</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> x:</span><br><span class="line">    <span class="keyword">if</span> i % <span class="number">2</span> == <span class="number">1</span>:</span><br><span class="line">        y.add(i)   </span><br><span class="line">print(y)</span><br><span class="line"><span class="comment"># 集合推导式生成</span></span><br><span class="line">[y.add(i) <span class="keyword">for</span> i <span class="keyword">in</span> x <span class="keyword">if</span> i%<span class="number">2</span>==<span class="number">1</span>]</span><br><span class="line">print(y)    </span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>结果同为 {1, 3, 5, 7, 9}</p>
+</blockquote>
+<h4 id="生成器推导式"><a href="#生成器推导式" class="headerlink" title="生成器推导式"></a>生成器推导式</h4><p>生成器推导式(或叫生成器表达式)，其结构也跟列表表达式相似。<br>语法：变量名 = (表达式 for 变量 in 列表 if 条件)<br>调用方法：1)for循环<br>        2)next函数<br><strong>例</strong>：将数字列表中各项平方运算，只算偶数</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 普通生成</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">square_even</span>(<span class="params">numbers</span>):</span></span><br><span class="line">    <span class="keyword">for</span> number <span class="keyword">in</span> numbers:</span><br><span class="line">        <span class="keyword">if</span> number % <span class="number">2</span> == <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">yield</span> (number * number)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">numbers = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]</span><br><span class="line">square_numbers = square_even(numbers)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> number <span class="keyword">in</span> square_numbers:</span><br><span class="line">    print(number)</span><br><span class="line"><span class="comment"># 集合推导式生成</span></span><br><span class="line">numbers = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]</span><br><span class="line">square_numbers = (num * num <span class="keyword">for</span> num <span class="keyword">in</span> numbers <span class="keyword">if</span> num % <span class="number">2</span> == <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> number <span class="keyword">in</span> square_numbers:</span><br><span class="line">    print(number)   </span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>结果同为 4 16 36</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>后端</category>
+      </categories>
+      <tags>
+        <tag>python</tag>
       </tags>
   </entry>
   <entry>
@@ -454,6 +493,9 @@
 </blockquote>
 <p><strong>加权队列</strong>：举个例子吧，在银行窗口办理业务的时候需要先取号==放进队列，然后排队等待。<br>但是这只是普通用户。如果有金卡用户取号，那么金卡用户的业务就可以插队==加权，先行办理金卡用户的业务<br>加权需要用到排序，并且Celery并没有加权这一功能<br>上代码！</p>
 <figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 首先进行方法封装</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyQueue</span>:</span></span><br><span class="line">    <span class="comment"># 队列遵循先进先出的原则</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, name, **redis_kwargs</span>):</span></span><br><span class="line">        <span class="comment"># **kwarys不定长参数  用于可传可不传的参数 </span></span><br><span class="line">        <span class="comment"># kwargs是用来传键值对，args 一般用来传列表和元祖</span></span><br><span class="line">        <span class="comment"># self.__变量名：使用双下划线开头的变量是私有变量，在类外不可以被调用</span></span><br><span class="line">        <span class="comment"># redis的默认参数为：host='localhost', port=6379, db=0， 其中db为定义redis的第几个库</span></span><br><span class="line">        self.__db = redis.Redis(**redis_kwargs, decode_responses=<span class="literal">True</span>)</span><br><span class="line">        self.key = name</span><br><span class="line">        <span class="comment"># llen:获取列表长度</span></span><br><span class="line">        <span class="comment"># lrange:获取列表指定范围内的元素</span></span><br><span class="line">        self.r_len = self.__db.llen(self.key)</span><br><span class="line">        self.l = self.__db.lrange(self.key, <span class="number">0</span>, -<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">push</span>(<span class="params">self, x: <span class="built_in">tuple</span></span>):</span></span><br><span class="line">        <span class="comment"># rpush:在列表中添加一个或多个值</span></span><br><span class="line">        self.__db.rpush(self.key, x)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">show</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(self.__db.lrange(self.key, <span class="number">0</span>, -<span class="number">1</span>))</span><br><span class="line">        <span class="keyword">return</span> self.__db.lrange(self.key, <span class="number">0</span>, -<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 排序用来加权(加权是celery没有的)</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">sort</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="comment"># 因为redis里存的是字符串，而排序的依据是元组中最后一个元素为int,所以使用-2下标</span></span><br><span class="line">        <span class="comment"># 此处可用eval </span></span><br><span class="line">        self.l = <span class="built_in">sorted</span>(self.l, key=<span class="keyword">lambda</span> x: x[-<span class="number">2</span>], reverse=<span class="literal">True</span>)</span><br><span class="line">        <span class="keyword">return</span> self.l</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">pop</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="comment"># pop(0):移出并获取列表的第一个元素</span></span><br><span class="line">        <span class="comment"># lrem 根据第二个参数的值，移除列表中与参数相等的元素。</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> self.l:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line">        item = self.l.pop(<span class="number">0</span>)</span><br><span class="line">        self.__db.lrem(self.key, item, <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> item</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">clear</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="comment"># 用来清空列表</span></span><br><span class="line">        <span class="keyword">return</span> self.__db.delete(self.key)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    m = MyQueue(<span class="string">'que'</span>)</span><br><span class="line">    <span class="comment"># 添加到redis</span></span><br><span class="line">    i = <span class="number">1</span></span><br><span class="line">    <span class="comment"># 列表推导式</span></span><br><span class="line">    [m.push(i,i+<span class="number">1</span>,i+<span class="number">2</span>) <span class="keyword">for</span> item <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>) i++]</span><br><span class="line">    <span class="comment"># 将添加进去的数据排序 </span></span><br><span class="line">    m.sort()</span><br><span class="line">    <span class="comment"># 删除排序后列表中的第一个元素</span></span><br><span class="line">    m.pop()</span><br><span class="line">    <span class="comment"># 清空列表</span></span><br><span class="line">    m.clear()</span><br></pre></td></tr></tbody></table></figure>]]></content>
+      <categories>
+        <category>数据库</category>
+      </categories>
       <tags>
         <tag>redis</tag>
       </tags>
@@ -483,6 +525,12 @@
 <li>协程指的是单个线程，因而一旦协程出现阻塞，将会阻塞整个线程<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 协程也是一种单线程，只不过是用户来给分配任务</span></span><br><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"><span class="comment"># 创建事件循环</span></span><br><span class="line">loop = asyncio.get_event_loop()</span><br><span class="line"><span class="comment"># 运行事件循环，直到dojob运行结束</span></span><br><span class="line">res = loop.run_until_complete(dojob())</span><br><span class="line">loop.close()</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure></li>
 </ol>
 ]]></content>
+      <categories>
+        <category>后端</category>
+      </categories>
+      <tags>
+        <tag>异步</tag>
+      </tags>
   </entry>
   <entry>
     <title>位运算</title>
@@ -499,6 +547,12 @@
 </blockquote>
 <h4 id="运算符"><a href="#运算符" class="headerlink" title="运算符"></a>运算符</h4><p>符号    描述    运算规则<br>&amp;    与    两个位都为1时，结果才为1<br>|    或    两个位都为0时，结果才为0<br>^    异或    两个位相同为0，相异为1<br>~    取反    0变1，1变0</p>
 ]]></content>
+      <categories>
+        <category>后端</category>
+      </categories>
+      <tags>
+        <tag>进制</tag>
+      </tags>
   </entry>
   <entry>
     <title>MongoDB安装与使用</title>
@@ -577,6 +631,12 @@
 <p>建立好之后，就可以进行查询了</p>
 <figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">self, request</span>):</span></span><br><span class="line">    <span class="comment"># 进入数据库</span></span><br><span class="line">    db = client.mongotest</span><br><span class="line">    <span class="comment"># 集合</span></span><br><span class="line">    dbset = db.CateTemplate</span><br><span class="line">    <span class="built_in">id</span> = request.GET.get(<span class="string">'id'</span>, <span class="literal">None</span>)</span><br><span class="line">    tid = WorkOrderModel.objects.<span class="built_in">filter</span>(<span class="built_in">id</span>=<span class="built_in">id</span>).first()</span><br><span class="line">    data = {}</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> zst.find({<span class="string">'tid'</span>: <span class="built_in">str</span>(tid.pid)}):</span><br><span class="line">        data = <span class="built_in">eval</span>(i[<span class="string">'name'</span>])</span><br><span class="line">    <span class="keyword">return</span> Response(data)</span><br></pre></td></tr></tbody></table></figure>
 <h4 id="OK"><a href="#OK" class="headerlink" title="OK"></a>OK</h4>]]></content>
+      <categories>
+        <category>数据库</category>
+      </categories>
+      <tags>
+        <tag>mongodb</tag>
+      </tags>
   </entry>
   <entry>
     <title>栈的使用</title>
@@ -593,6 +653,88 @@
 <h3 id="栈和队列的异同点"><a href="#栈和队列的异同点" class="headerlink" title="栈和队列的异同点"></a>栈和队列的异同点</h3><h4 id="首先，栈（Stack）和队列（Queue）是两种操作受限的线性表。"><a href="#首先，栈（Stack）和队列（Queue）是两种操作受限的线性表。" class="headerlink" title="首先，栈（Stack）和队列（Queue）是两种操作受限的线性表。"></a>首先，栈（Stack）和队列（Queue）是两种操作受限的线性表。</h4><h4 id="栈与队列的相同点："><a href="#栈与队列的相同点：" class="headerlink" title="栈与队列的相同点："></a>栈与队列的相同点：</h4><p>1.都是线性结构。<br>2.插入操作都是限定在表尾进行。<br>3.都可以通过顺序结构和链式结构实现。<br>4.插入与删除的时间复杂度都是O（1），在空间复杂度上两者也一样。<br>5.多链栈和多链队列的管理模式可以相同。</p>
 <h4 id="栈与队列的不同点："><a href="#栈与队列的不同点：" class="headerlink" title="栈与队列的不同点："></a>栈与队列的不同点：</h4><p>1.删除数据元素的位置不同，栈的删除操作在表尾进行，队列的删除操作在表头进行。<br>2.应用场景不同；常见栈的应用场景包括括号问题的求解，表达式的转换和求值，函数调用和递归实现，深度优先搜索遍历等；常见的队列的应用场景包括计算机系统中各种资源的管理，消息缓冲器的管理和广度优先搜索遍历等。<br>3.顺序栈能够实现多栈空间共享，而顺序队列不能。</p>
 ]]></content>
+      <categories>
+        <category>后端</category>
+      </categories>
+      <tags>
+        <tag>python</tag>
+        <tag>进制</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>引用计数</title>
+    <url>/id_27/</url>
+    <content><![CDATA[<h3 id="引用计数"><a href="#引用计数" class="headerlink" title="引用计数"></a>引用计数</h3><h5 id="问"><a href="#问" class="headerlink" title="问"></a>问</h5><p>引用计数这个问题是我们在面试中经常会遇到的。通常面试官会这样问：</p>
+<ol>
+<li>python中是如何管理内存的？</li>
+<li>你知道引用计数吗？<a id="more"></a>
+<h5 id="答"><a href="#答" class="headerlink" title="答"></a>答</h5></li>
+</ol>
+<p>引用计数是内存管理机制，将资源的使用次数保存起来，在引用次数变为<strong>零</strong>时进行释放</p>
+<p>比如说我们现在有一个变量a，指向内存中的字符 ‘x’ ，此时x在内存中的引用计数为1，然后又有一个变量b，b=a</p>
+<p>此时(b=a)和(a=’x’)是相等的，那这个时候x在内存中的引用计数就会+1变为2</p>
+<p><img src="/id_27/%E4%BE%8B.png" alt="案例"></p>
+<h4 id="引用计数的好处"><a href="#引用计数的好处" class="headerlink" title="引用计数的好处"></a>引用计数的好处</h4><p>我们可以举一些生活中的场景，比如说我们出去<strong>旅游</strong>，朋友提前抵达并开好了房间，这样我们就可以免费跟朋友住一间房，这样既节约了我们的时间，又节约了我们另外开房需要支付的资金。</p>
+<ul>
+<li>可知：减少了内存碎片的产生，</li>
+<li>并且可以对于我们在创建和释放内存中有一定的资源开销的节省。</li>
+<li>可以更快的进行资源管理</li>
+</ul>
+<p>那同样，当我们旅途结束，不需要再居住的时候，所有人离开酒店，那这个房间就会被酒店的人员进行清理，处理。</p>
+<ul>
+<li>这样就像引用计数中计数为0时，内存会被回收掉是一样的</li>
+</ul>
+<h4 id="查看引用计数"><a href="#查看引用计数" class="headerlink" title="查看引用计数"></a>查看引用计数</h4><p>查看引用计数我们是使用了sys模块中getrefcount方法</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">C:\Users\Lenovo&gt;python.exe</span><br><span class="line">Python <span class="number">3.7</span><span class="number">.0</span> (v3<span class="number">.7</span><span class="number">.0</span>:1bf9cc5093, Jun <span class="number">27</span> <span class="number">2018</span>, 04:<span class="number">59</span>:<span class="number">51</span>) [MSC v<span class="number">.1914</span> <span class="number">64</span> bit (AMD64)] on win32</span><br><span class="line">Type <span class="string">"help"</span>, <span class="string">"copyright"</span>, <span class="string">"credits"</span> <span class="keyword">or</span> <span class="string">"license"</span> <span class="keyword">for</span> more information.</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> sys</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sys.getrefcount(<span class="number">1</span>)</span><br><span class="line"><span class="number">119</span></span><br><span class="line"><span class="comment"># 得出常量1在内存中的引用计数为119</span></span><br></pre></td></tr></tbody></table></figure>
+<h4 id="那什么时候会用到引用计数呢"><a href="#那什么时候会用到引用计数呢" class="headerlink" title="那什么时候会用到引用计数呢"></a>那什么时候会用到引用计数呢</h4><p>有两点：</p>
+<p>1、 变量互相赋值的时候</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="string">'x'</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = a</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">id</span>(a)</span><br><span class="line"><span class="number">3242716434928</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">id</span>(b)</span><br><span class="line"><span class="number">3242716434928</span></span><br><span class="line"><span class="comment"># 此时我们可以看出两个变量指向的内存地址是完全一样的 。可得变量互相赋值的时候用到了引用计数</span></span><br></pre></td></tr></tbody></table></figure>
+<p>2、常用对象创建时</p>
+<p>python本身含有a-z,A-Z,0-9等常见值的引用</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>c = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>d = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">id</span>(a)</span><br><span class="line"><span class="number">140707666383904</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">id</span>(b)</span><br><span class="line"><span class="number">140707666383904</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">id</span>(c)</span><br><span class="line"><span class="number">140707666383904</span></span><br><span class="line"><span class="comment"># 此时我们可以看出a,b,c的内存地址都是完全一致的， 可得常用对象创建时用到了引用计数</span></span><br></pre></td></tr></tbody></table></figure>
+<h4 id="如何减少引用次数"><a href="#如何减少引用次数" class="headerlink" title="如何减少引用次数"></a>如何减少引用次数</h4><p>有两点</p>
+<p>1、变量被重新赋值为别的值</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>c = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>d = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sys.getrefcount(<span class="number">1</span>)</span><br><span class="line"><span class="number">123</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="string">'a'</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sys.getrefcount(<span class="number">1</span>)</span><br><span class="line"><span class="number">122</span></span><br><span class="line"><span class="comment"># 可以看出，当a被重新赋值后再次查看1的引用计数是减少了1的</span></span><br></pre></td></tr></tbody></table></figure>
+<p>2、del  删除变量</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>c = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>d = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sys.getrefcount(<span class="number">1</span>)</span><br><span class="line"><span class="number">123</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">del</span> a</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sys.getrefcount(<span class="number">1</span>)</span><br><span class="line"><span class="number">122</span></span><br><span class="line"><span class="comment"># 可以看出，当a被del删除后再次查看1的引用计数是减少了1的</span></span><br></pre></td></tr></tbody></table></figure>
+<h4 id="引用计数的缺点"><a href="#引用计数的缺点" class="headerlink" title="引用计数的缺点"></a>引用计数的缺点</h4><p>那引用计数真的这么完美吗，不占内存地址，用完即释放，nonono,当然不是</p>
+<p>引用计数最大的缺点就是<strong>循环引用</strong></p>
+<p>那循环引用是什么呢？</p>
+<p>循环引用就是两个变量互相引用时假设已经被释放，但引用计数不为0，那就会导致这两个变量无法被直接回收</p>
+<p><strong>那循环引用有什么解决办法吗？</strong></p>
+<p>那肯定是有的，python中解决循环引用的方法就是<strong>标记-清除</strong><br>请移步下一节：<a href="https://www.hr915.xyz/2018/09/05/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6/">https://www.hr915.xyz/2018/09/05/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6/</a></p>
+]]></content>
+      <categories>
+        <category>后端</category>
+      </categories>
+      <tags>
+        <tag>python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>垃圾回收机制之标记-清除</title>
+    <url>/id_28/</url>
+    <content><![CDATA[<h3 id="垃圾回收机制"><a href="#垃圾回收机制" class="headerlink" title="垃圾回收机制"></a>垃圾回收机制</h3><p>垃圾自动回收机制的出现使编程更加的简单，使得我们不需要再去考虑内存分配和释放的问题，而是更加的专注在我们产品功能的实现上</p>
+<p>目前最基本的垃圾收集算法有四种,标记-清除算法(mark-sweep),标记-压缩算法(mark-compact),复制算法(copying)以及引用计数算法(reference counting).而现代流行的垃圾收集算法一般是由这四种中的其中几种算法相互组合而成，比如说，对堆(heap)的一部分采用标记-清除算法，对堆(heap)的另外一部分则采用复制算法等等。今天我们主要来看下标记-清除算法的原理。</p>
+<a id="more"></a>
+<h4 id="标记-清除"><a href="#标记-清除" class="headerlink" title="标记-清除"></a>标记-清除</h4><p>标记-清除算法分为两个阶段，标记(mark)和清除(sweep)</p>
+<h5 id="标记："><a href="#标记：" class="headerlink" title="标记："></a>标记：</h5><p>在内存中对每一个被使用到的变量来进行标记</p>
+<p>标记是从根对象开始工作，所有能够和根对象联系的变量我们都会有相应的标记。</p>
+<h5 id="标记举例"><a href="#标记举例" class="headerlink" title="标记举例"></a>标记举例</h5><p><img src="/id_28/01.png" alt="标记"></p>
+<p><img src="/id_28/02.png" alt="标记"></p>
+<p><img src="/id_28/03.png" alt="标记"></p>
+<h5 id="清除"><a href="#清除" class="headerlink" title="清除:"></a>清除:</h5><p>清除主要是将内存中无关联根对象的并且没有被标记的变量给杀死，释放掉</p>
+<p><img src="/id_28/04.png" alt="image-20210324190403266"></p>
+<p>图中a和b已经和根对象没有关系了，而且并没有被标记，所以就会被清除掉</p>
+<h4 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h4><p>总的来说，在标记-清除过程中,他会扫描整个内存空间，扫描过程中python程序会暂停，被标记的对象不会被回收，没有标记的对象会被回收掉。<br>但是我们整个python程序暂停，暂停会导致程序无法正常运行，让程序运行时出现一些问题从而造成程序阻塞问题<br>那python呢就引入了<strong>分代回收</strong>来避免标记-清除，由于每一次过程都需要去大量的遍历整块内存而造成的程序阻塞问题</p>
+<p>分代回收参考下一篇文章：<a href="https://www.hr915.xyz/2018/09/05/%E5%88%86%E4%BB%A3%E5%9B%9E%E6%94%B6/">https://www.hr915.xyz/2018/09/05/%E5%88%86%E4%BB%A3%E5%9B%9E%E6%94%B6/</a></p>
+]]></content>
+      <categories>
+        <category>后端</category>
+      </categories>
+      <tags>
+        <tag>python</tag>
+      </tags>
   </entry>
   <entry>
     <title>设计模式</title>
@@ -683,77 +825,8 @@
 <p><img src="/id_26/%E5%8D%95%E4%BE%8B.png" alt="单例模式"></p>
 <p>实现：</p>
 <figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Singleton</span>(<span class="params"><span class="built_in">object</span></span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__new__</span>(<span class="params">cls, *args, **kw</span>):</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> <span class="built_in">hasattr</span>(cls, <span class="string">'_instance'</span>):</span><br><span class="line">            org = <span class="built_in">super</span>(Singleton, cls)</span><br><span class="line">            cls._instance = org.__new__(cls, *args, **kw)</span><br><span class="line">        <span class="keyword">return</span> cls._instance</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">SingleSpam</span>(<span class="params">Singleton</span>):</span></span><br><span class="line">        <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, s</span>):</span></span><br><span class="line">            self.s = s</span><br><span class="line">        <span class="function"><span class="keyword">def</span> <span class="title">__str__</span>(<span class="params">self</span>):</span></span><br><span class="line">            <span class="keyword">return</span> self.s</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">    s1 = SingleSpam(<span class="string">'spam'</span>)</span><br><span class="line">    <span class="built_in">print</span> <span class="built_in">id</span>(s1), s1</span><br><span class="line">    s2 = SingleSpam(<span class="string">'spa'</span>)</span><br><span class="line">    <span class="built_in">print</span> <span class="built_in">id</span>(s2), s2</span><br><span class="line">    <span class="built_in">print</span> <span class="built_in">id</span>(s1), s1</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>]]></content>
-  </entry>
-  <entry>
-    <title>引用计数</title>
-    <url>/id_27/</url>
-    <content><![CDATA[<h3 id="引用计数"><a href="#引用计数" class="headerlink" title="引用计数"></a>引用计数</h3><h5 id="问"><a href="#问" class="headerlink" title="问"></a>问</h5><p>引用计数这个问题是我们在面试中经常会遇到的。通常面试官会这样问：</p>
-<ol>
-<li>python中是如何管理内存的？</li>
-<li>你知道引用计数吗？<a id="more"></a>
-<h5 id="答"><a href="#答" class="headerlink" title="答"></a>答</h5></li>
-</ol>
-<p>引用计数是内存管理机制，将资源的使用次数保存起来，在引用次数变为<strong>零</strong>时进行释放</p>
-<p>比如说我们现在有一个变量a，指向内存中的字符 ‘x’ ，此时x在内存中的引用计数为1，然后又有一个变量b，b=a</p>
-<p>此时(b=a)和(a=’x’)是相等的，那这个时候x在内存中的引用计数就会+1变为2</p>
-<p><img src="/id_27/%E4%BE%8B.png" alt="案例"></p>
-<h4 id="引用计数的好处"><a href="#引用计数的好处" class="headerlink" title="引用计数的好处"></a>引用计数的好处</h4><p>我们可以举一些生活中的场景，比如说我们出去<strong>旅游</strong>，朋友提前抵达并开好了房间，这样我们就可以免费跟朋友住一间房，这样既节约了我们的时间，又节约了我们另外开房需要支付的资金。</p>
-<ul>
-<li>可知：减少了内存碎片的产生，</li>
-<li>并且可以对于我们在创建和释放内存中有一定的资源开销的节省。</li>
-<li>可以更快的进行资源管理</li>
-</ul>
-<p>那同样，当我们旅途结束，不需要再居住的时候，所有人离开酒店，那这个房间就会被酒店的人员进行清理，处理。</p>
-<ul>
-<li>这样就像引用计数中计数为0时，内存会被回收掉是一样的</li>
-</ul>
-<h4 id="查看引用计数"><a href="#查看引用计数" class="headerlink" title="查看引用计数"></a>查看引用计数</h4><p>查看引用计数我们是使用了sys模块中getrefcount方法</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">C:\Users\Lenovo&gt;python.exe</span><br><span class="line">Python <span class="number">3.7</span><span class="number">.0</span> (v3<span class="number">.7</span><span class="number">.0</span>:1bf9cc5093, Jun <span class="number">27</span> <span class="number">2018</span>, 04:<span class="number">59</span>:<span class="number">51</span>) [MSC v<span class="number">.1914</span> <span class="number">64</span> bit (AMD64)] on win32</span><br><span class="line">Type <span class="string">"help"</span>, <span class="string">"copyright"</span>, <span class="string">"credits"</span> <span class="keyword">or</span> <span class="string">"license"</span> <span class="keyword">for</span> more information.</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> sys</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sys.getrefcount(<span class="number">1</span>)</span><br><span class="line"><span class="number">119</span></span><br><span class="line"><span class="comment"># 得出常量1在内存中的引用计数为119</span></span><br></pre></td></tr></tbody></table></figure>
-<h4 id="那什么时候会用到引用计数呢"><a href="#那什么时候会用到引用计数呢" class="headerlink" title="那什么时候会用到引用计数呢"></a>那什么时候会用到引用计数呢</h4><p>有两点：</p>
-<p>1、 变量互相赋值的时候</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="string">'x'</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = a</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">id</span>(a)</span><br><span class="line"><span class="number">3242716434928</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">id</span>(b)</span><br><span class="line"><span class="number">3242716434928</span></span><br><span class="line"><span class="comment"># 此时我们可以看出两个变量指向的内存地址是完全一样的 。可得变量互相赋值的时候用到了引用计数</span></span><br></pre></td></tr></tbody></table></figure>
-<p>2、常用对象创建时</p>
-<p>python本身含有a-z,A-Z,0-9等常见值的引用</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>c = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>d = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">id</span>(a)</span><br><span class="line"><span class="number">140707666383904</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">id</span>(b)</span><br><span class="line"><span class="number">140707666383904</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">id</span>(c)</span><br><span class="line"><span class="number">140707666383904</span></span><br><span class="line"><span class="comment"># 此时我们可以看出a,b,c的内存地址都是完全一致的， 可得常用对象创建时用到了引用计数</span></span><br></pre></td></tr></tbody></table></figure>
-<h4 id="如何减少引用次数"><a href="#如何减少引用次数" class="headerlink" title="如何减少引用次数"></a>如何减少引用次数</h4><p>有两点</p>
-<p>1、变量被重新赋值为别的值</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>c = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>d = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sys.getrefcount(<span class="number">1</span>)</span><br><span class="line"><span class="number">123</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="string">'a'</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sys.getrefcount(<span class="number">1</span>)</span><br><span class="line"><span class="number">122</span></span><br><span class="line"><span class="comment"># 可以看出，当a被重新赋值后再次查看1的引用计数是减少了1的</span></span><br></pre></td></tr></tbody></table></figure>
-<p>2、del  删除变量</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>c = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>d = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sys.getrefcount(<span class="number">1</span>)</span><br><span class="line"><span class="number">123</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">del</span> a</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sys.getrefcount(<span class="number">1</span>)</span><br><span class="line"><span class="number">122</span></span><br><span class="line"><span class="comment"># 可以看出，当a被del删除后再次查看1的引用计数是减少了1的</span></span><br></pre></td></tr></tbody></table></figure>
-<h4 id="引用计数的缺点"><a href="#引用计数的缺点" class="headerlink" title="引用计数的缺点"></a>引用计数的缺点</h4><p>那引用计数真的这么完美吗，不占内存地址，用完即释放，nonono,当然不是</p>
-<p>引用计数最大的缺点就是<strong>循环引用</strong></p>
-<p>那循环引用是什么呢？</p>
-<p>循环引用就是两个变量互相引用时假设已经被释放，但引用计数不为0，那就会导致这两个变量无法被直接回收</p>
-<p><strong>那循环引用有什么解决办法吗？</strong></p>
-<p>那肯定是有的，python中解决循环引用的方法就是<strong>标记-清除</strong><br>请移步下一节：<a href="https://www.hr915.xyz/2018/09/05/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6/">https://www.hr915.xyz/2018/09/05/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6/</a></p>
-]]></content>
       <categories>
-        <category>python</category>
-      </categories>
-      <tags>
-        <tag>python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>垃圾回收机制之标记-清除</title>
-    <url>/id_28/</url>
-    <content><![CDATA[<h3 id="垃圾回收机制"><a href="#垃圾回收机制" class="headerlink" title="垃圾回收机制"></a>垃圾回收机制</h3><p>垃圾自动回收机制的出现使编程更加的简单，使得我们不需要再去考虑内存分配和释放的问题，而是更加的专注在我们产品功能的实现上</p>
-<p>目前最基本的垃圾收集算法有四种,标记-清除算法(mark-sweep),标记-压缩算法(mark-compact),复制算法(copying)以及引用计数算法(reference counting).而现代流行的垃圾收集算法一般是由这四种中的其中几种算法相互组合而成，比如说，对堆(heap)的一部分采用标记-清除算法，对堆(heap)的另外一部分则采用复制算法等等。今天我们主要来看下标记-清除算法的原理。</p>
-<a id="more"></a>
-<h4 id="标记-清除"><a href="#标记-清除" class="headerlink" title="标记-清除"></a>标记-清除</h4><p>标记-清除算法分为两个阶段，标记(mark)和清除(sweep)</p>
-<h5 id="标记："><a href="#标记：" class="headerlink" title="标记："></a>标记：</h5><p>在内存中对每一个被使用到的变量来进行标记</p>
-<p>标记是从根对象开始工作，所有能够和根对象联系的变量我们都会有相应的标记。</p>
-<h5 id="标记举例"><a href="#标记举例" class="headerlink" title="标记举例"></a>标记举例</h5><p><img src="/id_28/01.png" alt="标记"></p>
-<p><img src="/id_28/02.png" alt="标记"></p>
-<p><img src="/id_28/03.png" alt="标记"></p>
-<h5 id="清除"><a href="#清除" class="headerlink" title="清除:"></a>清除:</h5><p>清除主要是将内存中无关联根对象的并且没有被标记的变量给杀死，释放掉</p>
-<p><img src="/id_28/04.png" alt="image-20210324190403266"></p>
-<p>图中a和b已经和根对象没有关系了，而且并没有被标记，所以就会被清除掉</p>
-<h4 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h4><p>总的来说，在标记-清除过程中,他会扫描整个内存空间，扫描过程中python程序会暂停，被标记的对象不会被回收，没有标记的对象会被回收掉。<br>但是我们整个python程序暂停，暂停会导致程序无法正常运行，让程序运行时出现一些问题从而造成程序阻塞问题<br>那python呢就引入了<strong>分代回收</strong>来避免标记-清除，由于每一次过程都需要去大量的遍历整块内存而造成的程序阻塞问题</p>
-<p>分代回收参考下一篇文章：<a href="https://www.hr915.xyz/2018/09/05/%E5%88%86%E4%BB%A3%E5%9B%9E%E6%94%B6/">https://www.hr915.xyz/2018/09/05/%E5%88%86%E4%BB%A3%E5%9B%9E%E6%94%B6/</a></p>
-]]></content>
-      <categories>
-        <category>python</category>
+        <category>后端</category>
       </categories>
       <tags>
         <tag>python</tag>
@@ -783,7 +856,40 @@
 <h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>我们python管理内存是以引用计数为主，标记清除和分代回收为辅的方法来管理内存的</p>
 ]]></content>
       <categories>
-        <category>python</category>
+        <category>后端</category>
+      </categories>
+      <tags>
+        <tag>python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>周期总结</title>
+    <url>/id_30/</url>
+    <content><![CDATA[<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>转眼一个周期过去了，学了很多零碎的知识点。有遇到困难，有得到解惑。</p>
+<a id="more"></a>
+
+<p>day01: 在vue中使用ant_design<br>ant_design+vue官方文档：<a href="https://antdv.com/docs/vue/introduce-cn/">https://antdv.com/docs/vue/introduce-cn/</a></p>
+<p>day02: IT新闻资讯<br>网址: <a href="https://www.cnbeta.com/">https://www.cnbeta.com/</a></p>
+<p>day03: redis实现输入密码错误五次封禁账号<br>移步: <a href="https://www.hr915.xyz/id_20/">https://www.hr915.xyz/id_20/</a></p>
+<p>day04: httpx编写测试脚本<br>移步: <a href="https://www.hr915.xyz/id_6/">https://www.hr915.xyz/id_6/</a></p>
+<p>day05: 异步任务队列<br>移步: <a href="https://www.hr915.xyz/id_19/">https://www.hr915.xyz/id_19/</a></p>
+<p>day06: 加权队列<br>移步: <a href="https://www.hr915.xyz/id_21/">https://www.hr915.xyz/id_21/</a></p>
+<p>day07: 异步消费<br>移步: <a href="https://www.hr915.xyz/id_22/">https://www.hr915.xyz/id_22/</a></p>
+<p>day08: 权限模型</p>
+<p>day09: 三方登录<br>移步: <a href="https://www.hr915.xyz/id_13/">https://www.hr915.xyz/id_13/</a></p>
+<p>day10: 位运算<br>移步: <a href="https://www.hr915.xyz/id_23/">https://www.hr915.xyz/id_23/</a></p>
+<p>day11: 工单分类</p>
+<p>day12: Mongodb<br>移步: <a href="https://www.hr915.xyz/id_24/">https://www.hr915.xyz/id_24/</a></p>
+<p>day13: 审批流程</p>
+<p>day14: 栈的使用<br>移步: <a href="https://www.hr915.xyz/id_25/">https://www.hr915.xyz/id_25/</a></p>
+<p>day15: 设计模式<br>移步: <a href="https://www.hr915.xyz/id_26/">https://www.hr915.xyz/id_26/</a></p>
+<p>day16: 消息盒子</p>
+<p>day17: websocket<br>移步: <a href="https://www.hr915.xyz/id_10/">https://www.hr915.xyz/id_10/</a></p>
+<p>day18: 客服系统</p>
+<p>day19: 部署</p>
+]]></content>
+      <categories>
+        <category>总结</category>
       </categories>
       <tags>
         <tag>python</tag>
@@ -847,38 +953,11 @@
 <p>git status</p>
 </blockquote>
 ]]></content>
+      <categories>
+        <category>代码库</category>
+      </categories>
       <tags>
         <tag>git</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>周期总结</title>
-    <url>/id_30/</url>
-    <content><![CDATA[<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>转眼一个周期过去了，学了很多零碎的知识点。有遇到困难，有得到解惑。</p>
-<a id="more"></a>
-
-<p>day01: 在vue中使用ant_design<br>ant_design+vue官方文档：<a href="https://antdv.com/docs/vue/introduce-cn/">https://antdv.com/docs/vue/introduce-cn/</a></p>
-<p>day02: IT新闻资讯<br>网址: <a href="https://www.cnbeta.com/">https://www.cnbeta.com/</a></p>
-<p>day03: redis实现输入密码错误五次封禁账号<br>移步: <a href="https://www.hr915.xyz/id_20/">https://www.hr915.xyz/id_20/</a></p>
-<p>day04: httpx编写测试脚本<br>移步: <a href="https://www.hr915.xyz/id_6/">https://www.hr915.xyz/id_6/</a></p>
-<p>day05: 异步任务队列<br>移步: <a href="https://www.hr915.xyz/id_19/">https://www.hr915.xyz/id_19/</a></p>
-<p>day06: 加权队列<br>移步: <a href="https://www.hr915.xyz/id_21/">https://www.hr915.xyz/id_21/</a></p>
-<p>day07: 异步消费<br>移步: <a href="https://www.hr915.xyz/id_22/">https://www.hr915.xyz/id_22/</a></p>
-<p>day08: 权限模型</p>
-<p>day09: 三方登录<br>移步: <a href="https://www.hr915.xyz/id_13/">https://www.hr915.xyz/id_13/</a></p>
-<p>day10: 位运算<br>移步: <a href="https://www.hr915.xyz/id_23/">https://www.hr915.xyz/id_23/</a></p>
-<p>day11: 工单分类</p>
-<p>day12: Mongodb<br>移步: <a href="https://www.hr915.xyz/id_24/">https://www.hr915.xyz/id_24/</a></p>
-<p>day13: 审批流程</p>
-<p>day14: 栈的使用<br>移步: <a href="https://www.hr915.xyz/id_25/">https://www.hr915.xyz/id_25/</a></p>
-<p>day15: 设计模式<br>移步: <a href="https://www.hr915.xyz/id_26/">https://www.hr915.xyz/id_26/</a></p>
-<p>day16: 消息盒子</p>
-<p>day17: websocket<br>移步: <a href="https://www.hr915.xyz/id_10/">https://www.hr915.xyz/id_10/</a></p>
-<p>day18: 客服系统</p>
-<p>day19: 部署</p>
-]]></content>
-      <tags>
-        <tag>python</tag>
       </tags>
   </entry>
   <entry>
@@ -919,6 +998,9 @@
 </ul>
 <p>vue-git地址：<a href="https://gitee.com/before-l/vue-project.git">https://gitee.com/before-l/vue-project.git</a></p>
 ]]></content>
+      <categories>
+        <category>前端</category>
+      </categories>
       <tags>
         <tag>axios</tag>
       </tags>
@@ -1108,6 +1190,9 @@
 </ul>
 <p>Dockerfile学习自:<a href="https://www.docker.org.cn/dockerppt/114.html">https://www.docker.org.cn/dockerppt/114.html</a></p>
 <h3 id="OK-本文到此结束"><a href="#OK-本文到此结束" class="headerlink" title="OK 本文到此结束"></a>OK 本文到此结束</h3>]]></content>
+      <categories>
+        <category>部署</category>
+      </categories>
       <tags>
         <tag>docker</tag>
       </tags>
@@ -1171,29 +1256,11 @@
 <p>docker run -itd -p 11111:22(映射的端口号)  镜像ID  /bin/bash</p>
 </blockquote>
 ]]></content>
+      <categories>
+        <category>部署</category>
+      </categories>
       <tags>
         <tag>docker</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Httpx测试脚本</title>
-    <url>/id_6/</url>
-    <content><![CDATA[<p>在 Python 众多的 HTTP 客户端中，最有名的莫过于<strong>requests</strong>、<strong>aiohttp</strong>和<strong>httpx</strong>。<br>在不借助其他第三方库的情况下，<strong>requests</strong>只能发送同步请求；<strong>aiohttp</strong>只能发送异步请求；<br><strong>httpx</strong>既能发送同步请求，又能发送异步请求</p>
-<a id="more"></a>
-<blockquote>
-<p>所谓的<strong>同步</strong>请求，是指在单进程单线程的代码中，发起一次请求后，在收到返回结果之前，不能发起下一次请求。<br>所谓<strong>异步</strong>请求，是指在单进程单线程的代码中，发起一次请求后，在等待网站返回结果的时间里，可以继续发送更多请求</p>
-</blockquote>
-<p>那么我们篇文章就来介绍一下使用<strong>httpx</strong>编写测试脚本发送请求</p>
-<ul>
-<li>相关问题：</li>
-</ul>
-<p><strong>问</strong>：怎么在终端运行python文件？<br><strong>答</strong>：在终端运行python文件，需要先进到要运行的文件目录下，然后 python 文件名<br>废话不多说，上代码。</p>
-<h3 id="用httpx发送同步请求-和requests就差个关键字"><a href="#用httpx发送同步请求-和requests就差个关键字" class="headerlink" title="用httpx发送同步请求(和requests就差个关键字)"></a>用httpx发送同步请求(和requests就差个关键字)</h3><p>httpx由于支持异步请求，所以发送大量的请求时，httpx的效率是优于requests的</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># httpx发送请求</span></span><br><span class="line"></span><br><span class="line">url = <span class="string">'http://127.0.0.1:8000/p8/user/'</span></span><br><span class="line">data = {</span><br><span class="line">    <span class="string">'username'</span>: <span class="string">'admin'</span>,</span><br><span class="line">    <span class="string">'password'</span>: <span class="string">'123456'</span></span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">r = httpx.post(url=url,data=data)</span><br><span class="line"><span class="comment"># requests发送请求</span></span><br><span class="line"><span class="comment"># r = requests.post(url=url,data=data)</span></span><br><span class="line">print(r.text)</span><br></pre></td></tr></tbody></table></figure>
-<h3 id="用httpx发送异步请求"><a href="#用httpx发送异步请求" class="headerlink" title="用httpx发送异步请求"></a>用httpx发送异步请求</h3><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> httpx</span><br><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line">url = <span class="string">'http://127.0.0.1:8000/p8/user/'</span></span><br><span class="line">data = {</span><br><span class="line">    <span class="string">'username'</span>: <span class="string">'before'</span>,</span><br><span class="line">    <span class="string">'password'</span>: <span class="string">'123456'</span></span><br><span class="line">}</span><br><span class="line">update = {</span><br><span class="line">    <span class="string">'uid'</span>: <span class="number">2</span>,</span><br><span class="line">    <span class="string">'username'</span>: <span class="string">'abc'</span>,</span><br><span class="line">    <span class="string">'password'</span>: <span class="string">'123456'</span></span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">fun</span>():</span></span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">with</span> httpx.AsyncClient() <span class="keyword">as</span> client:</span><br><span class="line">        r = <span class="keyword">await</span> client.get(url)</span><br><span class="line">        c = <span class="keyword">await</span> client.post(url, data=data)</span><br><span class="line">        u = <span class="keyword">await</span> client.put(url, data=update)</span><br><span class="line">        d = <span class="keyword">await</span> client.delete(url, params={<span class="string">'uid'</span>: <span class="number">1</span>})</span><br><span class="line">        print(<span class="string">"查"</span>, r.json())</span><br><span class="line">        print(<span class="string">"填"</span>, c.json())</span><br><span class="line">        print(<span class="string">"改"</span>, u.json())</span><br><span class="line">        print(<span class="string">"删"</span>, d.json())</span><br><span class="line"></span><br><span class="line">asyncio.run(fun())</span><br></pre></td></tr></tbody></table></figure>
-<h3 id="快拿去测试接口吧"><a href="#快拿去测试接口吧" class="headerlink" title="快拿去测试接口吧"></a>快拿去测试接口吧</h3>]]></content>
-      <tags>
-        <tag>httpx</tag>
       </tags>
   </entry>
   <entry>
@@ -1213,9 +1280,37 @@
 <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;!-- 子组件 Son  --&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">    &lt;div&gt;</span><br><span class="line">      &lt;button @click="toFather"&gt;向父组件传值&lt;/button&gt;</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">export default {</span><br><span class="line">  data(){</span><br><span class="line">    return{</span><br><span class="line">      data:"我是子组件"</span><br><span class="line">    }</span><br><span class="line">  },</span><br><span class="line">  methods:{</span><br><span class="line">      toFather(){</span><br><span class="line">        this.$emit('event', this.data)</span><br><span class="line">      }</span><br><span class="line">  },</span><br><span class="line">}</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;style&gt;&lt;/style&gt;</span><br></pre></td></tr></tbody></table></figure>
 <p>效果：<br><img src="/id_7/02.png" alt="子父组件传参"></p>
 ]]></content>
+      <categories>
+        <category>前端</category>
+      </categories>
       <tags>
         <tag>vue</tag>
         <tag>组件</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Httpx测试脚本</title>
+    <url>/id_6/</url>
+    <content><![CDATA[<p>在 Python 众多的 HTTP 客户端中，最有名的莫过于<strong>requests</strong>、<strong>aiohttp</strong>和<strong>httpx</strong>。<br>在不借助其他第三方库的情况下，<strong>requests</strong>只能发送同步请求；<strong>aiohttp</strong>只能发送异步请求；<br><strong>httpx</strong>既能发送同步请求，又能发送异步请求</p>
+<a id="more"></a>
+<blockquote>
+<p>所谓的<strong>同步</strong>请求，是指在单进程单线程的代码中，发起一次请求后，在收到返回结果之前，不能发起下一次请求。<br>所谓<strong>异步</strong>请求，是指在单进程单线程的代码中，发起一次请求后，在等待网站返回结果的时间里，可以继续发送更多请求</p>
+</blockquote>
+<p>那么我们篇文章就来介绍一下使用<strong>httpx</strong>编写测试脚本发送请求</p>
+<ul>
+<li>相关问题：</li>
+</ul>
+<p><strong>问</strong>：怎么在终端运行python文件？<br><strong>答</strong>：在终端运行python文件，需要先进到要运行的文件目录下，然后 python 文件名<br>废话不多说，上代码。</p>
+<h3 id="用httpx发送同步请求-和requests就差个关键字"><a href="#用httpx发送同步请求-和requests就差个关键字" class="headerlink" title="用httpx发送同步请求(和requests就差个关键字)"></a>用httpx发送同步请求(和requests就差个关键字)</h3><p>httpx由于支持异步请求，所以发送大量的请求时，httpx的效率是优于requests的</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># httpx发送请求</span></span><br><span class="line"></span><br><span class="line">url = <span class="string">'http://127.0.0.1:8000/p8/user/'</span></span><br><span class="line">data = {</span><br><span class="line">    <span class="string">'username'</span>: <span class="string">'admin'</span>,</span><br><span class="line">    <span class="string">'password'</span>: <span class="string">'123456'</span></span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">r = httpx.post(url=url,data=data)</span><br><span class="line"><span class="comment"># requests发送请求</span></span><br><span class="line"><span class="comment"># r = requests.post(url=url,data=data)</span></span><br><span class="line">print(r.text)</span><br></pre></td></tr></tbody></table></figure>
+<h3 id="用httpx发送异步请求"><a href="#用httpx发送异步请求" class="headerlink" title="用httpx发送异步请求"></a>用httpx发送异步请求</h3><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> httpx</span><br><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line">url = <span class="string">'http://127.0.0.1:8000/p8/user/'</span></span><br><span class="line">data = {</span><br><span class="line">    <span class="string">'username'</span>: <span class="string">'before'</span>,</span><br><span class="line">    <span class="string">'password'</span>: <span class="string">'123456'</span></span><br><span class="line">}</span><br><span class="line">update = {</span><br><span class="line">    <span class="string">'uid'</span>: <span class="number">2</span>,</span><br><span class="line">    <span class="string">'username'</span>: <span class="string">'abc'</span>,</span><br><span class="line">    <span class="string">'password'</span>: <span class="string">'123456'</span></span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">fun</span>():</span></span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">with</span> httpx.AsyncClient() <span class="keyword">as</span> client:</span><br><span class="line">        r = <span class="keyword">await</span> client.get(url)</span><br><span class="line">        c = <span class="keyword">await</span> client.post(url, data=data)</span><br><span class="line">        u = <span class="keyword">await</span> client.put(url, data=update)</span><br><span class="line">        d = <span class="keyword">await</span> client.delete(url, params={<span class="string">'uid'</span>: <span class="number">1</span>})</span><br><span class="line">        print(<span class="string">"查"</span>, r.json())</span><br><span class="line">        print(<span class="string">"填"</span>, c.json())</span><br><span class="line">        print(<span class="string">"改"</span>, u.json())</span><br><span class="line">        print(<span class="string">"删"</span>, d.json())</span><br><span class="line"></span><br><span class="line">asyncio.run(fun())</span><br></pre></td></tr></tbody></table></figure>
+<h3 id="快拿去测试接口吧"><a href="#快拿去测试接口吧" class="headerlink" title="快拿去测试接口吧"></a>快拿去测试接口吧</h3>]]></content>
+      <categories>
+        <category>后端</category>
+      </categories>
+      <tags>
+        <tag>python</tag>
+        <tag>httpx</tag>
       </tags>
   </entry>
   <entry>
@@ -1235,6 +1330,9 @@
 <hr>
 <figure class="highlight js"><table><tbody><tr><td class="code"><pre><span class="line"><span class="function"><span class="title">beforeRouteEnter</span>(<span class="params">to, <span class="keyword">from</span>, next</span>)</span> {</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"****************Test1****我来啦**************"</span>);</span><br><span class="line">  next(<span class="function"><span class="params">vm</span> =&gt;</span> {</span><br><span class="line">    <span class="comment">//因为当钩子执行前，组件实例还没被创建</span></span><br><span class="line">    <span class="comment">// vm 就是当前组件的实例相当于上面的 this，所以在 next 方法里你就可以把 vm 当 this 来用了。</span></span><br><span class="line">    <span class="built_in">console</span>.log(vm);<span class="comment">//当前组件的实例</span></span><br><span class="line">  });</span><br><span class="line">},</span><br><span class="line"><span class="function"><span class="title">beforeRouteUpdate</span>(<span class="params">to, <span class="keyword">from</span>, next</span>)</span> {</span><br><span class="line">  <span class="comment">//在当前路由改变，但是该组件被复用时调用</span></span><br><span class="line">  <span class="comment">//对于一个带有动态参数的路径 /good/:id，在 /good/1 和 /good/2 之间跳转的时候，</span></span><br><span class="line">  <span class="comment">// 由于会渲染同样的good组件，因此组件实例会被复用。而这个钩子就会在这个情况下被调用。</span></span><br><span class="line">  <span class="comment">// 可以访问组件实例 `this`</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">//简单来说就是在跳转子路由的时候可以获取query和params</span></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"****************Test1*******Update***********"</span>);</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="built_in">this</span>, <span class="string">'Update'</span>); <span class="comment">//当前组件实例</span></span><br><span class="line">  next();</span><br><span class="line">}</span><br><span class="line"><span class="function"><span class="title">beforeRouteLeave</span>(<span class="params">to, <span class="keyword">from</span>, next</span>)</span> {</span><br><span class="line">  <span class="comment">// 导航离开该组件的对应路由时调用</span></span><br><span class="line">  <span class="comment">// 可以访问组件实例 `this`</span></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"****************Test1****我走啦**************"</span>);</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="built_in">this</span>, <span class="string">'Leave'</span>); <span class="comment">//当前组件实例</span></span><br><span class="line">  next();</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
 ]]></content>
+      <categories>
+        <category>前端</category>
+      </categories>
       <tags>
         <tag>vue</tag>
       </tags>
@@ -1257,9 +1355,11 @@
 <li>比如某些网络请求（比如登录token）,必须携带一些特殊的信息。</li>
 </ul>
 ]]></content>
+      <categories>
+        <category>前端</category>
+      </categories>
       <tags>
         <tag>vue</tag>
-        <tag>javascript</tag>
       </tags>
   </entry>
 </search>
