@@ -527,9 +527,11 @@
 <figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 首先进行方法封装</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyQueue</span>:</span></span><br><span class="line">    <span class="comment"># 队列遵循先进先出的原则</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, name, **redis_kwargs</span>):</span></span><br><span class="line">        <span class="comment"># **kwarys不定长参数  用于可传可不传的参数 </span></span><br><span class="line">        <span class="comment"># kwargs是用来传键值对，args 一般用来传列表和元祖</span></span><br><span class="line">        <span class="comment"># self.__变量名：使用双下划线开头的变量是私有变量，在类外不可以被调用</span></span><br><span class="line">        <span class="comment"># redis的默认参数为：host='localhost', port=6379, db=0， 其中db为定义redis的第几个库</span></span><br><span class="line">        self.__db = redis.Redis(**redis_kwargs, decode_responses=<span class="literal">True</span>)</span><br><span class="line">        self.key = name</span><br><span class="line">        <span class="comment"># llen:获取列表长度</span></span><br><span class="line">        <span class="comment"># lrange:获取列表指定范围内的元素</span></span><br><span class="line">        self.r_len = self.__db.llen(self.key)</span><br><span class="line">        self.l = self.__db.lrange(self.key, <span class="number">0</span>, -<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">push</span>(<span class="params">self, x: <span class="built_in">tuple</span></span>):</span></span><br><span class="line">        <span class="comment"># rpush:在列表中添加一个或多个值</span></span><br><span class="line">        self.__db.rpush(self.key, x)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">show</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(self.__db.lrange(self.key, <span class="number">0</span>, -<span class="number">1</span>))</span><br><span class="line">        <span class="keyword">return</span> self.__db.lrange(self.key, <span class="number">0</span>, -<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 排序用来加权(加权是celery没有的)</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">sort</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="comment"># 因为redis里存的是字符串，而排序的依据是元组中最后一个元素为int,所以使用-2下标</span></span><br><span class="line">        <span class="comment"># 此处可用eval </span></span><br><span class="line">        self.l = <span class="built_in">sorted</span>(self.l, key=<span class="keyword">lambda</span> x: x[-<span class="number">2</span>], reverse=<span class="literal">True</span>)</span><br><span class="line">        <span class="keyword">return</span> self.l</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">pop</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="comment"># pop(0):移出并获取列表的第一个元素</span></span><br><span class="line">        <span class="comment"># lrem 根据第二个参数的值，移除列表中与参数相等的元素。</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> self.l:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line">        item = self.l.pop(<span class="number">0</span>)</span><br><span class="line">        self.__db.lrem(self.key, item, <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> item</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">clear</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="comment"># 用来清空列表</span></span><br><span class="line">        <span class="keyword">return</span> self.__db.delete(self.key)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    m = MyQueue(<span class="string">'que'</span>)</span><br><span class="line">    <span class="comment"># 添加到redis</span></span><br><span class="line">    i = <span class="number">1</span></span><br><span class="line">    <span class="comment"># 列表推导式</span></span><br><span class="line">    [m.push(i,i+<span class="number">1</span>,i+<span class="number">2</span>) <span class="keyword">for</span> item <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>) i++]</span><br><span class="line">    <span class="comment"># 将添加进去的数据排序 </span></span><br><span class="line">    m.sort()</span><br><span class="line">    <span class="comment"># 删除排序后列表中的第一个元素</span></span><br><span class="line">    m.pop()</span><br><span class="line">    <span class="comment"># 清空列表</span></span><br><span class="line">    m.clear()</span><br></pre></td></tr></tbody></table></figure>]]></content>
       <categories>
         <category>数据库</category>
+        <category>数据结构</category>
       </categories>
       <tags>
         <tag>redis</tag>
+        <tag>队列</tag>
       </tags>
   </entry>
   <entry>
@@ -654,11 +656,11 @@
 <h4 id="栈与队列的不同点："><a href="#栈与队列的不同点：" class="headerlink" title="栈与队列的不同点："></a>栈与队列的不同点：</h4><p>1.删除数据元素的位置不同，栈的删除操作在表尾进行，队列的删除操作在表头进行。<br>2.应用场景不同；常见栈的应用场景包括括号问题的求解，表达式的转换和求值，函数调用和递归实现，深度优先搜索遍历等；常见的队列的应用场景包括计算机系统中各种资源的管理，消息缓冲器的管理和广度优先搜索遍历等。<br>3.顺序栈能够实现多栈空间共享，而顺序队列不能。</p>
 ]]></content>
       <categories>
-        <category>后端</category>
+        <category>数据结构</category>
       </categories>
       <tags>
-        <tag>python</tag>
         <tag>进制</tag>
+        <tag>栈</tag>
       </tags>
   </entry>
   <entry>
@@ -1360,6 +1362,87 @@
       </categories>
       <tags>
         <tag>vue</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Git分支</title>
+    <url>/id_33/</url>
+    <content><![CDATA[<h3 id="Git分支"><a href="#Git分支" class="headerlink" title="Git分支"></a>Git分支</h3><h4 id="什么是分支"><a href="#什么是分支" class="headerlink" title="什么是分支"></a>什么是分支</h4><p>分支是为了将修改记录的整体流程分叉保存。分叉后的分支不受其他分支的影响，所以在同一个数据库里可以同时进行多个修改。<br>简单理解：可以理解为复仇者联盟里面的多元宇宙，各个宇宙之间互不影响，到某一时间点会合并</p>
+<a id="more"></a>
+<h4 id="好处"><a href="#好处" class="headerlink" title="好处"></a>好处</h4><p>为了不受其他开发人员的影响，可以在主分支上建立自己专用的分支。<br>完成工作后，将自己分支上的修改合并到主分支。因为每一次提交的历史记录都会被保存，所以当发生问题时，定位和修改造成问题的提交就容易多了。</p>
+<h4 id="操作分支的简单命令"><a href="#操作分支的简单命令" class="headerlink" title="操作分支的简单命令"></a>操作分支的简单命令</h4><p>查看所有分支</p>
+<blockquote>
+<p>git branch -a</p>
+</blockquote>
+<p>查看云端分支</p>
+<blockquote>
+<p>git branch -r</p>
+</blockquote>
+<p>拉取云端代码or分支</p>
+<blockquote>
+<p>git pull</p>
+</blockquote>
+<p>创建分支</p>
+<blockquote>
+<p>git branch 分支名</p>
+</blockquote>
+<p>切换分支</p>
+<blockquote>
+<p>git checkout -b 或者git switch -c </p>
+</blockquote>
+<p>合并某分支到当前分支</p>
+<blockquote>
+<p>git merge 分支名</p>
+</blockquote>
+<p>删除分支</p>
+<blockquote>
+<p>git branch -d</p>
+</blockquote>
+<p>查看提交日志</p>
+<blockquote>
+<p>git log</p>
+</blockquote>
+<p>代码回退</p>
+<blockquote>
+<p>git reset –hard 提交ID</p>
+</blockquote>
+<p>回退完需要提交到线上 但是只需要提交头部 </p>
+<blockquote>
+<p>git push origin HEAD –force</p>
+<p>// force强制提交,注意：不能跳分支回退</p>
+</blockquote>
+<p>参考链接：<a href="https://backlog.com/git-tutorial/cn/">https://backlog.com/git-tutorial/cn/</a></p>
+]]></content>
+      <categories>
+        <category>代码库</category>
+      </categories>
+      <tags>
+        <tag>git</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>数据结构之二叉树</title>
+    <url>/id_34/</url>
+    <content><![CDATA[<h3 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h3><p>简单的三种数据结构：</p>
+<p><img src="/id_34/1.png" alt="数据结构"></p>
+<a id="more"></a>
+<p>树：由一个根节点分出许多子节点，最终的节点叫做叶子节点</p>
+<p>二叉树：每一个节点都会生出两个子节点(左节点or右节点)，最终的节点叫做叶子节点</p>
+<p>栈和队列想查询某个元素只有遍历查询，而树每个节点之间都有关联，便于高效查询</p>
+<p>查询效率第一位的时候需要用到树结构</p>
+<h4 id="遍历方式："><a href="#遍历方式：" class="headerlink" title="遍历方式："></a>遍历方式：</h4><p>树遍历的三种方式：前序遍历，中序遍历，后序遍历</p>
+<ul>
+<li>前序遍历 从根节点开始输出—&gt;左节点输出，继续向下左节点输出，直到叶子节点—&gt;右节点输出—&gt;   简单来说: 根—&gt;左—&gt;右</li>
+<li>中序遍历 先找左子树，找到叶子结点输出—&gt;上一级输出—-&gt;右节点的左叶子结点输出—&gt;上一级输出—右节点的左叶子节点输出—&gt;  简单来说: 左—&gt;根—&gt;右</li>
+<li>后序遍历 从子节点的左/右叶子节点，开始输出—&gt;右节点输出—&gt;上级节点—&gt;   简单来说: 左—&gt;右—&gt;根</li>
+</ul>
+<p>举个例子:<br><img src="/id_34/%E4%B8%89%E7%A7%8D%E9%81%8D%E5%8E%86.png" alt="数据结构"></p>
+<h4 id="代码实现、"><a href="#代码实现、" class="headerlink" title="代码实现、"></a>代码实现、</h4><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Tree</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        self.left = <span class="literal">None</span></span><br><span class="line">        self.right = <span class="literal">None</span></span><br><span class="line">        self.data = <span class="literal">None</span></span><br><span class="line">        self.lis = []</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">preface</span>(<span class="params">self, node</span>):</span></span><br><span class="line">        <span class="string">'''先序'''</span></span><br><span class="line">        self.lis.append(node.data)</span><br><span class="line">        <span class="keyword">if</span> node.left != <span class="literal">None</span>:</span><br><span class="line">            self.preface(node.left)</span><br><span class="line">        <span class="keyword">if</span> node.right != <span class="literal">None</span>:</span><br><span class="line">            self.preface(node.right)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">middleorder</span>(<span class="params">self, node</span>):</span></span><br><span class="line">        <span class="string">'''中序'''</span></span><br><span class="line">        <span class="keyword">if</span> node.left != <span class="literal">None</span>:</span><br><span class="line">            self.middleorder(node.left)</span><br><span class="line"></span><br><span class="line">        self.lis.append(node.data)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> node.right != <span class="literal">None</span>:</span><br><span class="line">            self.middleorder(node.right)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">postscript</span>(<span class="params">self, node</span>):</span></span><br><span class="line">        <span class="string">'''后序'''</span></span><br><span class="line">        <span class="keyword">if</span> node.left != <span class="literal">None</span>:</span><br><span class="line">            self.postscript(node.left)</span><br><span class="line">        <span class="keyword">if</span> node.right != <span class="literal">None</span>:</span><br><span class="line">            self.postscript(node.right)</span><br><span class="line"></span><br><span class="line">        self.lis.append(node.data)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">search</span>(<span class="params">self, node, lis, data</span>):</span></span><br><span class="line">        <span class="string">'''查找'''</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> node.left == <span class="literal">None</span>:</span><br><span class="line">            lis = self.search(node.left, lis, data)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> node.right == <span class="literal">None</span>:</span><br><span class="line">            lis = self.search(node.right, lis, data)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> lis != []:</span><br><span class="line">            <span class="comment"># 判断当前节点是否在查询节点的线上</span></span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> node.left != <span class="literal">None</span>:</span><br><span class="line">                <span class="keyword">if</span> lis[-<span class="number">1</span>] == node.left.data:</span><br><span class="line">                    lis.append(node.data)</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> node.right != <span class="literal">None</span>:</span><br><span class="line">                <span class="keyword">if</span> lis[-<span class="number">1</span>] == node.right.data:</span><br><span class="line">                    lis.append(node.data)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> node.data == data:</span><br><span class="line">            lis.append(data)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> lis</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    root = Tree()</span><br><span class="line"></span><br><span class="line">    root.data = <span class="string">'1'</span></span><br><span class="line"></span><br><span class="line">    root.left = Tree()</span><br><span class="line">    root.left.data = <span class="string">'2'</span></span><br><span class="line"></span><br><span class="line">    root.right = Tree()</span><br><span class="line">    root.right.data = <span class="string">'3'</span></span><br><span class="line"></span><br><span class="line">    root.left.left = Tree()</span><br><span class="line">    root.left.left.data = <span class="string">'4'</span></span><br><span class="line"></span><br><span class="line">    root.left.right = Tree()</span><br><span class="line">    root.left.right.data = <span class="string">'5'</span></span><br><span class="line"></span><br><span class="line">    root.right.left = Tree()</span><br><span class="line">    root.right.left.data = <span class="string">'6'</span></span><br><span class="line"></span><br><span class="line">    root.right.right = Tree()</span><br><span class="line">    root.right.right.data = <span class="string">'7'</span></span><br><span class="line"></span><br><span class="line">    root.left.left.left = Tree()</span><br><span class="line">    root.left.left.left.data = <span class="string">'8'</span></span><br><span class="line"></span><br><span class="line">    root.left.right.left = Tree()</span><br><span class="line">    root.left.right.left.data = <span class="string">'9'</span></span><br><span class="line"></span><br><span class="line">    root.right.left.right = Tree()</span><br><span class="line">    root.right.left.right.data = <span class="string">'10'</span></span><br><span class="line"></span><br><span class="line">    root.right.right.right = Tree()</span><br><span class="line">    root.right.right.right.data = <span class="string">'11'</span></span><br><span class="line"></span><br><span class="line">    print(<span class="string">'先序:'</span>)</span><br><span class="line">    root.lis = []</span><br><span class="line">    root.preface(root)</span><br><span class="line">    print(root.lis)</span><br><span class="line">    print(<span class="string">'中序:'</span>)</span><br><span class="line">    root.lis = []</span><br><span class="line">    root.middleorder(root)</span><br><span class="line">    print(root.lis)</span><br><span class="line">    print(<span class="string">'后序:'</span>)</span><br><span class="line">    root.lis = []</span><br><span class="line">    root.postscript(root)</span><br><span class="line">    print(root.lis)</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>]]></content>
+      <categories>
+        <category>数据结构</category>
+      </categories>
+      <tags>
+        <tag>二叉树</tag>
       </tags>
   </entry>
 </search>
