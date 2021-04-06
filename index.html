@@ -166,6 +166,117 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.hr915.xyz/id_35/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/123.jpg">
+      <meta itemprop="name" content="Before">
+      <meta itemprop="description" content="I hope you're here for me">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="I hope you're here for me">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/id_35/" class="post-title-link" itemprop="url">未命名</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-04-02 11:00:24" itemprop="dateCreated datePublished" datetime="2021-04-02T11:00:24+08:00">2021-04-02</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h4 id="什么是OpenLdap"><a href="#什么是OpenLdap" class="headerlink" title="什么是OpenLdap:"></a>什么是OpenLdap:</h4><h4 id="为什么要用OpenLdap"><a href="#为什么要用OpenLdap" class="headerlink" title="为什么要用OpenLdap:"></a>为什么要用OpenLdap:</h4><h4 id="相关概念-属性"><a href="#相关概念-属性" class="headerlink" title="相关概念(属性):"></a>相关概念(属性):</h4><table>
+<thead>
+<tr>
+<th align="left">英文简称</th>
+<th align="left">英文全称</th>
+<th align="left">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">DC</td>
+<td align="left">Domain Component</td>
+<td align="left">域名的部分，其格式是将完整的域名分成几部分，如域名为xxxx.com变成dc=xxxx,dc=com。简单理解把它理解成域名标识即可。</td>
+</tr>
+<tr>
+<td align="left">OU</td>
+<td align="left">Organization Unit</td>
+<td align="left">组织单位，组织单位可以包含其他各种对象，如“开发组”（一条记录的所属组织）。简单理解把他理解成公司的组织和部门：ou=开发一组，ou=技术研发部门</td>
+</tr>
+<tr>
+<td align="left">UID</td>
+<td align="left">User Id</td>
+<td align="left">用户ID zhangsan（一条记录的ID）</td>
+</tr>
+<tr>
+<td align="left">DN</td>
+<td align="left">Distinguished Name</td>
+<td align="left">“uid=zhangsan,ou=开发一组，ou=技术研发部门,dc=xxxx,dc=com”，一条记录的位置（唯一） DN的元素包含UID（或CN) + OU + DC</td>
+</tr>
+<tr>
+<td align="left">CN</td>
+<td align="left">Common Name</td>
+<td align="left">公共名称，如“张三”（一条记录的名称）。简单理解用于描述UID的</td>
+</tr>
+<tr>
+<td align="left">rdn</td>
+<td align="left">Relative dn</td>
+<td align="left">相对辨别名，类似于文件系统中的相对路径，它是与目录树结构无关的部分，如“uid=zhangsan”或“cn= 张三”</td>
+</tr>
+<tr>
+<td align="left">SN</td>
+<td align="left">Surname</td>
+<td align="left">姓，如“张”</td>
+</tr>
+</tbody></table>
+<h5 id="DN"><a href="#DN" class="headerlink" title="DN:"></a>DN:</h5><p>LDAP连接服务器的连接字串格式为：ldap://servername/DN  </p>
+<p>其中DN有三个属性，分别是CN,OU,DC  </p>
+<p>CN, OU, DC 都是 LDAP 连接服务器的端字符串中的区别名称（DN, distinguished  name） </p>
+<p>LDAP是一种通讯协议，如同HTTP是一种协议一样的！ </p>
+<p>Restful风格==面向过程—&gt;面向资源—&gt;面向标签—&gt;面向文档</p>
+<p>面向过程==想起一出是一出，只要有功能就写新接口</p>
+<p>面向资源==封装单个接口，添加一个接口，删除一个接口，修改一个接口，多重逻辑需要多个if-else</p>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> request.method ==POST:</span><br><span class="line">	.....</span><br><span class="line"><span class="keyword">elif</span> request.method==GET:</span><br><span class="line">    </span><br></pre></td></tr></tbody></table></figure>
+<p>面向标签==封装单个接口，通过method进行语义化操作 post/put/delete/get</p>
+<p>面向文档==具备面向标签的功能语义化，在返回响应的时候告诉客户还可以做什么操作</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://www.hr915.xyz/id_34/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -840,84 +951,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://www.hr915.xyz/id_22/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/123.jpg">
-      <meta itemprop="name" content="Before">
-      <meta itemprop="description" content="I hope you're here for me">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="I hope you're here for me">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/id_22/" class="post-title-link" itemprop="url">异步消费</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-08-28 19:34:15" itemprop="dateCreated datePublished" datetime="2018-08-28T19:34:15+08:00">2018-08-28</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%90%8E%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">后端</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>异步消费可以使用很多方式来实现，我们今天就来说说异步消费的其中三种实现方式:</p>
-<ul>
-<li>多线程</li>
-<li>线程池</li>
-<li>协程</li></ul>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/id_22/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -989,7 +1022,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">33</span>
+          <span class="site-state-item-count">34</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
