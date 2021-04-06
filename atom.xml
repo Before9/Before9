@@ -101,28 +101,6 @@
   </entry>
   
   <entry>
-    <title>垃圾回收机制之标记-清除</title>
-    <link href="https://www.hr915.xyz/id_28/"/>
-    <id>https://www.hr915.xyz/id_28/</id>
-    <published>2018-09-05T13:46:23.000Z</published>
-    <updated>2021-04-06T07:01:47.503Z</updated>
-    
-    <content type="html"><![CDATA[<h3 id="垃圾回收机制"><a href="#垃圾回收机制" class="headerlink" title="垃圾回收机制"></a>垃圾回收机制</h3><p>垃圾自动回收机制的出现使编程更加的简单，使得我们不需要再去考虑内存分配和释放的问题，而是更加的专注在我们产品功能的实现上</p><p>目前最基本的垃圾收集算法有四种,标记-清除算法(mark-sweep),标记-压缩算法(mark-compact),复制算法(copying)以及引用计数算法(reference counting).而现代流行的垃圾收集算法一般是由这四种中的其中几种算法相互组合而成，比如说，对堆(heap)的一部分采用标记-清除算法，对堆(heap)的另外一部分则采用复制算法等等。今天我们主要来看下标记-清除算法的原理。</p><a id="more"></a><h4 id="标记-清除"><a href="#标记-清除" class="headerlink" title="标记-清除"></a>标记-清除</h4><p>标记-清除算法分为两个阶段，标记(mark)和清除(sweep)</p><h5 id="标记："><a href="#标记：" class="headerlink" title="标记："></a>标记：</h5><p>在内存中对每一个被使用到的变量来进行标记</p><p>标记是从根对象开始工作，所有能够和根对象联系的变量我们都会有相应的标记。</p><h5 id="标记举例"><a href="#标记举例" class="headerlink" title="标记举例"></a>标记举例</h5><p><img src="/id_28/01.png" alt="标记"></p><p><img src="/id_28/02.png" alt="标记"></p><p><img src="/id_28/03.png" alt="标记"></p><h5 id="清除"><a href="#清除" class="headerlink" title="清除:"></a>清除:</h5><p>清除主要是将内存中无关联根对象的并且没有被标记的变量给杀死，释放掉</p><p><img src="/id_28/04.png" alt="image-20210324190403266"></p><p>图中a和b已经和根对象没有关系了，而且并没有被标记，所以就会被清除掉</p><h4 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h4><p>总的来说，在标记-清除过程中,他会扫描整个内存空间，扫描过程中python程序会暂停，被标记的对象不会被回收，没有标记的对象会被回收掉。<br>但是我们整个python程序暂停，暂停会导致程序无法正常运行，让程序运行时出现一些问题从而造成程序阻塞问题<br>那python呢就引入了<strong>分代回收</strong>来避免标记-清除，由于每一次过程都需要去大量的遍历整块内存而造成的程序阻塞问题</p><p>分代回收参考下一篇文章：<a href="https://www.hr915.xyz/id_29">https://www.hr915.xyz/id_29</a></p>]]></content>
-    
-    
-    <summary type="html">&lt;h3 id=&quot;垃圾回收机制&quot;&gt;&lt;a href=&quot;#垃圾回收机制&quot; class=&quot;headerlink&quot; title=&quot;垃圾回收机制&quot;&gt;&lt;/a&gt;垃圾回收机制&lt;/h3&gt;&lt;p&gt;垃圾自动回收机制的出现使编程更加的简单，使得我们不需要再去考虑内存分配和释放的问题，而是更加的专注在我们产品功能的实现上&lt;/p&gt;
-&lt;p&gt;目前最基本的垃圾收集算法有四种,标记-清除算法(mark-sweep),标记-压缩算法(mark-compact),复制算法(copying)以及引用计数算法(reference counting).而现代流行的垃圾收集算法一般是由这四种中的其中几种算法相互组合而成，比如说，对堆(heap)的一部分采用标记-清除算法，对堆(heap)的另外一部分则采用复制算法等等。今天我们主要来看下标记-清除算法的原理。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="后端" scheme="https://www.hr915.xyz/categories/%E5%90%8E%E7%AB%AF/"/>
-    
-    
-    <category term="python" scheme="https://www.hr915.xyz/tags/python/"/>
-    
-  </entry>
-  
-  <entry>
     <title>引用计数</title>
     <link href="https://www.hr915.xyz/id_27/"/>
     <id>https://www.hr915.xyz/id_27/</id>
@@ -136,6 +114,28 @@
 &lt;ol&gt;
 &lt;li&gt;python中是如何管理内存的？&lt;/li&gt;
 &lt;li&gt;你知道引用计数吗？&lt;/li&gt;&lt;/ol&gt;</summary>
+    
+    
+    
+    <category term="后端" scheme="https://www.hr915.xyz/categories/%E5%90%8E%E7%AB%AF/"/>
+    
+    
+    <category term="python" scheme="https://www.hr915.xyz/tags/python/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>垃圾回收机制之标记-清除</title>
+    <link href="https://www.hr915.xyz/id_28/"/>
+    <id>https://www.hr915.xyz/id_28/</id>
+    <published>2018-09-05T12:46:23.000Z</published>
+    <updated>2021-04-06T07:02:33.134Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="垃圾回收机制"><a href="#垃圾回收机制" class="headerlink" title="垃圾回收机制"></a>垃圾回收机制</h3><p>垃圾自动回收机制的出现使编程更加的简单，使得我们不需要再去考虑内存分配和释放的问题，而是更加的专注在我们产品功能的实现上</p><p>目前最基本的垃圾收集算法有四种,标记-清除算法(mark-sweep),标记-压缩算法(mark-compact),复制算法(copying)以及引用计数算法(reference counting).而现代流行的垃圾收集算法一般是由这四种中的其中几种算法相互组合而成，比如说，对堆(heap)的一部分采用标记-清除算法，对堆(heap)的另外一部分则采用复制算法等等。今天我们主要来看下标记-清除算法的原理。</p><a id="more"></a><h4 id="标记-清除"><a href="#标记-清除" class="headerlink" title="标记-清除"></a>标记-清除</h4><p>标记-清除算法分为两个阶段，标记(mark)和清除(sweep)</p><h5 id="标记："><a href="#标记：" class="headerlink" title="标记："></a>标记：</h5><p>在内存中对每一个被使用到的变量来进行标记</p><p>标记是从根对象开始工作，所有能够和根对象联系的变量我们都会有相应的标记。</p><h5 id="标记举例"><a href="#标记举例" class="headerlink" title="标记举例"></a>标记举例</h5><p><img src="/id_28/01.png" alt="标记"></p><p><img src="/id_28/02.png" alt="标记"></p><p><img src="/id_28/03.png" alt="标记"></p><h5 id="清除"><a href="#清除" class="headerlink" title="清除:"></a>清除:</h5><p>清除主要是将内存中无关联根对象的并且没有被标记的变量给杀死，释放掉</p><p><img src="/id_28/04.png" alt="image-20210324190403266"></p><p>图中a和b已经和根对象没有关系了，而且并没有被标记，所以就会被清除掉</p><h4 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h4><p>总的来说，在标记-清除过程中,他会扫描整个内存空间，扫描过程中python程序会暂停，被标记的对象不会被回收，没有标记的对象会被回收掉。<br>但是我们整个python程序暂停，暂停会导致程序无法正常运行，让程序运行时出现一些问题从而造成程序阻塞问题<br>那python呢就引入了<strong>分代回收</strong>来避免标记-清除，由于每一次过程都需要去大量的遍历整块内存而造成的程序阻塞问题</p><p>分代回收参考下一篇文章：<a href="https://www.hr915.xyz/id_29">https://www.hr915.xyz/id_29</a></p>]]></content>
+    
+    
+    <summary type="html">&lt;h3 id=&quot;垃圾回收机制&quot;&gt;&lt;a href=&quot;#垃圾回收机制&quot; class=&quot;headerlink&quot; title=&quot;垃圾回收机制&quot;&gt;&lt;/a&gt;垃圾回收机制&lt;/h3&gt;&lt;p&gt;垃圾自动回收机制的出现使编程更加的简单，使得我们不需要再去考虑内存分配和释放的问题，而是更加的专注在我们产品功能的实现上&lt;/p&gt;
+&lt;p&gt;目前最基本的垃圾收集算法有四种,标记-清除算法(mark-sweep),标记-压缩算法(mark-compact),复制算法(copying)以及引用计数算法(reference counting).而现代流行的垃圾收集算法一般是由这四种中的其中几种算法相互组合而成，比如说，对堆(heap)的一部分采用标记-清除算法，对堆(heap)的另外一部分则采用复制算法等等。今天我们主要来看下标记-清除算法的原理。&lt;/p&gt;</summary>
     
     
     
