@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.hr915.xyz","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":true,"preload":true},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="集合集合（set）是一个无序的不重复元素序列。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="集合(SET)">
+<meta property="og:url" content="https://www.hr915.xyz/id_39/index.html">
+<meta property="og:site_name" content="I hope you&#39;re here for me">
+<meta property="og:description" content="集合集合（set）是一个无序的不重复元素序列。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-10-05T13:32:17.000Z">
+<meta property="article:modified_time" content="2021-04-07T08:18:33.423Z">
+<meta property="article:author" content="Before">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="类型">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://www.hr915.xyz/id_39/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>集合(SET) | I hope you're here for me</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+
+<style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+<link rel="alternate" href="/atom.xml" title="I hope you're here for me" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">I hope you're here for me</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">贩卖日落</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fafa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fafa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fafa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.hr915.xyz/id_39/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/123.jpg">
+      <meta itemprop="name" content="Before">
+      <meta itemprop="description" content="I hope you're here for me">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="I hope you're here for me">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          集合(SET)
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-10-05 21:32:17" itemprop="dateCreated datePublished" datetime="2018-10-05T21:32:17+08:00">2018-10-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">python</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="集合"><a href="#集合" class="headerlink" title="集合"></a>集合</h3><p>集合（set）是一个无序的不重复元素序列。</p>
+<a id="more"></a>
+
+<p>集合又分为可变集合和不可变集合</p>
+<p>可变集合(set)：通过add等方法可以动态修改set中的内容</p>
+<p>不可变集合(frozenset)：顾名思义，他的元素是不可变的</p>
+<blockquote>
+<p>frozenset()是一个函数，会返回一个冻结的集合，冻结后集合不能再添加或删除任何元素。</p>
+</blockquote>
+<h4 id="特点"><a href="#特点" class="headerlink" title="特点:"></a>特点:</h4><ol>
+<li>不同元素组成（元素不能重复）</li>
+<li>无序（集合元素的顺序和定义、添加的顺序不一致）</li>
+<li>集合中的元素必须是不可变类型</li>
+</ol>
+<h4 id="底层实现"><a href="#底层实现" class="headerlink" title="底层实现"></a>底层实现</h4><figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 集合SET去重操作原理: 必须要有另外一个容器作比对，</span></span><br><span class="line"><span class="comment"># 比如每样鱼我要来一条，那么我旁边就需要有一个新的鱼缸，然后把挑选出来的鱼放进新鱼缸中，捞第二条的时候用眼睛和第一条作比对</span></span><br><span class="line"></span><br><span class="line">l = [<span class="number">3</span>, <span class="number">3</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">6</span>]</span><br><span class="line">mylist = []</span><br><span class="line"></span><br><span class="line">[mylist.append(i) <span class="keyword">for</span> i <span class="keyword">in</span> l <span class="keyword">if</span> <span class="keyword">not</span> i <span class="keyword">in</span> mylist]</span><br><span class="line"></span><br><span class="line">print(mylist)</span><br></pre></td></tr></tbody></table></figure>
+<p>延伸一下append的底层原理：</p>
+<blockquote>
+<p>append其实是用到了队列,先进先出的概念</p>
+<p>跟append一起的还有insert，两个的差别在于一个从头部插入，一个从尾部插入</p>
+</blockquote>
+<h4 id="集合的创建："><a href="#集合的创建：" class="headerlink" title="集合的创建："></a>集合的创建：</h4><p>可以使用大括号 { } 或者 set() 函数创建集合，注意：创建一个空集合必须用 set() 而不是 { }，因为 { } 是用来创建一个空字典。</p>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建集合</span></span><br><span class="line">parame = {<span class="number">1</span>,<span class="number">2</span>}</span><br><span class="line">print(<span class="built_in">type</span>(parame))</span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">a = <span class="string">'hello'</span></span><br><span class="line">print(<span class="built_in">set</span>(a))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建空集合</span></span><br><span class="line">myset = <span class="built_in">set</span>()</span><br><span class="line">print(<span class="built_in">type</span>(myset))</span><br></pre></td></tr></tbody></table></figure>
+<h4 id="集合常用方法"><a href="#集合常用方法" class="headerlink" title="集合常用方法"></a>集合常用方法</h4><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://www.runoob.com/python3/ref-set-add.html">add()</a></td>
+<td align="left">为集合添加元素</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://www.runoob.com/python3/ref-set-clear.html">clear()</a></td>
+<td align="left">移除集合中的所有元素</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://www.runoob.com/python3/ref-set-copy.html">copy()</a></td>
+<td align="left">拷贝一个集合</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://www.runoob.com/python3/ref-set-difference.html">difference()</a></td>
+<td align="left">返回多个集合的差集</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://www.runoob.com/python3/ref-set-difference_update.html">difference_update()</a></td>
+<td align="left">移除集合中的元素，该元素在指定的集合也存在。</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://www.runoob.com/python3/ref-set-discard.html">discard()</a></td>
+<td align="left">删除集合中指定的元素</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://www.runoob.com/python3/ref-set-intersection.html">intersection()</a></td>
+<td align="left">返回集合的交集</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://www.runoob.com/python3/ref-set-intersection_update.html">intersection_update()</a></td>
+<td align="left">返回集合的交集。</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://www.runoob.com/python3/ref-set-isdisjoint.html">isdisjoint()</a></td>
+<td align="left">判断两个集合是否包含相同的元素，如果没有返回 True，否则返回 False。</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://www.runoob.com/python3/ref-set-issubset.html">issubset()</a></td>
+<td align="left">判断指定集合是否为该方法参数集合的子集。</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://www.runoob.com/python3/ref-set-issuperset.html">issuperset()</a></td>
+<td align="left">判断该方法的参数集合是否为指定集合的子集</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://www.runoob.com/python3/ref-set-pop.html">pop()</a></td>
+<td align="left">随机移除元素</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://www.runoob.com/python3/ref-set-remove.html">remove()</a></td>
+<td align="left">移除指定元素</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://www.runoob.com/python3/ref-set-symmetric_difference.html">symmetric_difference()</a></td>
+<td align="left">返回两个集合中不重复的元素集合。</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://www.runoob.com/python3/ref-set-symmetric_difference_update.html">symmetric_difference_update()</a></td>
+<td align="left">移除当前集合中在另外一个指定集合相同的元素，并将另外一个指定集合中不同的元素插入到当前集合中。</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://www.runoob.com/python3/ref-set-union.html">union()</a></td>
+<td align="left">返回两个集合的并集</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://www.runoob.com/python3/ref-set-update.html">update()</a></td>
+<td align="left">给集合添加元素</td>
+</tr>
+</tbody></table>
+<h5 id="添加元素"><a href="#添加元素" class="headerlink" title="添加元素"></a>添加元素</h5><figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 向一个空集合中添加元素</span></span><br><span class="line">myset = <span class="built_in">set</span>()</span><br><span class="line">myset.add(<span class="string">'hello'</span>)</span><br><span class="line">print(myset)</span><br><span class="line"></span><br><span class="line"><span class="comment"># update可以添加多个参数，可以是列表，元组，字典等，参数用逗号隔开</span></span><br><span class="line">myset = <span class="built_in">set</span>()</span><br><span class="line">myset.update(<span class="string">'hello'</span>,[<span class="number">1</span>,<span class="number">2</span>],{<span class="number">3</span>:<span class="number">4</span>},(<span class="number">5</span>,<span class="number">6</span>))</span><br><span class="line">print(myset)</span><br></pre></td></tr></tbody></table></figure>
+<h5 id="移除元素"><a href="#移除元素" class="headerlink" title="移除元素"></a>移除元素</h5><figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 随机删除一个元素  pop</span></span><br><span class="line">parame = {<span class="number">1</span>,<span class="number">2</span>}</span><br><span class="line">parame.pop()</span><br><span class="line">print(parame)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除指定元素 remove,元素不存在报错</span></span><br><span class="line">myset = {<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>}</span><br><span class="line">myset.remove(<span class="number">4</span>)</span><br><span class="line">print(myset)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除指定元素 discard,元素不存在不会报错</span></span><br><span class="line">myset = {<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>}</span><br><span class="line">myset.discard(<span class="number">7</span>)</span><br><span class="line">print(myset)</span><br></pre></td></tr></tbody></table></figure>
+<h4 id="集合的运算符"><a href="#集合的运算符" class="headerlink" title="集合的运算符"></a>集合的运算符</h4><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>-</strong></td>
+<td align="left">集合a中包含而集合b中不包含的元素</td>
+</tr>
+<tr>
+<td align="left">|</td>
+<td align="left">集合a或b中包含的所有元素</td>
+</tr>
+<tr>
+<td align="left">&amp;</td>
+<td align="left">集合a和b中都包含了的元素</td>
+</tr>
+<tr>
+<td align="left">^</td>
+<td align="left">不同时包含于a和b的元素</td>
+</tr>
+</tbody></table>
+<h5 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h5><figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a = <span class="built_in">set</span>(<span class="string">'123456'</span>)</span><br><span class="line">b = <span class="built_in">set</span>(<span class="string">'456789'</span>)</span><br></pre></td></tr></tbody></table></figure>
+<h5 id="集合a中包含而集合b中不包含的元素"><a href="#集合a中包含而集合b中不包含的元素" class="headerlink" title="集合a中包含而集合b中不包含的元素"></a>集合a中包含而集合b中不包含的元素</h5><figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">print(a - b)</span><br><span class="line"><span class="comment"># {'1', '2', '3'}</span></span><br></pre></td></tr></tbody></table></figure>
+<h5 id="集合a或b中包含的所有元素"><a href="#集合a或b中包含的所有元素" class="headerlink" title="集合a或b中包含的所有元素"></a>集合a或b中包含的所有元素</h5><figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">print(a | b)</span><br><span class="line"><span class="comment"># {'1', '4', '5', '2', '8', '3', '6', '7', '9'}</span></span><br></pre></td></tr></tbody></table></figure>
+<h5 id="集合a和b中都包含了的元素"><a href="#集合a和b中都包含了的元素" class="headerlink" title="集合a和b中都包含了的元素"></a>集合a和b中都包含了的元素</h5><figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">print(a &amp; b)</span><br><span class="line"><span class="comment"># {'4', '5', '6'}</span></span><br></pre></td></tr></tbody></table></figure>
+<h5 id="不同时包含于a和b的元素"><a href="#不同时包含于a和b的元素" class="headerlink" title="不同时包含于a和b的元素"></a>不同时包含于a和b的元素</h5><figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">print(a ^ b)</span><br><span class="line"><span class="comment"># {'8', '3', '7', '9', '1', '2'}</span></span><br></pre></td></tr></tbody></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/python/" rel="tag"># python</a>
+              <a href="/tags/%E7%B1%BB%E5%9E%8B/" rel="tag"># 类型</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/id_38/" rel="prev" title="Sort和Sorted区别">
+      <i class="fa fa-chevron-left"></i> Sort和Sorted区别
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E5%90%88"><span class="nav-number">1.</span> <span class="nav-text">集合</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%89%B9%E7%82%B9"><span class="nav-number">1.1.</span> <span class="nav-text">特点:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.2.</span> <span class="nav-text">底层实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9B%86%E5%90%88%E7%9A%84%E5%88%9B%E5%BB%BA%EF%BC%9A"><span class="nav-number">1.3.</span> <span class="nav-text">集合的创建：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9B%86%E5%90%88%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95"><span class="nav-number">1.4.</span> <span class="nav-text">集合常用方法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E5%85%83%E7%B4%A0"><span class="nav-number">1.4.1.</span> <span class="nav-text">添加元素</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%A7%BB%E9%99%A4%E5%85%83%E7%B4%A0"><span class="nav-number">1.4.2.</span> <span class="nav-text">移除元素</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9B%86%E5%90%88%E7%9A%84%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="nav-number">1.5.</span> <span class="nav-text">集合的运算符</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%BE%E4%BE%8B"><span class="nav-number">1.5.1.</span> <span class="nav-text">举例</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%9B%86%E5%90%88a%E4%B8%AD%E5%8C%85%E5%90%AB%E8%80%8C%E9%9B%86%E5%90%88b%E4%B8%AD%E4%B8%8D%E5%8C%85%E5%90%AB%E7%9A%84%E5%85%83%E7%B4%A0"><span class="nav-number">1.5.2.</span> <span class="nav-text">集合a中包含而集合b中不包含的元素</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%9B%86%E5%90%88a%E6%88%96b%E4%B8%AD%E5%8C%85%E5%90%AB%E7%9A%84%E6%89%80%E6%9C%89%E5%85%83%E7%B4%A0"><span class="nav-number">1.5.3.</span> <span class="nav-text">集合a或b中包含的所有元素</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%9B%86%E5%90%88a%E5%92%8Cb%E4%B8%AD%E9%83%BD%E5%8C%85%E5%90%AB%E4%BA%86%E7%9A%84%E5%85%83%E7%B4%A0"><span class="nav-number">1.5.4.</span> <span class="nav-text">集合a和b中都包含了的元素</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%8D%E5%90%8C%E6%97%B6%E5%8C%85%E5%90%AB%E4%BA%8Ea%E5%92%8Cb%E7%9A%84%E5%85%83%E7%B4%A0"><span class="nav-number">1.5.5.</span> <span class="nav-text">不同时包含于a和b的元素</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Before"
+      src="/images/123.jpg">
+  <p class="site-author-name" itemprop="name">Before</p>
+  <div class="site-description" itemprop="description">I hope you're here for me</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">37</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/u/6558520690" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;u&#x2F;6558520690" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://zhang-sitong.gitee.io/blogs" title="https:&#x2F;&#x2F;zhang-sitong.gitee.io&#x2F;blogs" rel="noopener" target="_blank">小张</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://v3u.cn/" title="https:&#x2F;&#x2F;v3u.cn&#x2F;" rel="noopener" target="_blank">悦哥</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Before</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
