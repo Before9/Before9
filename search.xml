@@ -35,6 +35,38 @@
       </tags>
   </entry>
   <entry>
+    <title>WebShell</title>
+    <url>/id_10/</url>
+    <content><![CDATA[<h3 id="什么是Webshell"><a href="#什么是Webshell" class="headerlink" title="什么是Webshell?"></a>什么是Webshell?</h3><p>顾名思义，”web” - 显然需要服务器开放web服务,”shell” - 取得对服务器某种程度上操作权限。<br>webshell常常被称为匿名用户(入侵者)通过WEB服务端口对WEB服务器有某种程度上操作的权限,由于其大多是以网页脚本的形式出现，也有人称之为网站后门工具。</p>
+<a id="more"></a>
+
+<h3 id="Webshell有什么作用？"><a href="#Webshell有什么作用？" class="headerlink" title="Webshell有什么作用？"></a>Webshell有什么作用？</h3><ul>
+<li>一方面，webshell被站长常常用于网站管理、服务器管理等等，根据FSO权限的不同，作用有在线编辑网页脚本、上传下载文件、查看数据库、执行任意程序命令等。</li>
+<li>另一方面，被入侵者利用，从而达到控制网站服务器的目的。这些网页脚本常称为WEB脚本木马，目前比较流行的asp或php木马，也有基于.NET的脚本木马。</li>
+</ul>
+<h3 id="使用VUE-Django-实现Webshell"><a href="#使用VUE-Django-实现Webshell" class="headerlink" title="使用VUE+Django 实现Webshell"></a>使用VUE+Django 实现Webshell</h3><p>web端使用Xterm.js或者其他的WebShell组件和websocket<br>后端只需要支持WebSocket和SSH协议的远程登录模块即可</p>
+<h4 id="Web-VUE-端实现"><a href="#Web-VUE-端实现" class="headerlink" title="Web(VUE)端实现"></a>Web(VUE)端实现</h4><ul>
+<li>安装<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">npm install xterm@3.1.0 --save  # 指定版本安装，最新版的xterm文件的改动很大，使用下面的方法会报错</span><br></pre></td></tr></tbody></table></figure></li>
+<li>导包<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">import 'xterm/dist/xterm.css'</span><br><span class="line">import {Terminal} from 'xterm'</span><br><span class="line">import * as attach from 'xterm/lib/addons/attach/attach' // 安装插件时，可以使用attach去添加</span><br><span class="line">Terminal.applyAddon(attach) // 添加插件</span><br></pre></td></tr></tbody></table></figure></li>
+<li>在页面中渲染<figure class="highlight html"><table><tbody><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"terminal"</span> <span class="attr">style</span>=<span class="string">"width: 500px;height:300px;"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br></pre></td></tr></tbody></table></figure></li>
+<li>数据操作<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">mounted() {</span><br><span class="line">		    // 获取到了div标签</span><br><span class="line">            let terminalContainer = document.getElementById('terminal')</span><br><span class="line">            // 初始化黑窗口对象</span><br><span class="line">            this.term = new Terminal(this.terminal)</span><br><span class="line">            // 打开这个对象</span><br><span class="line">            this.term.open(terminalContainer)</span><br><span class="line">            // this.term.write("$ ")</span><br><span class="line">            // this.term.fit()</span><br><span class="line">            // open websocket</span><br><span class="line">        </span><br><span class="line">            this.terminalSocket = new WebSocket('ws://127.0.0.1:8000/webssh/')</span><br><span class="line">            this.terminalSocket.onopen = function () { // 连接成功触发该方法</span><br><span class="line">              // this.term_isconnect = true</span><br><span class="line">              console.log('websocket is Connected...')</span><br><span class="line">            }</span><br><span class="line">            this.terminalSocket.onclose = function () { // 连接关闭适触发的方法</span><br><span class="line">              console.log('websocket is Closed...')</span><br><span class="line">            }</span><br><span class="line">            this.terminalSocket.onerror = function () { // 连接出错触发的方法</span><br><span class="line">              console.log('damn Websocket is broken!')</span><br><span class="line">            }</span><br><span class="line">            this.term.attach(this.terminalSocket)</span><br><span class="line">            // 绑定xterm到ws流中</span><br><span class="line">    }</span><br></pre></td></tr></tbody></table></figure></li>
+<li>web端完整代码<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div id="terminal" style="width: 500px;height:300px;"&gt;&lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line">import 'xterm/dist/xterm.css';</span><br><span class="line">import {Terminal} from 'xterm';</span><br><span class="line">import * as fit from 'xterm/lib/addons/fit/fit';</span><br><span class="line"></span><br><span class="line">Terminal.applyAddon(fit);</span><br><span class="line">export default {</span><br><span class="line">  name: 'Webshell',</span><br><span class="line">  data() {</span><br><span class="line">    return {</span><br><span class="line"></span><br><span class="line">      term: null,</span><br><span class="line">      terminalSocket: null,</span><br><span class="line">      order: ''</span><br><span class="line">    }</span><br><span class="line">  },</span><br><span class="line">  methods: {},</span><br><span class="line">  mounted () {</span><br><span class="line">       // 获取到了div标签</span><br><span class="line">       let terminalContainer = document.getElementById('terminal')</span><br><span class="line">       // 初始化黑窗口对象</span><br><span class="line">       this.term = new Terminal(this.terminal)</span><br><span class="line">       // 打开这个对象</span><br><span class="line">       this.term.open(terminalContainer)</span><br><span class="line">       // open websocket</span><br><span class="line">   </span><br><span class="line">       this.terminalSocket = new WebSocket('ws://127.0.0.1:8000/webssh/')</span><br><span class="line">       this.terminalSocket.onopen = function () { // 连接成功触发该方法</span><br><span class="line">         // this.term_isconnect = true</span><br><span class="line">         console.log('websocket is Connected...')</span><br><span class="line">       }</span><br><span class="line">       this.terminalSocket.onclose = function () { // 连接关闭适触发的方法</span><br><span class="line">         console.log('websocket is Closed...')</span><br><span class="line">       }</span><br><span class="line">       this.terminalSocket.onerror = function () { // 连接出错触发的方法</span><br><span class="line">         console.log('damn Websocket is broken!')</span><br><span class="line">       }</span><br><span class="line">       this.term.attach(this.terminalSocket)</span><br><span class="line">       // 绑定xterm到ws流中</span><br><span class="line">  }</span><br><span class="line">}</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;style&gt;</span><br><span class="line"></span><br><span class="line">&lt;/style&gt;</span><br></pre></td></tr></tbody></table></figure>
+<h4 id="服务器端-Django-实现-使用paramiko与服务器建立交互"><a href="#服务器端-Django-实现-使用paramiko与服务器建立交互" class="headerlink" title="服务器端(Django)实现         使用paramiko与服务器建立交互"></a>服务器端(Django)实现         使用paramiko与服务器建立交互</h4>  ssh是一个协议，OpenSSH是其中一个开源实现，paramiko是Python的一个库，实现了SSHv2协议(底层使用cryptography)。<br>  有了Paramiko以后，我们就可以在Python代码中直接使用SSH协议对远程服务器执行操作，而不是通过ssh命令对远程服务器进行操作</li>
+<li>安装<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">pip install paramiko</span><br></pre></td></tr></tbody></table></figure></li>
+<li>利用paramiko进行ssh远程登录<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> paramiko</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">make_ssh</span>(<span class="params">host=<span class="string">"********"</span>, username=<span class="string">"***"</span>, password=<span class="string">"****"</span>, port=<span class="number">22</span></span>):</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    :host 主机地址</span></span><br><span class="line"><span class="string">    :username 用户名，一般是root</span></span><br><span class="line"><span class="string">    :password 密码</span></span><br><span class="line"><span class="string">    :port ssh协议的端口,22</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="comment"># 初始化一个ssh对象</span></span><br><span class="line">    sh = paramiko.SSHClient()</span><br><span class="line">    <span class="comment"># 设置对象连接密钥规则</span></span><br><span class="line">    sh.set_missing_host_key_policy(paramiko.AutoAddPolicy())</span><br><span class="line">    <span class="comment"># 连接</span></span><br><span class="line">    sh.connect(host, username=username, password=password, port=port)</span><br><span class="line">    <span class="comment"># 生成shell对象</span></span><br><span class="line">    channle = sh.invoke_shell(term=<span class="string">'xterm'</span>)</span><br><span class="line">    <span class="keyword">return</span> channle</span><br></pre></td></tr></tbody></table></figure></li>
+<li>编写子线程方法，专注接收web端发送的命令<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">recv_ssh_msg</span>(<span class="params">channle, ws</span>):</span></span><br><span class="line">    <span class="string">'''</span></span><br><span class="line"><span class="string">        只管接收</span></span><br><span class="line"><span class="string">    '''</span></span><br><span class="line">    <span class="comment"># 判断shell连接对象是否没有退出</span></span><br><span class="line">    <span class="keyword">while</span> <span class="keyword">not</span> channle.exit_status_ready():</span><br><span class="line">        <span class="comment"># 接收过程可能会因为没有任何返回而报错</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            buf = channle.recv(<span class="number">1024</span>)  <span class="comment"># 接收命令的执行结果</span></span><br><span class="line">            ws.send(buf)  <span class="comment"># 向Websocket通道返回</span></span><br><span class="line">        <span class="comment"># 接收不到会报错，但是报错没关系，继续重新尝试接受</span></span><br><span class="line">        <span class="keyword">except</span>:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure></li>
+<li>结合websocket实现实时操作<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> threading <span class="keyword">import</span> Thread</span><br><span class="line"><span class="meta">@accept_websocket</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">webssh</span>(<span class="params">request</span>):</span></span><br><span class="line">    print(<span class="string">"来人了"</span>)</span><br><span class="line">    <span class="keyword">if</span> request.is_websocket:</span><br><span class="line">        <span class="comment"># 1. 获取到连接对象</span></span><br><span class="line">        ws = request.websocket</span><br><span class="line">        <span class="comment"># 2. 初始化linux连接</span></span><br><span class="line">        channel = make_ssh()</span><br><span class="line">        <span class="comment"># 3. 初始化linux数据接收线程，并开启</span></span><br><span class="line">        recv_thread = Thread(target=recv_ssh_msg, args=(channel, ws))</span><br><span class="line">        recv_thread.start()</span><br><span class="line">        <span class="keyword">while</span> <span class="number">1</span>:  <span class="comment"># 主线程: 只管发送</span></span><br><span class="line">            <span class="comment"># 2. 阻塞ws接收发来的数据</span></span><br><span class="line">            cmd = ws.wait()</span><br><span class="line">            <span class="comment"># cmd = ws.recv()</span></span><br><span class="line">            <span class="keyword">if</span> cmd:</span><br><span class="line">                channel.send(cmd)  <span class="comment"># 发送到linux 去执行</span></span><br><span class="line">            <span class="keyword">else</span>:  <span class="comment"># 如果连接断开，那么cmd将会发一个空包</span></span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">        recv_thread.join()  <span class="comment"># 回收子线程</span></span><br><span class="line">        ws.close()  <span class="comment"># 关闭ws连接</span></span><br></pre></td></tr></tbody></table></figure></li>
+<li>这样一个webShell就完成了<h3 id="OK-本文到此结束"><a href="#OK-本文到此结束" class="headerlink" title="OK 本文到此结束"></a>OK 本文到此结束</h3>django-git地址：<a href="https://gitee.com/before-l/celery-demo.git">https://gitee.com/before-l/celery-demo.git</a> </li>
+</ul>
+]]></content>
+      <categories>
+        <category>前端</category>
+      </categories>
+      <tags>
+        <tag>websocket</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>视频直播</title>
     <url>/id_11/</url>
     <content><![CDATA[<blockquote>
@@ -133,38 +165,6 @@
       </categories>
       <tags>
         <tag>django</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>WebShell</title>
-    <url>/id_10/</url>
-    <content><![CDATA[<h3 id="什么是Webshell"><a href="#什么是Webshell" class="headerlink" title="什么是Webshell?"></a>什么是Webshell?</h3><p>顾名思义，”web” - 显然需要服务器开放web服务,”shell” - 取得对服务器某种程度上操作权限。<br>webshell常常被称为匿名用户(入侵者)通过WEB服务端口对WEB服务器有某种程度上操作的权限,由于其大多是以网页脚本的形式出现，也有人称之为网站后门工具。</p>
-<a id="more"></a>
-
-<h3 id="Webshell有什么作用？"><a href="#Webshell有什么作用？" class="headerlink" title="Webshell有什么作用？"></a>Webshell有什么作用？</h3><ul>
-<li>一方面，webshell被站长常常用于网站管理、服务器管理等等，根据FSO权限的不同，作用有在线编辑网页脚本、上传下载文件、查看数据库、执行任意程序命令等。</li>
-<li>另一方面，被入侵者利用，从而达到控制网站服务器的目的。这些网页脚本常称为WEB脚本木马，目前比较流行的asp或php木马，也有基于.NET的脚本木马。</li>
-</ul>
-<h3 id="使用VUE-Django-实现Webshell"><a href="#使用VUE-Django-实现Webshell" class="headerlink" title="使用VUE+Django 实现Webshell"></a>使用VUE+Django 实现Webshell</h3><p>web端使用Xterm.js或者其他的WebShell组件和websocket<br>后端只需要支持WebSocket和SSH协议的远程登录模块即可</p>
-<h4 id="Web-VUE-端实现"><a href="#Web-VUE-端实现" class="headerlink" title="Web(VUE)端实现"></a>Web(VUE)端实现</h4><ul>
-<li>安装<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">npm install xterm@3.1.0 --save  # 指定版本安装，最新版的xterm文件的改动很大，使用下面的方法会报错</span><br></pre></td></tr></tbody></table></figure></li>
-<li>导包<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">import 'xterm/dist/xterm.css'</span><br><span class="line">import {Terminal} from 'xterm'</span><br><span class="line">import * as attach from 'xterm/lib/addons/attach/attach' // 安装插件时，可以使用attach去添加</span><br><span class="line">Terminal.applyAddon(attach) // 添加插件</span><br></pre></td></tr></tbody></table></figure></li>
-<li>在页面中渲染<figure class="highlight html"><table><tbody><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"terminal"</span> <span class="attr">style</span>=<span class="string">"width: 500px;height:300px;"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br></pre></td></tr></tbody></table></figure></li>
-<li>数据操作<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">mounted() {</span><br><span class="line">		    // 获取到了div标签</span><br><span class="line">            let terminalContainer = document.getElementById('terminal')</span><br><span class="line">            // 初始化黑窗口对象</span><br><span class="line">            this.term = new Terminal(this.terminal)</span><br><span class="line">            // 打开这个对象</span><br><span class="line">            this.term.open(terminalContainer)</span><br><span class="line">            // this.term.write("$ ")</span><br><span class="line">            // this.term.fit()</span><br><span class="line">            // open websocket</span><br><span class="line">        </span><br><span class="line">            this.terminalSocket = new WebSocket('ws://127.0.0.1:8000/webssh/')</span><br><span class="line">            this.terminalSocket.onopen = function () { // 连接成功触发该方法</span><br><span class="line">              // this.term_isconnect = true</span><br><span class="line">              console.log('websocket is Connected...')</span><br><span class="line">            }</span><br><span class="line">            this.terminalSocket.onclose = function () { // 连接关闭适触发的方法</span><br><span class="line">              console.log('websocket is Closed...')</span><br><span class="line">            }</span><br><span class="line">            this.terminalSocket.onerror = function () { // 连接出错触发的方法</span><br><span class="line">              console.log('damn Websocket is broken!')</span><br><span class="line">            }</span><br><span class="line">            this.term.attach(this.terminalSocket)</span><br><span class="line">            // 绑定xterm到ws流中</span><br><span class="line">    }</span><br></pre></td></tr></tbody></table></figure></li>
-<li>web端完整代码<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div id="terminal" style="width: 500px;height:300px;"&gt;&lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line">import 'xterm/dist/xterm.css';</span><br><span class="line">import {Terminal} from 'xterm';</span><br><span class="line">import * as fit from 'xterm/lib/addons/fit/fit';</span><br><span class="line"></span><br><span class="line">Terminal.applyAddon(fit);</span><br><span class="line">export default {</span><br><span class="line">  name: 'Webshell',</span><br><span class="line">  data() {</span><br><span class="line">    return {</span><br><span class="line"></span><br><span class="line">      term: null,</span><br><span class="line">      terminalSocket: null,</span><br><span class="line">      order: ''</span><br><span class="line">    }</span><br><span class="line">  },</span><br><span class="line">  methods: {},</span><br><span class="line">  mounted () {</span><br><span class="line">       // 获取到了div标签</span><br><span class="line">       let terminalContainer = document.getElementById('terminal')</span><br><span class="line">       // 初始化黑窗口对象</span><br><span class="line">       this.term = new Terminal(this.terminal)</span><br><span class="line">       // 打开这个对象</span><br><span class="line">       this.term.open(terminalContainer)</span><br><span class="line">       // open websocket</span><br><span class="line">   </span><br><span class="line">       this.terminalSocket = new WebSocket('ws://127.0.0.1:8000/webssh/')</span><br><span class="line">       this.terminalSocket.onopen = function () { // 连接成功触发该方法</span><br><span class="line">         // this.term_isconnect = true</span><br><span class="line">         console.log('websocket is Connected...')</span><br><span class="line">       }</span><br><span class="line">       this.terminalSocket.onclose = function () { // 连接关闭适触发的方法</span><br><span class="line">         console.log('websocket is Closed...')</span><br><span class="line">       }</span><br><span class="line">       this.terminalSocket.onerror = function () { // 连接出错触发的方法</span><br><span class="line">         console.log('damn Websocket is broken!')</span><br><span class="line">       }</span><br><span class="line">       this.term.attach(this.terminalSocket)</span><br><span class="line">       // 绑定xterm到ws流中</span><br><span class="line">  }</span><br><span class="line">}</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;style&gt;</span><br><span class="line"></span><br><span class="line">&lt;/style&gt;</span><br></pre></td></tr></tbody></table></figure>
-<h4 id="服务器端-Django-实现-使用paramiko与服务器建立交互"><a href="#服务器端-Django-实现-使用paramiko与服务器建立交互" class="headerlink" title="服务器端(Django)实现         使用paramiko与服务器建立交互"></a>服务器端(Django)实现         使用paramiko与服务器建立交互</h4>  ssh是一个协议，OpenSSH是其中一个开源实现，paramiko是Python的一个库，实现了SSHv2协议(底层使用cryptography)。<br>  有了Paramiko以后，我们就可以在Python代码中直接使用SSH协议对远程服务器执行操作，而不是通过ssh命令对远程服务器进行操作</li>
-<li>安装<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">pip install paramiko</span><br></pre></td></tr></tbody></table></figure></li>
-<li>利用paramiko进行ssh远程登录<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> paramiko</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">make_ssh</span>(<span class="params">host=<span class="string">"********"</span>, username=<span class="string">"***"</span>, password=<span class="string">"****"</span>, port=<span class="number">22</span></span>):</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    :host 主机地址</span></span><br><span class="line"><span class="string">    :username 用户名，一般是root</span></span><br><span class="line"><span class="string">    :password 密码</span></span><br><span class="line"><span class="string">    :port ssh协议的端口,22</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="comment"># 初始化一个ssh对象</span></span><br><span class="line">    sh = paramiko.SSHClient()</span><br><span class="line">    <span class="comment"># 设置对象连接密钥规则</span></span><br><span class="line">    sh.set_missing_host_key_policy(paramiko.AutoAddPolicy())</span><br><span class="line">    <span class="comment"># 连接</span></span><br><span class="line">    sh.connect(host, username=username, password=password, port=port)</span><br><span class="line">    <span class="comment"># 生成shell对象</span></span><br><span class="line">    channle = sh.invoke_shell(term=<span class="string">'xterm'</span>)</span><br><span class="line">    <span class="keyword">return</span> channle</span><br></pre></td></tr></tbody></table></figure></li>
-<li>编写子线程方法，专注接收web端发送的命令<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">recv_ssh_msg</span>(<span class="params">channle, ws</span>):</span></span><br><span class="line">    <span class="string">'''</span></span><br><span class="line"><span class="string">        只管接收</span></span><br><span class="line"><span class="string">    '''</span></span><br><span class="line">    <span class="comment"># 判断shell连接对象是否没有退出</span></span><br><span class="line">    <span class="keyword">while</span> <span class="keyword">not</span> channle.exit_status_ready():</span><br><span class="line">        <span class="comment"># 接收过程可能会因为没有任何返回而报错</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            buf = channle.recv(<span class="number">1024</span>)  <span class="comment"># 接收命令的执行结果</span></span><br><span class="line">            ws.send(buf)  <span class="comment"># 向Websocket通道返回</span></span><br><span class="line">        <span class="comment"># 接收不到会报错，但是报错没关系，继续重新尝试接受</span></span><br><span class="line">        <span class="keyword">except</span>:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure></li>
-<li>结合websocket实现实时操作<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> threading <span class="keyword">import</span> Thread</span><br><span class="line"><span class="meta">@accept_websocket</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">webssh</span>(<span class="params">request</span>):</span></span><br><span class="line">    print(<span class="string">"来人了"</span>)</span><br><span class="line">    <span class="keyword">if</span> request.is_websocket:</span><br><span class="line">        <span class="comment"># 1. 获取到连接对象</span></span><br><span class="line">        ws = request.websocket</span><br><span class="line">        <span class="comment"># 2. 初始化linux连接</span></span><br><span class="line">        channel = make_ssh()</span><br><span class="line">        <span class="comment"># 3. 初始化linux数据接收线程，并开启</span></span><br><span class="line">        recv_thread = Thread(target=recv_ssh_msg, args=(channel, ws))</span><br><span class="line">        recv_thread.start()</span><br><span class="line">        <span class="keyword">while</span> <span class="number">1</span>:  <span class="comment"># 主线程: 只管发送</span></span><br><span class="line">            <span class="comment"># 2. 阻塞ws接收发来的数据</span></span><br><span class="line">            cmd = ws.wait()</span><br><span class="line">            <span class="comment"># cmd = ws.recv()</span></span><br><span class="line">            <span class="keyword">if</span> cmd:</span><br><span class="line">                channel.send(cmd)  <span class="comment"># 发送到linux 去执行</span></span><br><span class="line">            <span class="keyword">else</span>:  <span class="comment"># 如果连接断开，那么cmd将会发一个空包</span></span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">        recv_thread.join()  <span class="comment"># 回收子线程</span></span><br><span class="line">        ws.close()  <span class="comment"># 关闭ws连接</span></span><br></pre></td></tr></tbody></table></figure></li>
-<li>这样一个webShell就完成了<h3 id="OK-本文到此结束"><a href="#OK-本文到此结束" class="headerlink" title="OK 本文到此结束"></a>OK 本文到此结束</h3>django-git地址：<a href="https://gitee.com/before-l/celery-demo.git">https://gitee.com/before-l/celery-demo.git</a> </li>
-</ul>
-]]></content>
-      <categories>
-        <category>前端</category>
-      </categories>
-      <tags>
-        <tag>websocket</tag>
       </tags>
   </entry>
   <entry>
@@ -282,39 +282,6 @@
       </tags>
   </entry>
   <entry>
-    <title>redis发布订阅</title>
-    <url>/id_16/</url>
-    <content><![CDATA[<p>Redis提供了发布订阅功能，跟消息中间件是类似的，可以用于消息的传输，Redis提供了一组命令可以让开发者实现“发布/订阅”模式 (publish/subscribe) ，该模式同样可以实现进程间的消息传递。<br>它的实现原理是发布/订阅模式包含两种角色，分别是发布者和订阅者。订阅者可以订阅一个或多个频道，而发布者可以向指定的 频道发送消息，所有订阅此频道的订阅者都会收到该消息。</p>
-<a id="more"></a>
-<h4 id="关系图"><a href="#关系图" class="headerlink" title="关系图"></a>关系图</h4><p><img src="/id_16/01.png" alt="发布订阅"></p>
-<h4 id="redis-消息订阅和发布命令："><a href="#redis-消息订阅和发布命令：" class="headerlink" title="redis 消息订阅和发布命令："></a>redis 消息订阅和发布命令：</h4><ol>
-<li>psubscribe pattern [pattern…] ：订阅一个或多个给定模式的 频道</li>
-<li>punsubscribe [pattern [pttern…]]：退订所有频道给定模式的频道</li>
-<li>pubsub subcommand [argument [argument…]]：查看订阅与发布系统状态</li>
-<li>publish channel message：将信息发送到指定的频道</li>
-<li>subscribe channel [channel…]：订阅给定的一个或多个频道信息。</li>
-<li>unsubscribe [channel [channel…]]：指退订给定的频道。</li>
-</ol>
-<h4 id="案例-for-example-："><a href="#案例-for-example-：" class="headerlink" title="案例 for example ："></a>案例 for example ：</h4><p><strong>注意</strong>：需要打开两个小黑窗口哦！</p>
-<ol>
-<li><p>一次订阅多个频道 c1,c2,c3 (subscribe c1 c2 c3)<br><img src="/id_16/02.png" alt="订阅多个频道"></p>
-</li>
-<li><p>消息发布，向c2频道发布消息 (publish c2 hello-redis)<br><img src="/id_16/03.png" alt="向指定频道发布消息"></p>
-</li>
-<li><p>订阅给定模式的频道，通配符* (psubscribe new*)<br><img src="/id_16/04.png" alt="订阅特定模式的频道"></p>
-</li>
-<li><p>发布消息 (publish new1 redis-hello)<br><img src="/id_16/05.png" alt="发布消息"></p>
-</li>
-</ol>
-<h4 id="OK-本文到此结束"><a href="#OK-本文到此结束" class="headerlink" title="OK 本文到此结束"></a>OK 本文到此结束</h4>]]></content>
-      <categories>
-        <category>数据库</category>
-      </categories>
-      <tags>
-        <tag>redis</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>redis键空间事件</title>
     <url>/id_17/</url>
     <content><![CDATA[<p>Redis的键空间通知(keyspace notifications)功能是自2.8.0版本开始加入的，客户端可以通过订阅/发布(Pub/Sub)机制，接收那些以某种方式改变了Redis数据空间的事件通知。比如：所有改变给定key的命令；所有经过lpush操作的key；所有在0号数据库中过期的key等等。<br>通知是通过Redis的订阅/发布机制发送的，因此，所有支持订阅/发布功能的客户端都可在无需调整的情况下，使用键空间通知功能。</p>
@@ -359,6 +326,39 @@
       </tags>
   </entry>
   <entry>
+    <title>redis发布订阅</title>
+    <url>/id_16/</url>
+    <content><![CDATA[<p>Redis提供了发布订阅功能，跟消息中间件是类似的，可以用于消息的传输，Redis提供了一组命令可以让开发者实现“发布/订阅”模式 (publish/subscribe) ，该模式同样可以实现进程间的消息传递。<br>它的实现原理是发布/订阅模式包含两种角色，分别是发布者和订阅者。订阅者可以订阅一个或多个频道，而发布者可以向指定的 频道发送消息，所有订阅此频道的订阅者都会收到该消息。</p>
+<a id="more"></a>
+<h4 id="关系图"><a href="#关系图" class="headerlink" title="关系图"></a>关系图</h4><p><img src="/id_16/01.png" alt="发布订阅"></p>
+<h4 id="redis-消息订阅和发布命令："><a href="#redis-消息订阅和发布命令：" class="headerlink" title="redis 消息订阅和发布命令："></a>redis 消息订阅和发布命令：</h4><ol>
+<li>psubscribe pattern [pattern…] ：订阅一个或多个给定模式的 频道</li>
+<li>punsubscribe [pattern [pttern…]]：退订所有频道给定模式的频道</li>
+<li>pubsub subcommand [argument [argument…]]：查看订阅与发布系统状态</li>
+<li>publish channel message：将信息发送到指定的频道</li>
+<li>subscribe channel [channel…]：订阅给定的一个或多个频道信息。</li>
+<li>unsubscribe [channel [channel…]]：指退订给定的频道。</li>
+</ol>
+<h4 id="案例-for-example-："><a href="#案例-for-example-：" class="headerlink" title="案例 for example ："></a>案例 for example ：</h4><p><strong>注意</strong>：需要打开两个小黑窗口哦！</p>
+<ol>
+<li><p>一次订阅多个频道 c1,c2,c3 (subscribe c1 c2 c3)<br><img src="/id_16/02.png" alt="订阅多个频道"></p>
+</li>
+<li><p>消息发布，向c2频道发布消息 (publish c2 hello-redis)<br><img src="/id_16/03.png" alt="向指定频道发布消息"></p>
+</li>
+<li><p>订阅给定模式的频道，通配符* (psubscribe new*)<br><img src="/id_16/04.png" alt="订阅特定模式的频道"></p>
+</li>
+<li><p>发布消息 (publish new1 redis-hello)<br><img src="/id_16/05.png" alt="发布消息"></p>
+</li>
+</ol>
+<h4 id="OK-本文到此结束"><a href="#OK-本文到此结束" class="headerlink" title="OK 本文到此结束"></a>OK 本文到此结束</h4>]]></content>
+      <categories>
+        <category>数据库</category>
+      </categories>
+      <tags>
+        <tag>redis</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>用户注册</title>
     <url>/id_18/</url>
     <content><![CDATA[<h4 id="用户注册功能"><a href="#用户注册功能" class="headerlink" title="用户注册功能"></a>用户注册功能</h4><p>需求：实现用户注册功能，并将用户注册信息保存到磁盘文件中，用户注册时至少给定：用户名和密码<br>注意：用户名使用了唯一索引，不可重复</p>
@@ -388,6 +388,68 @@
       </categories>
       <tags>
         <tag>异步</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>四大推导式(列表/字典/集合/生成器)</title>
+    <url>/id_2/</url>
+    <content><![CDATA[<p>推导式（又称解析式），是 python 的一种独有特性。推导式是可以从一个数据序列构建另一个新的数据序列。</p>
+<h3 id="Python-里有四种推导式："><a href="#Python-里有四种推导式：" class="headerlink" title="Python 里有四种推导式："></a>Python 里有四种推导式：</h3><ul>
+<li>列表推导式(List Comprehensions)</li>
+<li>字典推导式(Dictionary Comprehensions)</li>
+<li>集合推导式(Set Comprehensions)</li>
+<li>生成器推导式(Generator Comprehensions)<a id="more"></a>
+
+</li>
+</ul>
+<h4 id="列表推导式"><a href="#列表推导式" class="headerlink" title="列表推导式"></a>列表推导式</h4><p>语法：变量名 = [表达式 for 变量 in 列表 if 条件]<br>注意：这里的if不是必须的哦<br><strong>例</strong>：生成一个1-10的列表</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 普通生成</span></span><br><span class="line">x = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,<span class="number">11</span>):</span><br><span class="line">    x.append(i)</span><br><span class="line">print(x)</span><br><span class="line"><span class="comment"># 列表推导式生成</span></span><br><span class="line">[x.append(i) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,<span class="number">11</span>)]</span><br><span class="line">print(x)    </span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>结果同为 [1,2,3,4,5,6,7,8,9,10]</p>
+</blockquote>
+<h4 id="字典推导式"><a href="#字典推导式" class="headerlink" title="字典推导式"></a>字典推导式</h4><p>字典推导式和列表推导式是一样的，只不过把[]换成了{}<br>语法：变量名 = {表达式 for 变量 in 列表 if 条件}<br>注意：这里的if不是必须的哦<br><strong>例</strong>：生成一个只有偶数的字典</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 普通生成</span></span><br><span class="line">x = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>]</span><br><span class="line">y = {}</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> x:</span><br><span class="line">    <span class="keyword">if</span> i % <span class="number">2</span> == <span class="number">0</span>:</span><br><span class="line">        y[i] = <span class="built_in">str</span>(i)      </span><br><span class="line">print(y)</span><br><span class="line"><span class="comment"># 字典推导式生成</span></span><br><span class="line">z = {i: <span class="built_in">str</span>(i) <span class="keyword">for</span> i <span class="keyword">in</span> x <span class="keyword">if</span> i % <span class="number">2</span> == <span class="number">0</span>}</span><br><span class="line">print(z)   </span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>结果同为 {2:”2”,4:”4”,6:”6”,8:”8”}</p>
+</blockquote>
+<h4 id="集合推导式"><a href="#集合推导式" class="headerlink" title="集合推导式"></a>集合推导式</h4><p>集合推导式和列表推导式是一样的，同样也是把[]换成了{}<br>语法：变量名 = {表达式 for 变量 in 列表 if 条件}<br>注意：这里的if不是必须的哦<br><strong>例</strong>：生成一个只有奇数的集合</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 普通生成</span></span><br><span class="line">x = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>]</span><br><span class="line">y = <span class="built_in">set</span>()</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> x:</span><br><span class="line">    <span class="keyword">if</span> i % <span class="number">2</span> == <span class="number">1</span>:</span><br><span class="line">        y.add(i)   </span><br><span class="line">print(y)</span><br><span class="line"><span class="comment"># 集合推导式生成</span></span><br><span class="line">[y.add(i) <span class="keyword">for</span> i <span class="keyword">in</span> x <span class="keyword">if</span> i%<span class="number">2</span>==<span class="number">1</span>]</span><br><span class="line">print(y)    </span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>结果同为 {1, 3, 5, 7, 9}</p>
+</blockquote>
+<h4 id="生成器推导式"><a href="#生成器推导式" class="headerlink" title="生成器推导式"></a>生成器推导式</h4><p>生成器推导式(或叫生成器表达式)，其结构也跟列表表达式相似。<br>语法：变量名 = (表达式 for 变量 in 列表 if 条件)<br>调用方法：1)for循环<br>        2)next函数<br><strong>例</strong>：将数字列表中各项平方运算，只算偶数</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 普通生成</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">square_even</span>(<span class="params">numbers</span>):</span></span><br><span class="line">    <span class="keyword">for</span> number <span class="keyword">in</span> numbers:</span><br><span class="line">        <span class="keyword">if</span> number % <span class="number">2</span> == <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">yield</span> (number * number)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">numbers = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]</span><br><span class="line">square_numbers = square_even(numbers)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> number <span class="keyword">in</span> square_numbers:</span><br><span class="line">    print(number)</span><br><span class="line"><span class="comment"># 集合推导式生成</span></span><br><span class="line">numbers = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]</span><br><span class="line">square_numbers = (num * num <span class="keyword">for</span> num <span class="keyword">in</span> numbers <span class="keyword">if</span> num % <span class="number">2</span> == <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> number <span class="keyword">in</span> square_numbers:</span><br><span class="line">    print(number)   </span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>结果同为 4 16 36</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>后端</category>
+      </categories>
+      <tags>
+        <tag>python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Redis实现消息队列(Queue)</title>
+    <url>/id_21/</url>
+    <content><![CDATA[<ul>
+<li>相关问题：</li>
+</ul>
+<p><strong>问</strong>：为什么能用列表推导式的时候不用普通for循环？<br><strong>答</strong>：列表推导式比普通for循环性能好</p>
+<a id="more"></a>
+<p><strong>问</strong>：什么是lambda表达式？怎么用？<br><strong>答</strong>：lambda表达式又被称为匿名函数，一般在执行简单的逻辑时使用<br>lambda x:x<em>x   lambda关键字 x变量 x</em>x逻辑<br>注意：lambda的使用大量简化了代码，使代码简练清晰。但是值得注意的是，这会在一定程度上降低代码的可读性。还有lambda内不要包含循环，如果有，我宁愿定义函数来完成，使代码获得可重用性和更好的可读性。<br><strong>问</strong>：redis列表里只能存字符串，如果想存别的类型有什么办法？<br><strong>答</strong>：使用eval()</p>
+<blockquote>
+<p>eval() 原样输出字符串，将字符串强转成它包含的数据类型<br>例: a = “[1,2,3]”(字符串)<br>    a = eval(a)<br>结果：a=<a href="%E5%88%97%E8%A1%A8">1,2,3</a></p>
+</blockquote>
+<p><strong>加权队列</strong>：举个例子吧，在银行窗口办理业务的时候需要先取号==放进队列，然后排队等待。<br>但是这只是普通用户。如果有金卡用户取号，那么金卡用户的业务就可以插队==加权，先行办理金卡用户的业务<br>加权需要用到排序，并且Celery并没有加权这一功能<br>上代码！</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 首先进行方法封装</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyQueue</span>:</span></span><br><span class="line">    <span class="comment"># 队列遵循先进先出的原则</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, name, **redis_kwargs</span>):</span></span><br><span class="line">        <span class="comment"># **kwarys不定长参数  用于可传可不传的参数 </span></span><br><span class="line">        <span class="comment"># kwargs是用来传键值对，args 一般用来传列表和元祖</span></span><br><span class="line">        <span class="comment"># self.__变量名：使用双下划线开头的变量是私有变量，在类外不可以被调用</span></span><br><span class="line">        <span class="comment"># redis的默认参数为：host='localhost', port=6379, db=0， 其中db为定义redis的第几个库</span></span><br><span class="line">        self.__db = redis.Redis(**redis_kwargs, decode_responses=<span class="literal">True</span>)</span><br><span class="line">        self.key = name</span><br><span class="line">        <span class="comment"># llen:获取列表长度</span></span><br><span class="line">        <span class="comment"># lrange:获取列表指定范围内的元素</span></span><br><span class="line">        self.r_len = self.__db.llen(self.key)</span><br><span class="line">        self.l = self.__db.lrange(self.key, <span class="number">0</span>, -<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">push</span>(<span class="params">self, x: <span class="built_in">tuple</span></span>):</span></span><br><span class="line">        <span class="comment"># rpush:在列表中添加一个或多个值</span></span><br><span class="line">        self.__db.rpush(self.key, x)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">show</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(self.__db.lrange(self.key, <span class="number">0</span>, -<span class="number">1</span>))</span><br><span class="line">        <span class="keyword">return</span> self.__db.lrange(self.key, <span class="number">0</span>, -<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 排序用来加权(加权是celery没有的)</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">sort</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="comment"># 因为redis里存的是字符串，而排序的依据是元组中最后一个元素为int,所以使用-2下标</span></span><br><span class="line">        <span class="comment"># 此处可用eval </span></span><br><span class="line">        self.l = <span class="built_in">sorted</span>(self.l, key=<span class="keyword">lambda</span> x: x[-<span class="number">2</span>], reverse=<span class="literal">True</span>)</span><br><span class="line">        <span class="keyword">return</span> self.l</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">pop</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="comment"># pop(0):移出并获取列表的第一个元素</span></span><br><span class="line">        <span class="comment"># lrem 根据第二个参数的值，移除列表中与参数相等的元素。</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> self.l:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line">        item = self.l.pop(<span class="number">0</span>)</span><br><span class="line">        self.__db.lrem(self.key, item, <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> item</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">clear</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="comment"># 用来清空列表</span></span><br><span class="line">        <span class="keyword">return</span> self.__db.delete(self.key)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    m = MyQueue(<span class="string">'que'</span>)</span><br><span class="line">    <span class="comment"># 添加到redis</span></span><br><span class="line">    i = <span class="number">1</span></span><br><span class="line">    <span class="comment"># 列表推导式</span></span><br><span class="line">    [m.push(i,i+<span class="number">1</span>,i+<span class="number">2</span>) <span class="keyword">for</span> item <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>) i++]</span><br><span class="line">    <span class="comment"># 将添加进去的数据排序 </span></span><br><span class="line">    m.sort()</span><br><span class="line">    <span class="comment"># 删除排序后列表中的第一个元素</span></span><br><span class="line">    m.pop()</span><br><span class="line">    <span class="comment"># 清空列表</span></span><br><span class="line">    m.clear()</span><br></pre></td></tr></tbody></table></figure>]]></content>
+      <categories>
+        <category>数据结构</category>
+      </categories>
+      <tags>
+        <tag>redis</tag>
+        <tag>队列</tag>
       </tags>
   </entry>
   <entry>
@@ -440,46 +502,6 @@
       </tags>
   </entry>
   <entry>
-    <title>四大推导式(列表/字典/集合/生成器)</title>
-    <url>/id_2/</url>
-    <content><![CDATA[<p>推导式（又称解析式），是 python 的一种独有特性。推导式是可以从一个数据序列构建另一个新的数据序列。</p>
-<h3 id="Python-里有四种推导式："><a href="#Python-里有四种推导式：" class="headerlink" title="Python 里有四种推导式："></a>Python 里有四种推导式：</h3><ul>
-<li>列表推导式(List Comprehensions)</li>
-<li>字典推导式(Dictionary Comprehensions)</li>
-<li>集合推导式(Set Comprehensions)</li>
-<li>生成器推导式(Generator Comprehensions)<a id="more"></a>
-
-</li>
-</ul>
-<h4 id="列表推导式"><a href="#列表推导式" class="headerlink" title="列表推导式"></a>列表推导式</h4><p>语法：变量名 = [表达式 for 变量 in 列表 if 条件]<br>注意：这里的if不是必须的哦<br><strong>例</strong>：生成一个1-10的列表</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 普通生成</span></span><br><span class="line">x = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,<span class="number">11</span>):</span><br><span class="line">    x.append(i)</span><br><span class="line">print(x)</span><br><span class="line"><span class="comment"># 列表推导式生成</span></span><br><span class="line">[x.append(i) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,<span class="number">11</span>)]</span><br><span class="line">print(x)    </span><br></pre></td></tr></tbody></table></figure>
-<blockquote>
-<p>结果同为 [1,2,3,4,5,6,7,8,9,10]</p>
-</blockquote>
-<h4 id="字典推导式"><a href="#字典推导式" class="headerlink" title="字典推导式"></a>字典推导式</h4><p>字典推导式和列表推导式是一样的，只不过把[]换成了{}<br>语法：变量名 = {表达式 for 变量 in 列表 if 条件}<br>注意：这里的if不是必须的哦<br><strong>例</strong>：生成一个只有偶数的字典</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 普通生成</span></span><br><span class="line">x = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>]</span><br><span class="line">y = {}</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> x:</span><br><span class="line">    <span class="keyword">if</span> i % <span class="number">2</span> == <span class="number">0</span>:</span><br><span class="line">        y[i] = <span class="built_in">str</span>(i)      </span><br><span class="line">print(y)</span><br><span class="line"><span class="comment"># 字典推导式生成</span></span><br><span class="line">z = {i: <span class="built_in">str</span>(i) <span class="keyword">for</span> i <span class="keyword">in</span> x <span class="keyword">if</span> i % <span class="number">2</span> == <span class="number">0</span>}</span><br><span class="line">print(z)   </span><br></pre></td></tr></tbody></table></figure>
-<blockquote>
-<p>结果同为 {2:”2”,4:”4”,6:”6”,8:”8”}</p>
-</blockquote>
-<h4 id="集合推导式"><a href="#集合推导式" class="headerlink" title="集合推导式"></a>集合推导式</h4><p>集合推导式和列表推导式是一样的，同样也是把[]换成了{}<br>语法：变量名 = {表达式 for 变量 in 列表 if 条件}<br>注意：这里的if不是必须的哦<br><strong>例</strong>：生成一个只有奇数的集合</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 普通生成</span></span><br><span class="line">x = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>]</span><br><span class="line">y = <span class="built_in">set</span>()</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> x:</span><br><span class="line">    <span class="keyword">if</span> i % <span class="number">2</span> == <span class="number">1</span>:</span><br><span class="line">        y.add(i)   </span><br><span class="line">print(y)</span><br><span class="line"><span class="comment"># 集合推导式生成</span></span><br><span class="line">[y.add(i) <span class="keyword">for</span> i <span class="keyword">in</span> x <span class="keyword">if</span> i%<span class="number">2</span>==<span class="number">1</span>]</span><br><span class="line">print(y)    </span><br></pre></td></tr></tbody></table></figure>
-<blockquote>
-<p>结果同为 {1, 3, 5, 7, 9}</p>
-</blockquote>
-<h4 id="生成器推导式"><a href="#生成器推导式" class="headerlink" title="生成器推导式"></a>生成器推导式</h4><p>生成器推导式(或叫生成器表达式)，其结构也跟列表表达式相似。<br>语法：变量名 = (表达式 for 变量 in 列表 if 条件)<br>调用方法：1)for循环<br>        2)next函数<br><strong>例</strong>：将数字列表中各项平方运算，只算偶数</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 普通生成</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">square_even</span>(<span class="params">numbers</span>):</span></span><br><span class="line">    <span class="keyword">for</span> number <span class="keyword">in</span> numbers:</span><br><span class="line">        <span class="keyword">if</span> number % <span class="number">2</span> == <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">yield</span> (number * number)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">numbers = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]</span><br><span class="line">square_numbers = square_even(numbers)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> number <span class="keyword">in</span> square_numbers:</span><br><span class="line">    print(number)</span><br><span class="line"><span class="comment"># 集合推导式生成</span></span><br><span class="line">numbers = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]</span><br><span class="line">square_numbers = (num * num <span class="keyword">for</span> num <span class="keyword">in</span> numbers <span class="keyword">if</span> num % <span class="number">2</span> == <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> number <span class="keyword">in</span> square_numbers:</span><br><span class="line">    print(number)   </span><br></pre></td></tr></tbody></table></figure>
-<blockquote>
-<p>结果同为 4 16 36</p>
-</blockquote>
-]]></content>
-      <categories>
-        <category>后端</category>
-      </categories>
-      <tags>
-        <tag>python</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>异步消费</title>
     <url>/id_22/</url>
     <content><![CDATA[<p>异步消费可以使用很多方式来实现，我们今天就来说说异步消费的其中三种实现方式:</p>
@@ -512,28 +534,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Redis实现消息队列(Queue)</title>
-    <url>/id_21/</url>
-    <content><![CDATA[<ul>
-<li>相关问题：</li>
-</ul>
-<p><strong>问</strong>：为什么能用列表推导式的时候不用普通for循环？<br><strong>答</strong>：列表推导式比普通for循环性能好</p>
-<a id="more"></a>
-<p><strong>问</strong>：什么是lambda表达式？怎么用？<br><strong>答</strong>：lambda表达式又被称为匿名函数，一般在执行简单的逻辑时使用<br>lambda x:x<em>x   lambda关键字 x变量 x</em>x逻辑<br>注意：lambda的使用大量简化了代码，使代码简练清晰。但是值得注意的是，这会在一定程度上降低代码的可读性。还有lambda内不要包含循环，如果有，我宁愿定义函数来完成，使代码获得可重用性和更好的可读性。<br><strong>问</strong>：redis列表里只能存字符串，如果想存别的类型有什么办法？<br><strong>答</strong>：使用eval()</p>
-<blockquote>
-<p>eval() 原样输出字符串，将字符串强转成它包含的数据类型<br>例: a = “[1,2,3]”(字符串)<br>    a = eval(a)<br>结果：a=<a href="%E5%88%97%E8%A1%A8">1,2,3</a></p>
-</blockquote>
-<p><strong>加权队列</strong>：举个例子吧，在银行窗口办理业务的时候需要先取号==放进队列，然后排队等待。<br>但是这只是普通用户。如果有金卡用户取号，那么金卡用户的业务就可以插队==加权，先行办理金卡用户的业务<br>加权需要用到排序，并且Celery并没有加权这一功能<br>上代码！</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 首先进行方法封装</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyQueue</span>:</span></span><br><span class="line">    <span class="comment"># 队列遵循先进先出的原则</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, name, **redis_kwargs</span>):</span></span><br><span class="line">        <span class="comment"># **kwarys不定长参数  用于可传可不传的参数 </span></span><br><span class="line">        <span class="comment"># kwargs是用来传键值对，args 一般用来传列表和元祖</span></span><br><span class="line">        <span class="comment"># self.__变量名：使用双下划线开头的变量是私有变量，在类外不可以被调用</span></span><br><span class="line">        <span class="comment"># redis的默认参数为：host='localhost', port=6379, db=0， 其中db为定义redis的第几个库</span></span><br><span class="line">        self.__db = redis.Redis(**redis_kwargs, decode_responses=<span class="literal">True</span>)</span><br><span class="line">        self.key = name</span><br><span class="line">        <span class="comment"># llen:获取列表长度</span></span><br><span class="line">        <span class="comment"># lrange:获取列表指定范围内的元素</span></span><br><span class="line">        self.r_len = self.__db.llen(self.key)</span><br><span class="line">        self.l = self.__db.lrange(self.key, <span class="number">0</span>, -<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">push</span>(<span class="params">self, x: <span class="built_in">tuple</span></span>):</span></span><br><span class="line">        <span class="comment"># rpush:在列表中添加一个或多个值</span></span><br><span class="line">        self.__db.rpush(self.key, x)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">show</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(self.__db.lrange(self.key, <span class="number">0</span>, -<span class="number">1</span>))</span><br><span class="line">        <span class="keyword">return</span> self.__db.lrange(self.key, <span class="number">0</span>, -<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 排序用来加权(加权是celery没有的)</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">sort</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="comment"># 因为redis里存的是字符串，而排序的依据是元组中最后一个元素为int,所以使用-2下标</span></span><br><span class="line">        <span class="comment"># 此处可用eval </span></span><br><span class="line">        self.l = <span class="built_in">sorted</span>(self.l, key=<span class="keyword">lambda</span> x: x[-<span class="number">2</span>], reverse=<span class="literal">True</span>)</span><br><span class="line">        <span class="keyword">return</span> self.l</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">pop</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="comment"># pop(0):移出并获取列表的第一个元素</span></span><br><span class="line">        <span class="comment"># lrem 根据第二个参数的值，移除列表中与参数相等的元素。</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> self.l:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line">        item = self.l.pop(<span class="number">0</span>)</span><br><span class="line">        self.__db.lrem(self.key, item, <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> item</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">clear</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="comment"># 用来清空列表</span></span><br><span class="line">        <span class="keyword">return</span> self.__db.delete(self.key)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    m = MyQueue(<span class="string">'que'</span>)</span><br><span class="line">    <span class="comment"># 添加到redis</span></span><br><span class="line">    i = <span class="number">1</span></span><br><span class="line">    <span class="comment"># 列表推导式</span></span><br><span class="line">    [m.push(i,i+<span class="number">1</span>,i+<span class="number">2</span>) <span class="keyword">for</span> item <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>) i++]</span><br><span class="line">    <span class="comment"># 将添加进去的数据排序 </span></span><br><span class="line">    m.sort()</span><br><span class="line">    <span class="comment"># 删除排序后列表中的第一个元素</span></span><br><span class="line">    m.pop()</span><br><span class="line">    <span class="comment"># 清空列表</span></span><br><span class="line">    m.clear()</span><br></pre></td></tr></tbody></table></figure>]]></content>
-      <categories>
-        <category>数据结构</category>
-      </categories>
-      <tags>
-        <tag>redis</tag>
-        <tag>队列</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>位运算</title>
     <url>/id_23/</url>
     <content><![CDATA[<p>位运算是一切算法的基础<br>位运算是对二进制进行操作<br>使用位运算来判断奇偶数的时候效率要快一些，性能会高一些，因为二进制是计算机识别的语言，计算机不需要去强转然后判断，直接判断即可<br>例如；判断4是不是奇数或偶数</p>
@@ -553,6 +553,29 @@
       </categories>
       <tags>
         <tag>进制</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>栈的使用</title>
+    <url>/id_25/</url>
+    <content><![CDATA[<h3 id="栈"><a href="#栈" class="headerlink" title="栈"></a>栈</h3><p>栈（stack）又名堆栈，它是一种运算受限的<strong>线性表</strong>。限定仅在表尾进行插入和删除操作的线性表。<br>这一端被称为栈顶，相对地，把另一端称为栈底。向一个栈插入新元素又称作进栈、入栈或压栈，它是把新元素放到栈顶元素的上面，使之成为新的栈顶元素；<br>从一个栈删除元素又称作出栈或退栈，它是把栈顶元素删除掉，使其相邻的元素成为新的栈顶元素。</p>
+<a id="more"></a>
+<p>栈作为一种数据结构，是一种只能在一端进行插入和删除操作的特殊线性表。<br>它按照<strong>先进后出</strong>，<strong>后进先出</strong>的原则存储数据</p>
+<h4 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h4><ul>
+<li>银行ATM自动存取款机<br>  假设取款机下有一个用来钱的箱子，箱子只有一个口供用户存取现金<br>  当你存钱的时候，ATM会把钱放在最上面<br>  当你取钱的时候，ATM会把最上面的钱吐出来</li>
+</ul>
+<h4 id="案例"><a href="#案例" class="headerlink" title="案例"></a>案例</h4><h5 id="将十进制的数转换为二进制的数"><a href="#将十进制的数转换为二进制的数" class="headerlink" title="将十进制的数转换为二进制的数"></a>将十进制的数转换为二进制的数</h5><p>我们都知道，通过求余法，可以将十进制数转换为其他进制，比如要转为二进制，将十进制数除以2，记录余数，然后继续将商除以2，一直到商等于0为止，最后将余数倒着写数来就可以了。</p>
+<p>比如13的二进制，13首先除以2商6余1,1首先进栈，然后6除以2商3余0，第二个余数0进栈，接着3除以2，商1余1，第三个余数1进栈，继续1除以2商0余1，第四个余数1进栈。最后将四个余数出栈，就得到了13的二进制1101。<br>实现代码如下</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Stack</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        self.item = []</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">push</span>(<span class="params">self, key</span>):</span></span><br><span class="line">        self.item.append(key)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">pop</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">while</span> <span class="number">1</span>:</span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">len</span>(self.item) != <span class="number">0</span>:</span><br><span class="line">                print(self.item.pop(),end=<span class="string">''</span>)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">exe</span>(<span class="params">self, key</span>):</span></span><br><span class="line">        key = <span class="built_in">int</span>(key)</span><br><span class="line">        <span class="keyword">while</span> <span class="number">1</span>:</span><br><span class="line">            self.push(key % <span class="number">2</span>)</span><br><span class="line">            key //= <span class="number">2</span></span><br><span class="line">            <span class="keyword">if</span> key == <span class="number">0</span>:</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">s = Stack()</span><br><span class="line">s.exe(<span class="built_in">input</span>(<span class="string">"请输入您要进行换算的数字："</span>))</span><br><span class="line">s.pop()</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+<h3 id="栈和队列的异同点"><a href="#栈和队列的异同点" class="headerlink" title="栈和队列的异同点"></a>栈和队列的异同点</h3><h4 id="首先，栈（Stack）和队列（Queue）是两种操作受限的线性表。"><a href="#首先，栈（Stack）和队列（Queue）是两种操作受限的线性表。" class="headerlink" title="首先，栈（Stack）和队列（Queue）是两种操作受限的线性表。"></a>首先，栈（Stack）和队列（Queue）是两种操作受限的线性表。</h4><h4 id="栈与队列的相同点："><a href="#栈与队列的相同点：" class="headerlink" title="栈与队列的相同点："></a>栈与队列的相同点：</h4><p>1.都是线性结构。<br>2.插入操作都是限定在表尾进行。<br>3.都可以通过顺序结构和链式结构实现。<br>4.插入与删除的时间复杂度都是O（1），在空间复杂度上两者也一样。<br>5.多链栈和多链队列的管理模式可以相同。</p>
+<h4 id="栈与队列的不同点："><a href="#栈与队列的不同点：" class="headerlink" title="栈与队列的不同点："></a>栈与队列的不同点：</h4><p>1.删除数据元素的位置不同，栈的删除操作在表尾进行，队列的删除操作在表头进行。<br>2.应用场景不同；常见栈的应用场景包括括号问题的求解，表达式的转换和求值，函数调用和递归实现，深度优先搜索遍历等；常见的队列的应用场景包括计算机系统中各种资源的管理，消息缓冲器的管理和广度优先搜索遍历等。<br>3.顺序栈能够实现多栈空间共享，而顺序队列不能。</p>
+]]></content>
+      <categories>
+        <category>数据结构</category>
+      </categories>
+      <tags>
+        <tag>进制</tag>
+        <tag>栈</tag>
       </tags>
   </entry>
   <entry>
@@ -640,26 +663,33 @@
       </tags>
   </entry>
   <entry>
-    <title>栈的使用</title>
-    <url>/id_25/</url>
-    <content><![CDATA[<h3 id="栈"><a href="#栈" class="headerlink" title="栈"></a>栈</h3><p>栈（stack）又名堆栈，它是一种运算受限的<strong>线性表</strong>。限定仅在表尾进行插入和删除操作的线性表。<br>这一端被称为栈顶，相对地，把另一端称为栈底。向一个栈插入新元素又称作进栈、入栈或压栈，它是把新元素放到栈顶元素的上面，使之成为新的栈顶元素；<br>从一个栈删除元素又称作出栈或退栈，它是把栈顶元素删除掉，使其相邻的元素成为新的栈顶元素。</p>
+    <title>分代回收</title>
+    <url>/id_29/</url>
+    <content><![CDATA[<h3 id="分代回收"><a href="#分代回收" class="headerlink" title="分代回收"></a>分代回收</h3><p>标记-清除会在大规模遍历内存中会使程序暂停 ，程序暂停会导致我们程序出现很多我们意想不到的错误和问题出现，所以pyt hon引入了我们的分代回收来解决这个问题，分代回收也应该是我们在面试过程中主动向面试官阐述出来的。</p>
 <a id="more"></a>
-<p>栈作为一种数据结构，是一种只能在一端进行插入和删除操作的特殊线性表。<br>它按照<strong>先进后出</strong>，<strong>后进先出</strong>的原则存储数据</p>
-<h4 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h4><ul>
-<li>银行ATM自动存取款机<br>  假设取款机下有一个用来钱的箱子，箱子只有一个口供用户存取现金<br>  当你存钱的时候，ATM会把钱放在最上面<br>  当你取钱的时候，ATM会把最上面的钱吐出来</li>
+<h4 id="分代回收原理："><a href="#分代回收原理：" class="headerlink" title="分代回收原理："></a>分代回收原理：</h4><p>分代回收主要是将我们的内存根据对象的时候或被标记的次数进行分代他是一种典型是<strong>时间换空间</strong>的行为，那么他主要分为三代，<strong>青年代</strong>、<strong>中年代</strong>、<strong>老年代</strong>。那么我们可以认为一个对象在内存中存在的时间越长，越不容易被回收，越不是一个垃圾，这里我们认为<strong>老年代</strong>是存活在三代中最长的，那也是最不容易被回收掉的。</p>
+<h4 id="举例说明"><a href="#举例说明" class="headerlink" title="举例说明"></a>举例说明</h4><p>那么我们可以来看一下，假设下图是一块内存： </p>
+<p><img src="/id_29/01.png" alt="内存"></p>
+<p>那我们现在有一个变量a=1首先进入青年代，然后陆陆续续的我们会有变量存入青年代之后，青年代觉得他自己快要满了，那么此时会触发我们的标记清除动作。</p>
+<p><img src="/id_29/02.png" alt="青年代"></p>
+<p>那么触发我们的回收机制，标记-清除之后会在青年代中找到所有引用计数为0的元素，并将其释放。把剩余可以继续往下的元素沉淀到中年代，那么这就是分代回收的技术。</p>
+<p><img src="/id_29/03.png" alt="沉淀中年代"></p>
+<p>他是结合了我们引用计数和标记清除在内的，那每一次对比于之前，现在我们标记清除不需要遍历整段内存，只需要将其对应代遍历即可，那么这样就间接节约了我们遍历所花费的暂停时间，让我们的程序尽可能不要的过多整段内存去遍历，去过滤。</p>
+<p>那么当然呢，更加细节的来说：</p>
+<ul>
+<li>其实是在我们的第0代，也就是青年代满的时候呢将会触发清理我们所有的三代，</li>
+<li>而在中年代满时，将会触发清理我们的中年代和老年代，</li>
+<li>而在我们老年代满的时候呢，只会触发清理我们的老年代，</li>
+<li>也就是说呢，每一层在满了之后，他就会触发<strong>当前及当前之后的每代</strong>的回收动作，</li>
 </ul>
-<h4 id="案例"><a href="#案例" class="headerlink" title="案例"></a>案例</h4><h5 id="将十进制的数转换为二进制的数"><a href="#将十进制的数转换为二进制的数" class="headerlink" title="将十进制的数转换为二进制的数"></a>将十进制的数转换为二进制的数</h5><p>我们都知道，通过求余法，可以将十进制数转换为其他进制，比如要转为二进制，将十进制数除以2，记录余数，然后继续将商除以2，一直到商等于0为止，最后将余数倒着写数来就可以了。</p>
-<p>比如13的二进制，13首先除以2商6余1,1首先进栈，然后6除以2商3余0，第二个余数0进栈，接着3除以2，商1余1，第三个余数1进栈，继续1除以2商0余1，第四个余数1进栈。最后将四个余数出栈，就得到了13的二进制1101。<br>实现代码如下</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Stack</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        self.item = []</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">push</span>(<span class="params">self, key</span>):</span></span><br><span class="line">        self.item.append(key)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">pop</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">while</span> <span class="number">1</span>:</span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">len</span>(self.item) != <span class="number">0</span>:</span><br><span class="line">                print(self.item.pop(),end=<span class="string">''</span>)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">exe</span>(<span class="params">self, key</span>):</span></span><br><span class="line">        key = <span class="built_in">int</span>(key)</span><br><span class="line">        <span class="keyword">while</span> <span class="number">1</span>:</span><br><span class="line">            self.push(key % <span class="number">2</span>)</span><br><span class="line">            key //= <span class="number">2</span></span><br><span class="line">            <span class="keyword">if</span> key == <span class="number">0</span>:</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">s = Stack()</span><br><span class="line">s.exe(<span class="built_in">input</span>(<span class="string">"请输入您要进行换算的数字："</span>))</span><br><span class="line">s.pop()</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
-<h3 id="栈和队列的异同点"><a href="#栈和队列的异同点" class="headerlink" title="栈和队列的异同点"></a>栈和队列的异同点</h3><h4 id="首先，栈（Stack）和队列（Queue）是两种操作受限的线性表。"><a href="#首先，栈（Stack）和队列（Queue）是两种操作受限的线性表。" class="headerlink" title="首先，栈（Stack）和队列（Queue）是两种操作受限的线性表。"></a>首先，栈（Stack）和队列（Queue）是两种操作受限的线性表。</h4><h4 id="栈与队列的相同点："><a href="#栈与队列的相同点：" class="headerlink" title="栈与队列的相同点："></a>栈与队列的相同点：</h4><p>1.都是线性结构。<br>2.插入操作都是限定在表尾进行。<br>3.都可以通过顺序结构和链式结构实现。<br>4.插入与删除的时间复杂度都是O（1），在空间复杂度上两者也一样。<br>5.多链栈和多链队列的管理模式可以相同。</p>
-<h4 id="栈与队列的不同点："><a href="#栈与队列的不同点：" class="headerlink" title="栈与队列的不同点："></a>栈与队列的不同点：</h4><p>1.删除数据元素的位置不同，栈的删除操作在表尾进行，队列的删除操作在表头进行。<br>2.应用场景不同；常见栈的应用场景包括括号问题的求解，表达式的转换和求值，函数调用和递归实现，深度优先搜索遍历等；常见的队列的应用场景包括计算机系统中各种资源的管理，消息缓冲器的管理和广度优先搜索遍历等。<br>3.顺序栈能够实现多栈空间共享，而顺序队列不能。</p>
+<p><strong>目的</strong>：那么分代回收他的主要目的是为了解决我们标记-清除所带来的一些额外操作，我们上一节也说过，标记-清除如果需要遍历的内存节点较多的时候，那么每一次回收他都要花费大量的时间，那么利用我们的分代回收就可以减少这些情况</p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>我们python管理内存是以引用计数为主，标记清除和分代回收为辅的方法来管理内存的</p>
 ]]></content>
       <categories>
-        <category>数据结构</category>
+        <category>后端</category>
       </categories>
       <tags>
-        <tag>进制</tag>
-        <tag>栈</tag>
+        <tag>python</tag>
       </tags>
   </entry>
   <entry>
@@ -759,6 +789,31 @@
       </tags>
   </entry>
   <entry>
+    <title>垃圾回收机制之标记-清除</title>
+    <url>/id_28/</url>
+    <content><![CDATA[<h3 id="垃圾回收机制"><a href="#垃圾回收机制" class="headerlink" title="垃圾回收机制"></a>垃圾回收机制</h3><p>垃圾自动回收机制的出现使编程更加的简单，使得我们不需要再去考虑内存分配和释放的问题，而是更加的专注在我们产品功能的实现上</p>
+<p>目前最基本的垃圾收集算法有四种,标记-清除算法(mark-sweep),标记-压缩算法(mark-compact),复制算法(copying)以及引用计数算法(reference counting).而现代流行的垃圾收集算法一般是由这四种中的其中几种算法相互组合而成，比如说，对堆(heap)的一部分采用标记-清除算法，对堆(heap)的另外一部分则采用复制算法等等。今天我们主要来看下标记-清除算法的原理。</p>
+<a id="more"></a>
+<h4 id="标记-清除"><a href="#标记-清除" class="headerlink" title="标记-清除"></a>标记-清除</h4><p>标记-清除算法分为两个阶段，标记(mark)和清除(sweep)</p>
+<h5 id="标记："><a href="#标记：" class="headerlink" title="标记："></a>标记：</h5><p>在内存中对每一个被使用到的变量来进行标记</p>
+<p>标记是从根对象开始工作，所有能够和根对象联系的变量我们都会有相应的标记。</p>
+<h5 id="标记举例"><a href="#标记举例" class="headerlink" title="标记举例"></a>标记举例</h5><p><img src="/id_28/01.png" alt="标记"></p>
+<p><img src="/id_28/02.png" alt="标记"></p>
+<p><img src="/id_28/03.png" alt="标记"></p>
+<h5 id="清除"><a href="#清除" class="headerlink" title="清除:"></a>清除:</h5><p>清除主要是将内存中无关联根对象的并且没有被标记的变量给杀死，释放掉</p>
+<p><img src="/id_28/04.png" alt="image-20210324190403266"></p>
+<p>图中a和b已经和根对象没有关系了，而且并没有被标记，所以就会被清除掉</p>
+<h4 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h4><p>总的来说，在标记-清除过程中,他会扫描整个内存空间，扫描过程中python程序会暂停，被标记的对象不会被回收，没有标记的对象会被回收掉。<br>但是我们整个python程序暂停，暂停会导致程序无法正常运行，让程序运行时出现一些问题从而造成程序阻塞问题<br>那python呢就引入了<strong>分代回收</strong>来避免标记-清除，由于每一次过程都需要去大量的遍历整块内存而造成的程序阻塞问题</p>
+<p>分代回收参考下一篇文章：<a href="https://www.hr915.xyz/id_29">https://www.hr915.xyz/id_29</a></p>
+]]></content>
+      <categories>
+        <category>后端</category>
+      </categories>
+      <tags>
+        <tag>python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>引用计数</title>
     <url>/id_27/</url>
     <content><![CDATA[<h3 id="引用计数"><a href="#引用计数" class="headerlink" title="引用计数"></a>引用计数</h3><h5 id="问"><a href="#问" class="headerlink" title="问"></a>问</h5><p>引用计数这个问题是我们在面试中经常会遇到的。通常面试官会这样问：</p>
@@ -800,61 +855,6 @@
 <p>循环引用就是两个变量互相引用时假设已经被释放，但引用计数不为0，那就会导致这两个变量无法被直接回收</p>
 <p><strong>那循环引用有什么解决办法吗？</strong></p>
 <p>那肯定是有的，python中解决循环引用的方法就是<strong>标记-清除</strong><br>请移步下一节：<a href="https://www.hr915.xyz/id_28">https://www.hr915.xyz/id_28</a></p>
-]]></content>
-      <categories>
-        <category>后端</category>
-      </categories>
-      <tags>
-        <tag>python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>垃圾回收机制之标记-清除</title>
-    <url>/id_28/</url>
-    <content><![CDATA[<h3 id="垃圾回收机制"><a href="#垃圾回收机制" class="headerlink" title="垃圾回收机制"></a>垃圾回收机制</h3><p>垃圾自动回收机制的出现使编程更加的简单，使得我们不需要再去考虑内存分配和释放的问题，而是更加的专注在我们产品功能的实现上</p>
-<p>目前最基本的垃圾收集算法有四种,标记-清除算法(mark-sweep),标记-压缩算法(mark-compact),复制算法(copying)以及引用计数算法(reference counting).而现代流行的垃圾收集算法一般是由这四种中的其中几种算法相互组合而成，比如说，对堆(heap)的一部分采用标记-清除算法，对堆(heap)的另外一部分则采用复制算法等等。今天我们主要来看下标记-清除算法的原理。</p>
-<a id="more"></a>
-<h4 id="标记-清除"><a href="#标记-清除" class="headerlink" title="标记-清除"></a>标记-清除</h4><p>标记-清除算法分为两个阶段，标记(mark)和清除(sweep)</p>
-<h5 id="标记："><a href="#标记：" class="headerlink" title="标记："></a>标记：</h5><p>在内存中对每一个被使用到的变量来进行标记</p>
-<p>标记是从根对象开始工作，所有能够和根对象联系的变量我们都会有相应的标记。</p>
-<h5 id="标记举例"><a href="#标记举例" class="headerlink" title="标记举例"></a>标记举例</h5><p><img src="/id_28/01.png" alt="标记"></p>
-<p><img src="/id_28/02.png" alt="标记"></p>
-<p><img src="/id_28/03.png" alt="标记"></p>
-<h5 id="清除"><a href="#清除" class="headerlink" title="清除:"></a>清除:</h5><p>清除主要是将内存中无关联根对象的并且没有被标记的变量给杀死，释放掉</p>
-<p><img src="/id_28/04.png" alt="image-20210324190403266"></p>
-<p>图中a和b已经和根对象没有关系了，而且并没有被标记，所以就会被清除掉</p>
-<h4 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h4><p>总的来说，在标记-清除过程中,他会扫描整个内存空间，扫描过程中python程序会暂停，被标记的对象不会被回收，没有标记的对象会被回收掉。<br>但是我们整个python程序暂停，暂停会导致程序无法正常运行，让程序运行时出现一些问题从而造成程序阻塞问题<br>那python呢就引入了<strong>分代回收</strong>来避免标记-清除，由于每一次过程都需要去大量的遍历整块内存而造成的程序阻塞问题</p>
-<p>分代回收参考下一篇文章：<a href="https://www.hr915.xyz/id_29">https://www.hr915.xyz/id_29</a></p>
-]]></content>
-      <categories>
-        <category>后端</category>
-      </categories>
-      <tags>
-        <tag>python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>分代回收</title>
-    <url>/id_29/</url>
-    <content><![CDATA[<h3 id="分代回收"><a href="#分代回收" class="headerlink" title="分代回收"></a>分代回收</h3><p>标记-清除会在大规模遍历内存中会使程序暂停 ，程序暂停会导致我们程序出现很多我们意想不到的错误和问题出现，所以pyt hon引入了我们的分代回收来解决这个问题，分代回收也应该是我们在面试过程中主动向面试官阐述出来的。</p>
-<a id="more"></a>
-<h4 id="分代回收原理："><a href="#分代回收原理：" class="headerlink" title="分代回收原理："></a>分代回收原理：</h4><p>分代回收主要是将我们的内存根据对象的时候或被标记的次数进行分代他是一种典型是<strong>时间换空间</strong>的行为，那么他主要分为三代，<strong>青年代</strong>、<strong>中年代</strong>、<strong>老年代</strong>。那么我们可以认为一个对象在内存中存在的时间越长，越不容易被回收，越不是一个垃圾，这里我们认为<strong>老年代</strong>是存活在三代中最长的，那也是最不容易被回收掉的。</p>
-<h4 id="举例说明"><a href="#举例说明" class="headerlink" title="举例说明"></a>举例说明</h4><p>那么我们可以来看一下，假设下图是一块内存： </p>
-<p><img src="/id_29/01.png" alt="内存"></p>
-<p>那我们现在有一个变量a=1首先进入青年代，然后陆陆续续的我们会有变量存入青年代之后，青年代觉得他自己快要满了，那么此时会触发我们的标记清除动作。</p>
-<p><img src="/id_29/02.png" alt="青年代"></p>
-<p>那么触发我们的回收机制，标记-清除之后会在青年代中找到所有引用计数为0的元素，并将其释放。把剩余可以继续往下的元素沉淀到中年代，那么这就是分代回收的技术。</p>
-<p><img src="/id_29/03.png" alt="沉淀中年代"></p>
-<p>他是结合了我们引用计数和标记清除在内的，那每一次对比于之前，现在我们标记清除不需要遍历整段内存，只需要将其对应代遍历即可，那么这样就间接节约了我们遍历所花费的暂停时间，让我们的程序尽可能不要的过多整段内存去遍历，去过滤。</p>
-<p>那么当然呢，更加细节的来说：</p>
-<ul>
-<li>其实是在我们的第0代，也就是青年代满的时候呢将会触发清理我们所有的三代，</li>
-<li>而在中年代满时，将会触发清理我们的中年代和老年代，</li>
-<li>而在我们老年代满的时候呢，只会触发清理我们的老年代，</li>
-<li>也就是说呢，每一层在满了之后，他就会触发<strong>当前及当前之后的每代</strong>的回收动作，</li>
-</ul>
-<p><strong>目的</strong>：那么分代回收他的主要目的是为了解决我们标记-清除所带来的一些额外操作，我们上一节也说过，标记-清除如果需要遍历的内存节点较多的时候，那么每一次回收他都要花费大量的时间，那么利用我们的分代回收就可以减少这些情况</p>
-<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>我们python管理内存是以引用计数为主，标记清除和分代回收为辅的方法来管理内存的</p>
 ]]></content>
       <categories>
         <category>后端</category>
@@ -929,6 +929,39 @@
       </tags>
   </entry>
   <entry>
+    <title>周期总结</title>
+    <url>/id_30/</url>
+    <content><![CDATA[<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>转眼一个周期过去了，学了很多零碎的知识点。有遇到困难，有得到解惑。</p>
+<a id="more"></a>
+
+<p>day01: 在vue中使用ant_design<br>ant_design+vue官方文档：<a href="https://antdv.com/docs/vue/introduce-cn/">https://antdv.com/docs/vue/introduce-cn/</a></p>
+<p>day02: IT新闻资讯<br>网址: <a href="https://www.cnbeta.com/">https://www.cnbeta.com/</a></p>
+<p>day03: redis实现输入密码错误五次封禁账号<br>移步: <a href="https://www.hr915.xyz/id_20/">https://www.hr915.xyz/id_20/</a></p>
+<p>day04: httpx编写测试脚本<br>移步: <a href="https://www.hr915.xyz/id_6/">https://www.hr915.xyz/id_6/</a></p>
+<p>day05: 异步任务队列<br>移步: <a href="https://www.hr915.xyz/id_19/">https://www.hr915.xyz/id_19/</a></p>
+<p>day06: 加权队列<br>移步: <a href="https://www.hr915.xyz/id_21/">https://www.hr915.xyz/id_21/</a></p>
+<p>day07: 异步消费<br>移步: <a href="https://www.hr915.xyz/id_22/">https://www.hr915.xyz/id_22/</a></p>
+<p>day08: 权限模型</p>
+<p>day09: 三方登录<br>移步: <a href="https://www.hr915.xyz/id_13/">https://www.hr915.xyz/id_13/</a></p>
+<p>day10: 位运算<br>移步: <a href="https://www.hr915.xyz/id_23/">https://www.hr915.xyz/id_23/</a></p>
+<p>day11: 工单分类</p>
+<p>day12: Mongodb<br>移步: <a href="https://www.hr915.xyz/id_24/">https://www.hr915.xyz/id_24/</a></p>
+<p>day13: 审批流程</p>
+<p>day14: 栈的使用<br>移步: <a href="https://www.hr915.xyz/id_25/">https://www.hr915.xyz/id_25/</a></p>
+<p>day15: 设计模式<br>移步: <a href="https://www.hr915.xyz/id_26/">https://www.hr915.xyz/id_26/</a></p>
+<p>day16: 消息盒子</p>
+<p>day17: websocket<br>移步: <a href="https://www.hr915.xyz/id_10/">https://www.hr915.xyz/id_10/</a></p>
+<p>day18: 客服系统</p>
+<p>day19: 部署</p>
+]]></content>
+      <categories>
+        <category>总结</category>
+      </categories>
+      <tags>
+        <tag>python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>axios封装</title>
     <url>/id_31/</url>
     <content><![CDATA[<p>在vue项目中，和后台交互获取数据这块，我们通常使用的是axios库，它是基于promise的http库，可运行在浏览器端和node.js中。<br>他有很多优秀的特性，例如拦截请求和响应、取消请求、转换json、客户端防御CSRF等。<br>axios文档：<a href="https://www.npmjs.com/package/axios">https://www.npmjs.com/package/axios</a></p>
@@ -974,36 +1007,356 @@
       </tags>
   </entry>
   <entry>
-    <title>周期总结</title>
-    <url>/id_30/</url>
-    <content><![CDATA[<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>转眼一个周期过去了，学了很多零碎的知识点。有遇到困难，有得到解惑。</p>
+    <title>Git分支</title>
+    <url>/id_33/</url>
+    <content><![CDATA[<h3 id="Git分支"><a href="#Git分支" class="headerlink" title="Git分支"></a>Git分支</h3><h4 id="什么是分支"><a href="#什么是分支" class="headerlink" title="什么是分支"></a>什么是分支</h4><p>分支是为了将修改记录的整体流程分叉保存。分叉后的分支不受其他分支的影响，所以在同一个数据库里可以同时进行多个修改。<br>简单理解：可以理解为复仇者联盟里面的多元宇宙，各个宇宙之间互不影响，到某一时间点会合并</p>
 <a id="more"></a>
-
-<p>day01: 在vue中使用ant_design<br>ant_design+vue官方文档：<a href="https://antdv.com/docs/vue/introduce-cn/">https://antdv.com/docs/vue/introduce-cn/</a></p>
-<p>day02: IT新闻资讯<br>网址: <a href="https://www.cnbeta.com/">https://www.cnbeta.com/</a></p>
-<p>day03: redis实现输入密码错误五次封禁账号<br>移步: <a href="https://www.hr915.xyz/id_20/">https://www.hr915.xyz/id_20/</a></p>
-<p>day04: httpx编写测试脚本<br>移步: <a href="https://www.hr915.xyz/id_6/">https://www.hr915.xyz/id_6/</a></p>
-<p>day05: 异步任务队列<br>移步: <a href="https://www.hr915.xyz/id_19/">https://www.hr915.xyz/id_19/</a></p>
-<p>day06: 加权队列<br>移步: <a href="https://www.hr915.xyz/id_21/">https://www.hr915.xyz/id_21/</a></p>
-<p>day07: 异步消费<br>移步: <a href="https://www.hr915.xyz/id_22/">https://www.hr915.xyz/id_22/</a></p>
-<p>day08: 权限模型</p>
-<p>day09: 三方登录<br>移步: <a href="https://www.hr915.xyz/id_13/">https://www.hr915.xyz/id_13/</a></p>
-<p>day10: 位运算<br>移步: <a href="https://www.hr915.xyz/id_23/">https://www.hr915.xyz/id_23/</a></p>
-<p>day11: 工单分类</p>
-<p>day12: Mongodb<br>移步: <a href="https://www.hr915.xyz/id_24/">https://www.hr915.xyz/id_24/</a></p>
-<p>day13: 审批流程</p>
-<p>day14: 栈的使用<br>移步: <a href="https://www.hr915.xyz/id_25/">https://www.hr915.xyz/id_25/</a></p>
-<p>day15: 设计模式<br>移步: <a href="https://www.hr915.xyz/id_26/">https://www.hr915.xyz/id_26/</a></p>
-<p>day16: 消息盒子</p>
-<p>day17: websocket<br>移步: <a href="https://www.hr915.xyz/id_10/">https://www.hr915.xyz/id_10/</a></p>
-<p>day18: 客服系统</p>
-<p>day19: 部署</p>
+<h4 id="好处"><a href="#好处" class="headerlink" title="好处"></a>好处</h4><p>为了不受其他开发人员的影响，可以在主分支上建立自己专用的分支。<br>完成工作后，将自己分支上的修改合并到主分支。因为每一次提交的历史记录都会被保存，所以当发生问题时，定位和修改造成问题的提交就容易多了。</p>
+<h4 id="操作分支的简单命令"><a href="#操作分支的简单命令" class="headerlink" title="操作分支的简单命令"></a>操作分支的简单命令</h4><p>查看所有分支</p>
+<blockquote>
+<p>git branch -a</p>
+</blockquote>
+<p>查看云端分支</p>
+<blockquote>
+<p>git branch -r</p>
+</blockquote>
+<p>拉取云端代码or分支</p>
+<blockquote>
+<p>git pull</p>
+</blockquote>
+<p>创建分支</p>
+<blockquote>
+<p>git branch 分支名</p>
+</blockquote>
+<p>切换分支</p>
+<blockquote>
+<p>git checkout -b 或者git switch -c </p>
+</blockquote>
+<p>合并某分支到当前分支</p>
+<blockquote>
+<p>git merge 分支名 或者 git rebase 分支名</p>
+<p>merge可以保留所有提交，方便回滚，但不方便查看提交日志</p>
+<p>rebase 只保留主历史，线性历史，便于查看，但每次都会把平行的历史给抹掉</p>
+</blockquote>
+<p>删除分支</p>
+<blockquote>
+<p>git branch -d</p>
+</blockquote>
+<p>查看提交日志</p>
+<blockquote>
+<p>git log</p>
+</blockquote>
+<p>代码回退</p>
+<blockquote>
+<p>git reset –hard 提交ID</p>
+</blockquote>
+<p>回退完需要提交到线上 但是只需要提交头部 </p>
+<blockquote>
+<p>git push origin HEAD –force</p>
+<p>// force强制提交,注意：不能跳分支回退</p>
+</blockquote>
+<p>参考链接：<a href="https://backlog.com/git-tutorial/cn/">https://backlog.com/git-tutorial/cn/</a></p>
 ]]></content>
       <categories>
-        <category>总结</category>
+        <category>代码库</category>
+      </categories>
+      <tags>
+        <tag>git</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>OpenLdap</title>
+    <url>/id_35/</url>
+    <content><![CDATA[<h4 id="什么是OpenLdap"><a href="#什么是OpenLdap" class="headerlink" title="什么是OpenLdap:"></a>什么是OpenLdap:</h4><p>轻型目录访问协议（英文： LightweightDirectoryAccessProtocol，缩写： LDAP）是一个开放的，中立的，工业标准的应用协议，通过IP协议提供访问控制和维护分布式信息的目录信息。OpenLDAP是轻型目录访问协议（ LightweightDirectoryAccessProtocol， LDAP）的自由和开源的实现，在其 OpenLDAP许可证下发行，并已经被包含在众多流行的 Linux发行版中。</p>
+<a id="more"></a>
+<h4 id="为什么要用OpenLdap"><a href="#为什么要用OpenLdap" class="headerlink" title="为什么要用OpenLdap:"></a>为什么要用OpenLdap:</h4><p>可以这样讲：市面上只要你能够想像得到的所有工具软件，全部都支持 LDAP协议。<br>比如说你公司要安装一个项目管理工具，那么这个工具几乎必然支持 LDAP协议，你公司要安装一个 bug管理工具，这工具必然也支持 LDAP协议，你公司要安装一套软件版本管理工具，这工具也必然支持 LDAP协议。 LDAP协议的好处就是你公司的所有员工在所有这些工具里共享同一套用户名和密码，来人的时候新增一个用户就能自动访问所有系统，走人的时候一键删除就取消了他对所有系统的访问权限，这就是 LDAP</p>
+<h4 id="相关概念-属性"><a href="#相关概念-属性" class="headerlink" title="相关概念(属性):"></a>相关概念(属性):</h4><table>
+<thead>
+<tr>
+<th align="left">英文简称</th>
+<th align="left">英文全称</th>
+<th align="left">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">DC</td>
+<td align="left">Domain Component</td>
+<td align="left">域名的部分，其格式是将完整的域名分成几部分，如域名为xxxx.com变成dc=xxxx,dc=com。简单理解把它理解成域名标识即可。</td>
+</tr>
+<tr>
+<td align="left">OU</td>
+<td align="left">Organization Unit</td>
+<td align="left">组织单位，组织单位可以包含其他各种对象，如“开发组”（一条记录的所属组织）。简单理解把他理解成公司的组织和部门：ou=开发一组，ou=技术研发部门</td>
+</tr>
+<tr>
+<td align="left">UID</td>
+<td align="left">User Id</td>
+<td align="left">用户ID zhangsan（一条记录的ID）</td>
+</tr>
+<tr>
+<td align="left">DN</td>
+<td align="left">Distinguished Name</td>
+<td align="left">“uid=zhangsan,ou=开发一组，ou=技术研发部门,dc=xxxx,dc=com”，一条记录的位置（唯一） DN的元素包含UID（或CN) + OU + DC</td>
+</tr>
+<tr>
+<td align="left">CN</td>
+<td align="left">Common Name</td>
+<td align="left">公共名称，如“张三”（一条记录的名称）。简单理解用于描述UID的</td>
+</tr>
+<tr>
+<td align="left">rdn</td>
+<td align="left">Relative dn</td>
+<td align="left">相对辨别名，类似于文件系统中的相对路径，它是与目录树结构无关的部分，如“uid=zhangsan”或“cn= 张三”</td>
+</tr>
+<tr>
+<td align="left">SN</td>
+<td align="left">Surname</td>
+<td align="left">姓，如“张”</td>
+</tr>
+</tbody></table>
+<h5 id="DN"><a href="#DN" class="headerlink" title="DN:"></a>DN:</h5><p>LDAP连接服务器的连接字串格式为：ldap://servername/DN  </p>
+<p>其中DN有三个属性，分别是CN,OU,DC  </p>
+<p>CN, OU, DC 都是 LDAP 连接服务器的端字符串中的区别名称（DN, distinguished  name） </p>
+<p>LDAP是一种通讯协议，如同HTTP是一种协议一样的！ </p>
+]]></content>
+      <categories>
+        <category>数据库</category>
+      </categories>
+      <tags>
+        <tag>OpenLdap</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>数据结构之二叉树</title>
+    <url>/id_34/</url>
+    <content><![CDATA[<h3 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h3><p>简单的三种数据结构：</p>
+<p><img src="/id_34/1.png" alt="数据结构"></p>
+<a id="more"></a>
+<p>树：由一个根节点分出许多子节点，最终的节点叫做叶子节点</p>
+<p>二叉树：每一个节点都会生出两个子节点(左节点or右节点)，最终的节点叫做叶子节点</p>
+<p>栈和队列想查询某个元素只有遍历查询，而树每个节点之间都有关联，便于高效查询</p>
+<p>查询效率第一位的时候需要用到树结构</p>
+<h4 id="遍历方式："><a href="#遍历方式：" class="headerlink" title="遍历方式："></a>遍历方式：</h4><p>树遍历的三种方式：前序遍历，中序遍历，后序遍历</p>
+<ul>
+<li>前序遍历 从根节点开始输出—&gt;左节点输出，继续向下左节点输出，直到叶子节点—&gt;右节点输出—&gt;   简单来说: 根—&gt;左—&gt;右</li>
+<li>中序遍历 先找左子树，找到叶子结点输出—&gt;上一级输出—-&gt;右节点的左叶子结点输出—&gt;上一级输出—右节点的左叶子节点输出—&gt;  简单来说: 左—&gt;根—&gt;右</li>
+<li>后序遍历 从子节点的左/右叶子节点，开始输出—&gt;右节点输出—&gt;上级节点—&gt;   简单来说: 左—&gt;右—&gt;根</li>
+</ul>
+<p>举个例子:<br><img src="/id_34/%E4%B8%89%E7%A7%8D%E9%81%8D%E5%8E%86.png" alt="数据结构"></p>
+<h4 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h4><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Tree</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        self.left = <span class="literal">None</span></span><br><span class="line">        self.right = <span class="literal">None</span></span><br><span class="line">        self.data = <span class="literal">None</span></span><br><span class="line">        self.lis = []</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">preface</span>(<span class="params">self, node</span>):</span></span><br><span class="line">        <span class="string">'''先序'''</span></span><br><span class="line">        self.lis.append(node.data)</span><br><span class="line">        <span class="keyword">if</span> node.left != <span class="literal">None</span>:</span><br><span class="line">            self.preface(node.left)</span><br><span class="line">        <span class="keyword">if</span> node.right != <span class="literal">None</span>:</span><br><span class="line">            self.preface(node.right)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">middleorder</span>(<span class="params">self, node</span>):</span></span><br><span class="line">        <span class="string">'''中序'''</span></span><br><span class="line">        <span class="keyword">if</span> node.left != <span class="literal">None</span>:</span><br><span class="line">            self.middleorder(node.left)</span><br><span class="line"></span><br><span class="line">        self.lis.append(node.data)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> node.right != <span class="literal">None</span>:</span><br><span class="line">            self.middleorder(node.right)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">postscript</span>(<span class="params">self, node</span>):</span></span><br><span class="line">        <span class="string">'''后序'''</span></span><br><span class="line">        <span class="keyword">if</span> node.left != <span class="literal">None</span>:</span><br><span class="line">            self.postscript(node.left)</span><br><span class="line">        <span class="keyword">if</span> node.right != <span class="literal">None</span>:</span><br><span class="line">            self.postscript(node.right)</span><br><span class="line"></span><br><span class="line">        self.lis.append(node.data)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">search</span>(<span class="params">self, node, lis, data</span>):</span></span><br><span class="line">        <span class="string">'''查找'''</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> node.left == <span class="literal">None</span>:</span><br><span class="line">            lis = self.search(node.left, lis, data)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> node.right == <span class="literal">None</span>:</span><br><span class="line">            lis = self.search(node.right, lis, data)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> lis != []:</span><br><span class="line">            <span class="comment"># 判断当前节点是否在查询节点的线上</span></span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> node.left != <span class="literal">None</span>:</span><br><span class="line">                <span class="keyword">if</span> lis[-<span class="number">1</span>] == node.left.data:</span><br><span class="line">                    lis.append(node.data)</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> node.right != <span class="literal">None</span>:</span><br><span class="line">                <span class="keyword">if</span> lis[-<span class="number">1</span>] == node.right.data:</span><br><span class="line">                    lis.append(node.data)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> node.data == data:</span><br><span class="line">            lis.append(data)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> lis</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    root = Tree()</span><br><span class="line"></span><br><span class="line">    root.data = <span class="string">'1'</span></span><br><span class="line"></span><br><span class="line">    root.left = Tree()</span><br><span class="line">    root.left.data = <span class="string">'2'</span></span><br><span class="line"></span><br><span class="line">    root.right = Tree()</span><br><span class="line">    root.right.data = <span class="string">'3'</span></span><br><span class="line"></span><br><span class="line">    root.left.left = Tree()</span><br><span class="line">    root.left.left.data = <span class="string">'4'</span></span><br><span class="line"></span><br><span class="line">    root.left.right = Tree()</span><br><span class="line">    root.left.right.data = <span class="string">'5'</span></span><br><span class="line"></span><br><span class="line">    root.right.left = Tree()</span><br><span class="line">    root.right.left.data = <span class="string">'6'</span></span><br><span class="line"></span><br><span class="line">    root.right.right = Tree()</span><br><span class="line">    root.right.right.data = <span class="string">'7'</span></span><br><span class="line"></span><br><span class="line">    root.left.left.left = Tree()</span><br><span class="line">    root.left.left.left.data = <span class="string">'8'</span></span><br><span class="line"></span><br><span class="line">    root.left.right.left = Tree()</span><br><span class="line">    root.left.right.left.data = <span class="string">'9'</span></span><br><span class="line"></span><br><span class="line">    root.right.left.right = Tree()</span><br><span class="line">    root.right.left.right.data = <span class="string">'10'</span></span><br><span class="line"></span><br><span class="line">    root.right.right.right = Tree()</span><br><span class="line">    root.right.right.right.data = <span class="string">'11'</span></span><br><span class="line"></span><br><span class="line">    print(<span class="string">'先序:'</span>)</span><br><span class="line">    root.lis = []</span><br><span class="line">    root.preface(root)</span><br><span class="line">    print(root.lis)</span><br><span class="line">    print(<span class="string">'中序:'</span>)</span><br><span class="line">    root.lis = []</span><br><span class="line">    root.middleorder(root)</span><br><span class="line">    print(root.lis)</span><br><span class="line">    print(<span class="string">'后序:'</span>)</span><br><span class="line">    root.lis = []</span><br><span class="line">    root.postscript(root)</span><br><span class="line">    print(root.lis)</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>]]></content>
+      <categories>
+        <category>数据结构</category>
+      </categories>
+      <tags>
+        <tag>二叉树</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Restful</title>
+    <url>/id_36/</url>
+    <content><![CDATA[<h3 id="Restful："><a href="#Restful：" class="headerlink" title="Restful："></a>Restful：</h3><p>一种软件架构风格、设计风格，而不是标准，只是提供了一组设计原则和约束条件。它主要用于客户端和服务器交互类的软件。基于这个风格设计的软件可以更简洁，更有层次，更易于实现缓存等机制。</p>
+<a id="more"></a>
+<p>这么理解试试看，也就是你听过建筑的复古风格，欧美风格之类的么，大体就是一个意思。如果你盖个别墅不按设计风格走，直接以小茅屋的形式，没有属于任何风格它也能盖成不是，这就是我们平时开发API不按RESTFUL风格也可以是一个道理。REST 指的是一组架构约束条件和原则，满足这些约束条件和原则的应用程序或设计就是RESTful。</p>
+<h4 id="Restful发展历程："><a href="#Restful发展历程：" class="headerlink" title="Restful发展历程："></a>Restful发展历程：</h4><p>详细发展历程：<a href="https://blog.csdn.net/a78270528/article/details/78469758">https://blog.csdn.net/a78270528/article/details/78469758</a><br>Restful风格==面向过程—&gt;面向资源—&gt;面向标签—&gt;面向文档</p>
+<p>面向过程==想起一出是一出，只要有功能就写新接口</p>
+<p>面向资源==封装单个接口，添加一个接口，删除一个接口，修改一个接口，多重逻辑需要多个if-else</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> request.method ==POST:</span><br><span class="line">	.....</span><br><span class="line"><span class="keyword">elif</span> request.method==GET:</span><br><span class="line">    </span><br></pre></td></tr></tbody></table></figure>
+<p>面向标签==封装单个接口，通过method进行语义化操作 post/put/delete/get</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Test</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span>:</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">post</span>:</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">put</span>:</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">delete</span>:</span></span><br><span class="line">        <span class="keyword">pass</span></span><br></pre></td></tr></tbody></table></figure>
+<p>面向文档==具备面向标签的功能语义化，在返回响应的时候告诉客户还可以做什么操作</p>
+<ul>
+<li>说这么多，到底restful是什么？<h4 id="接口规范"><a href="#接口规范" class="headerlink" title="接口规范"></a>接口规范</h4></li>
+</ul>
+<ol>
+<li><p>统一资源接口<br> RESTful架构应该遵循统一接口原则，统一接口包含了一组受限的预定义的操作，不论什么样的资源，都是通过使用相同的接口进行资源的访问。接口应该使用标准的HTTP方法如GET，PUT和POST，并遵循这些方法的语义。</p>
+</li>
+<li><p>URL中只使用名词来指定资源，原则上不使用动词</p>
+</li>
+<li><p>用HTTP协议里的动词来实现资源的添加，修改，删除等操作。即通过HTTP动词来实现资源的状态扭转<br> GET 用来获取资源，<br> POST 用来新建资源（也可以用于更新资源），<br> PUT 用来更新资源，<br> DELETE 用来删除资源。  </p>
+</li>
+<li><p>Server和Client之间传递某资源的一个表现形式，比如用JSON，XML传输文本，或者用JPG，WebP传输图片等。当然还可以压缩HTTP传输时的数据（on-wire data compression）。</p>
+</li>
+<li><p>用 HTTP Status Code传递Server的状态信息。比如最常用的 200 表示成功，500 表示Server内部错误等。</p>
+</li>
+</ol>
+<h4 id="一些其他规范："><a href="#一些其他规范：" class="headerlink" title="一些其他规范："></a>一些其他规范：</h4><p>规则1：URI结尾不应包含（/）<br>规则2：正斜杠分隔符（/）必须用来指示层级关系<br>规则3：应使用连字符（ - ）来提高URI的可读性<br>规则4：不得在URI中使用下划线（_）<br>规则5：URI路径中全都使用小写字母</p>
+]]></content>
+      <tags>
+        <tag>Restful</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Sort和Sorted区别</title>
+    <url>/id_38/</url>
+    <content><![CDATA[<h4 id="引入"><a href="#引入" class="headerlink" title="引入"></a>引入</h4><p>我们需要对List进行排序，Python提供了两个方法<br>对给定的List L进行排序，<br>方法1.用List的成员函数sort进行排序<br>方法2.用内建函数sorted进行排序（从python 2.4开始）</p>
+<a id="more"></a>
+<h4 id="语法："><a href="#语法：" class="headerlink" title="语法："></a>语法：</h4><p>sort函数定义：sort(cmp=None, key=None, reverse=False)<br>sorted函数定义：sorted(iterable, cmp=None, key=None, reverse=False)</p>
+<p>参数解析：<br>iterable：是可迭代类型;<br>cmp：用于比较的函数（大于时返回1，小于时返回-1，等于时返回0），比较什么由key决定,有默认值，迭代集合中的一项;<br>key：用列表元素的某个属性和函数进行作为关键字，有默认值，迭代集合中的一项;<br>reverse：排序规则. reverse = True 或者 reverse = False，有默认值。</p>
+<h4 id="区别"><a href="#区别" class="headerlink" title="区别:"></a>区别:</h4><ol>
+<li>sort( )函数时对已存在的列表进行操作，调用其没有返回值；<br>而sorted( )函数是返回一个新的list,不在原来的list上进行操作，调用其返回一个排好序的list。</li>
+<li>sorted()不会改变原来的list，而是会返回一个新的已经排序好的list<br>list.sort()方法仅仅被list所定义，sorted()可用于任何一个可迭代对象</li>
+</ol>
+<h4 id="举例说明："><a href="#举例说明：" class="headerlink" title="举例说明："></a>举例说明：</h4><p>示例1:</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">a = [<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">3</span>,<span class="number">5</span>,<span class="number">2</span>]</span><br><span class="line">a.sort()</span><br><span class="line">print(a)</span><br><span class="line"> </span><br><span class="line">c = [<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">3</span>,<span class="number">5</span>,<span class="number">2</span>]</span><br><span class="line">d = <span class="built_in">sorted</span>(c)</span><br><span class="line"></span><br><span class="line">print(d)</span><br><span class="line">print(c)</span><br></pre></td></tr></tbody></table></figure>
+<p>得：</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">[<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>]</span><br><span class="line">[<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>]</span><br><span class="line">[<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">2</span>]</span><br></pre></td></tr></tbody></table></figure>
+<p>示例1是采用函数默认的设置</p>
+<ul>
+<li>对于排序参数设置，主要有以下两种：基于key；基于reverse。<br>示例2: 基于key和reverse</li>
+</ul>
+<p>1.reverse实现降序排序，需要提供一个布尔值，默认为False（升序排列）。<br>2.key在使用时必须提供一个排序过程总调用的函数：</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">alist  =  [( <span class="string">'2'</span> ,  <span class="string">'3'</span> ,  <span class="string">'10'</span> ), ( <span class="string">'1'</span> ,  <span class="string">'2'</span> ,  <span class="string">'3'</span> ), ( <span class="string">'5'</span> ,  <span class="string">'6'</span> ,  <span class="string">'7'</span> ), ( <span class="string">'2'</span> ,  <span class="string">'5'</span> ,  <span class="string">'10'</span> ), ( <span class="string">'2'</span> ,  <span class="string">'4'</span> ,  <span class="string">'10'</span> )]</span><br><span class="line"><span class="comment"># 多级排序，先按照第3个元素排序，然后按照第2个元素排序：</span></span><br><span class="line"><span class="comment"># reverse = False 降序</span></span><br><span class="line">print(<span class="built_in">sorted</span>(alist, key=<span class="keyword">lambda</span>  x:( <span class="built_in">int</span> (x[ <span class="number">2</span> ]),<span class="built_in">int</span> (x[ <span class="number">1</span> ])),reverse  =  <span class="literal">False</span> )) </span><br><span class="line"><span class="comment"># reverse = False 升序</span></span><br><span class="line">alist.sort(key=<span class="keyword">lambda</span>  x:( <span class="built_in">int</span> (x[ <span class="number">2</span> ]),<span class="built_in">int</span> (x[ <span class="number">1</span> ])),reverse  =  <span class="literal">True</span> )</span><br><span class="line">print(alist)</span><br></pre></td></tr></tbody></table></figure>
+<p>得：</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">[(<span class="string">'1'</span>, <span class="string">'2'</span>, <span class="string">'3'</span>), (<span class="string">'5'</span>, <span class="string">'6'</span>, <span class="string">'7'</span>), (<span class="string">'2'</span>, <span class="string">'3'</span>, <span class="string">'10'</span>), (<span class="string">'2'</span>, <span class="string">'4'</span>, <span class="string">'10'</span>), (<span class="string">'2'</span>, <span class="string">'5'</span>, <span class="string">'10'</span>)]</span><br><span class="line">[(<span class="string">'2'</span>, <span class="string">'5'</span>, <span class="string">'10'</span>), (<span class="string">'2'</span>, <span class="string">'4'</span>, <span class="string">'10'</span>), (<span class="string">'2'</span>, <span class="string">'3'</span>, <span class="string">'10'</span>), (<span class="string">'5'</span>, <span class="string">'6'</span>, <span class="string">'7'</span>), (<span class="string">'1'</span>, <span class="string">'2'</span>, <span class="string">'3'</span>)]```</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+<h5 id="结论："><a href="#结论：" class="headerlink" title="结论："></a>结论：</h5><p>1、函数sorted()不改变原来的list，而是返回一个新的排好序的list。<br>2、key可以采用lambda表达式<br>3、排序的key是函数自己选择；采用key是确定排序的key，排序方式是函数自己选择。</p>
+]]></content>
+      <categories>
+        <category>python</category>
       </categories>
       <tags>
         <tag>python</tag>
+        <tag>内置方法</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>集合(SET)</title>
+    <url>/id_39/</url>
+    <content><![CDATA[<h3 id="集合"><a href="#集合" class="headerlink" title="集合"></a>集合</h3><p>集合（set）是一个无序的不重复元素序列。一般用于去重。<br>当元素的顺序性没有唯一性重要的时候，使用到SET去重</p>
+<a id="more"></a>
+
+<p>集合又分为可变集合和不可变集合</p>
+<p>可变集合(set)：通过add等方法可以动态修改set中的内容</p>
+<p>不可变集合(frozenset)：顾名思义，他的元素是不可变的</p>
+<blockquote>
+<p>frozenset()是一个函数，会返回一个冻结的集合，冻结后集合不能再添加或删除任何元素。</p>
+</blockquote>
+<h4 id="特点"><a href="#特点" class="headerlink" title="特点:"></a>特点:</h4><ol>
+<li>不同元素组成（元素不能重复）</li>
+<li>无序（集合元素的顺序和定义、添加的顺序不一致）</li>
+<li>集合中的元素必须是不可变类型</li>
+</ol>
+<h4 id="底层实现"><a href="#底层实现" class="headerlink" title="底层实现"></a>底层实现</h4><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 集合SET去重操作原理: 必须要有另外一个容器作比对，</span></span><br><span class="line"><span class="comment"># 比如每样鱼我要来一条，那么我旁边就需要有一个新的鱼缸，然后把挑选出来的鱼放进新鱼缸中，捞第二条的时候用眼睛和第一条作比对</span></span><br><span class="line"></span><br><span class="line">l = [<span class="number">3</span>, <span class="number">3</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">6</span>]</span><br><span class="line">mylist = []</span><br><span class="line"></span><br><span class="line">[mylist.append(i) <span class="keyword">for</span> i <span class="keyword">in</span> l <span class="keyword">if</span> <span class="keyword">not</span> i <span class="keyword">in</span> mylist]</span><br><span class="line"></span><br><span class="line">print(mylist)</span><br></pre></td></tr></tbody></table></figure>
+<p>延伸一下append的底层原理：</p>
+<blockquote>
+<p>append其实是用到了队列,先进先出的概念</p>
+<p>跟append一起的还有insert，两个的差别在于一个从头部插入，一个从尾部插入</p>
+</blockquote>
+<h4 id="集合的创建："><a href="#集合的创建：" class="headerlink" title="集合的创建："></a>集合的创建：</h4><p>可以使用大括号 { } 或者 set() 函数创建集合，注意：创建一个空集合必须用 set() 而不是 { }，因为 { } 是用来创建一个空字典。</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 创建集合</span></span><br><span class="line">parame = {<span class="number">1</span>,<span class="number">2</span>}</span><br><span class="line">print(<span class="built_in">type</span>(parame))</span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">a = <span class="string">'hello'</span></span><br><span class="line">print(<span class="built_in">set</span>(a))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建空集合</span></span><br><span class="line">myset = <span class="built_in">set</span>()</span><br><span class="line">print(<span class="built_in">type</span>(myset))</span><br></pre></td></tr></tbody></table></figure>
+<h4 id="集合常用方法"><a href="#集合常用方法" class="headerlink" title="集合常用方法"></a>集合常用方法</h4><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><a href="https://www.runoob.com/python3/ref-set-add.html">add()</a></td>
+<td align="left">为集合添加元素</td>
+</tr>
+<tr>
+<td align="left"><a href="https://www.runoob.com/python3/ref-set-clear.html">clear()</a></td>
+<td align="left">移除集合中的所有元素</td>
+</tr>
+<tr>
+<td align="left"><a href="https://www.runoob.com/python3/ref-set-copy.html">copy()</a></td>
+<td align="left">拷贝一个集合</td>
+</tr>
+<tr>
+<td align="left"><a href="https://www.runoob.com/python3/ref-set-difference.html">difference()</a></td>
+<td align="left">返回多个集合的差集</td>
+</tr>
+<tr>
+<td align="left"><a href="https://www.runoob.com/python3/ref-set-difference_update.html">difference_update()</a></td>
+<td align="left">移除集合中的元素，该元素在指定的集合也存在。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://www.runoob.com/python3/ref-set-discard.html">discard()</a></td>
+<td align="left">删除集合中指定的元素</td>
+</tr>
+<tr>
+<td align="left"><a href="https://www.runoob.com/python3/ref-set-intersection.html">intersection()</a></td>
+<td align="left">返回集合的交集</td>
+</tr>
+<tr>
+<td align="left"><a href="https://www.runoob.com/python3/ref-set-intersection_update.html">intersection_update()</a></td>
+<td align="left">返回集合的交集。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://www.runoob.com/python3/ref-set-isdisjoint.html">isdisjoint()</a></td>
+<td align="left">判断两个集合是否包含相同的元素，如果没有返回 True，否则返回 False。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://www.runoob.com/python3/ref-set-issubset.html">issubset()</a></td>
+<td align="left">判断指定集合是否为该方法参数集合的子集。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://www.runoob.com/python3/ref-set-issuperset.html">issuperset()</a></td>
+<td align="left">判断该方法的参数集合是否为指定集合的子集</td>
+</tr>
+<tr>
+<td align="left"><a href="https://www.runoob.com/python3/ref-set-pop.html">pop()</a></td>
+<td align="left">随机移除元素</td>
+</tr>
+<tr>
+<td align="left"><a href="https://www.runoob.com/python3/ref-set-remove.html">remove()</a></td>
+<td align="left">移除指定元素</td>
+</tr>
+<tr>
+<td align="left"><a href="https://www.runoob.com/python3/ref-set-symmetric_difference.html">symmetric_difference()</a></td>
+<td align="left">返回两个集合中不重复的元素集合。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://www.runoob.com/python3/ref-set-symmetric_difference_update.html">symmetric_difference_update()</a></td>
+<td align="left">移除当前集合中在另外一个指定集合相同的元素，并将另外一个指定集合中不同的元素插入到当前集合中。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://www.runoob.com/python3/ref-set-union.html">union()</a></td>
+<td align="left">返回两个集合的并集</td>
+</tr>
+<tr>
+<td align="left"><a href="https://www.runoob.com/python3/ref-set-update.html">update()</a></td>
+<td align="left">给集合添加元素</td>
+</tr>
+</tbody></table>
+<h5 id="添加元素"><a href="#添加元素" class="headerlink" title="添加元素"></a>添加元素</h5><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 向一个空集合中添加元素</span></span><br><span class="line">myset = <span class="built_in">set</span>()</span><br><span class="line">myset.add(<span class="string">'hello'</span>)</span><br><span class="line">print(myset)</span><br><span class="line"></span><br><span class="line"><span class="comment"># update可以添加多个参数，可以是列表，元组，字典等，参数用逗号隔开</span></span><br><span class="line">myset = <span class="built_in">set</span>()</span><br><span class="line">myset.update(<span class="string">'hello'</span>,[<span class="number">1</span>,<span class="number">2</span>],{<span class="number">3</span>:<span class="number">4</span>},(<span class="number">5</span>,<span class="number">6</span>))</span><br><span class="line">print(myset)</span><br></pre></td></tr></tbody></table></figure>
+<h5 id="移除元素"><a href="#移除元素" class="headerlink" title="移除元素"></a>移除元素</h5><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 随机删除一个元素  pop</span></span><br><span class="line">parame = {<span class="number">1</span>,<span class="number">2</span>}</span><br><span class="line">parame.pop()</span><br><span class="line">print(parame)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除指定元素 remove,元素不存在报错</span></span><br><span class="line">myset = {<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>}</span><br><span class="line">myset.remove(<span class="number">4</span>)</span><br><span class="line">print(myset)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除指定元素 discard,元素不存在不会报错</span></span><br><span class="line">myset = {<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>}</span><br><span class="line">myset.discard(<span class="number">7</span>)</span><br><span class="line">print(myset)</span><br></pre></td></tr></tbody></table></figure>
+<h4 id="集合的运算符"><a href="#集合的运算符" class="headerlink" title="集合的运算符"></a>集合的运算符</h4><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>-</strong></td>
+<td align="left">集合a中包含而集合b中不包含的元素</td>
+</tr>
+<tr>
+<td align="left">|</td>
+<td align="left">集合a或b中包含的所有元素</td>
+</tr>
+<tr>
+<td align="left">&amp;</td>
+<td align="left">集合a和b中都包含了的元素</td>
+</tr>
+<tr>
+<td align="left">^</td>
+<td align="left">不同时包含于a和b的元素</td>
+</tr>
+</tbody></table>
+<h5 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h5><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">a = <span class="built_in">set</span>(<span class="string">'123456'</span>)</span><br><span class="line">b = <span class="built_in">set</span>(<span class="string">'456789'</span>)</span><br></pre></td></tr></tbody></table></figure>
+<h5 id="集合a中包含而集合b中不包含的元素"><a href="#集合a中包含而集合b中不包含的元素" class="headerlink" title="集合a中包含而集合b中不包含的元素"></a>集合a中包含而集合b中不包含的元素</h5><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">print(a - b)</span><br><span class="line"><span class="comment"># {'1', '2', '3'}</span></span><br></pre></td></tr></tbody></table></figure>
+<h5 id="集合a或b中包含的所有元素"><a href="#集合a或b中包含的所有元素" class="headerlink" title="集合a或b中包含的所有元素"></a>集合a或b中包含的所有元素</h5><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">print(a | b)</span><br><span class="line"><span class="comment"># {'1', '4', '5', '2', '8', '3', '6', '7', '9'}</span></span><br></pre></td></tr></tbody></table></figure>
+<h5 id="集合a和b中都包含了的元素"><a href="#集合a和b中都包含了的元素" class="headerlink" title="集合a和b中都包含了的元素"></a>集合a和b中都包含了的元素</h5><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">print(a &amp; b)</span><br><span class="line"><span class="comment"># {'4', '5', '6'}</span></span><br></pre></td></tr></tbody></table></figure>
+<h5 id="不同时包含于a和b的元素"><a href="#不同时包含于a和b的元素" class="headerlink" title="不同时包含于a和b的元素"></a>不同时包含于a和b的元素</h5><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">print(a ^ b)</span><br><span class="line"><span class="comment"># {'8', '3', '7', '9', '1', '2'}</span></span><br></pre></td></tr></tbody></table></figure>
+]]></content>
+      <categories>
+        <category>python</category>
+      </categories>
+      <tags>
+        <tag>python</tag>
+        <tag>类型</tag>
       </tags>
   </entry>
   <entry>
@@ -1290,31 +1643,6 @@
       </tags>
   </entry>
   <entry>
-    <title>VUE父子组件</title>
-    <url>/id_7/</url>
-    <content><![CDATA[<h4 id="VUE父子组件使用"><a href="#VUE父子组件使用" class="headerlink" title="VUE父子组件使用"></a>VUE父子组件使用</h4><p>在vue组件通信中其中最常见通信方式就是父子组件之中的通信，而父子组件的设定方式在不同情况下又各有不同。<br>最常见的就是父组件为控制组件，子组件为视图组件。<br>父组件传递数据给子组件使用，遇到业务逻辑操作时子组件触发父组件的自定义事件。<br>但是，无论哪种组织方式父子组件的通信方式都是大同小异</p>
-<a id="more"></a>
-
-<h4 id="父组件向子组件传参"><a href="#父组件向子组件传参" class="headerlink" title="父组件向子组件传参"></a>父组件向子组件传参</h4><p><strong>通过 [props]传递数据 (推荐)</strong></p>
-<p>父子通讯中最常见的数据传递方式就是通过props传递数据，就好像方法的传参一样，父组件调用子组件并传入数据，子组件接受到父组件传递的数据进行验证<br>使用props 可以是数组或对象，用于接收来自父组件的数据。<br>props 可以是简单的数组，或者使用对象作为替代，对象允许配置高级选项，如类型检测、自定义校验和设置默认值prop 的定义应该尽量详细，至少需要指定其类型</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;!-- 父组件  Father --&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;Son :parentMessage="parentMessage"&gt;&lt;/Son&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">import Son from "./Son";</span><br><span class="line"></span><br><span class="line">export default {</span><br><span class="line">  components: {</span><br><span class="line">    Son</span><br><span class="line">  },</span><br><span class="line">  data() {</span><br><span class="line">    return {</span><br><span class="line">      parentMessage: "我是来自父组件的消息，借用一下子组件的地方渲染一下"</span><br><span class="line">    }</span><br><span class="line">  }</span><br><span class="line">}</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;style&gt;&lt;/style&gt;</span><br></pre></td></tr></tbody></table></figure>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;!-- 子组件 Son  --&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;h1&gt;你好哇&lt;/h1&gt;</span><br><span class="line">    &lt;span&gt;{{ parentMessage }}&lt;/span&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">export default {</span><br><span class="line">  mounted() {</span><br><span class="line">    console.log(this.parentMessage)</span><br><span class="line">  },</span><br><span class="line">  //第一种方法  </span><br><span class="line">  // props: ['parentMessage']</span><br><span class="line">  //第二种方法</span><br><span class="line">    props: {</span><br><span class="line">      parentMessage: {</span><br><span class="line">        type: String,</span><br><span class="line">        default: '子组件默认显示的信息',</span><br><span class="line">        require: true</span><br><span class="line">      }</span><br><span class="line">    }  </span><br><span class="line"></span><br><span class="line">}</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;style&gt;&lt;/style&gt;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
-<p>效果：<br><img src="/id_7/01.png" alt="父子组件传参"></p>
-<h4 id="子组件向父组件传参"><a href="#子组件向父组件传参" class="headerlink" title="子组件向父组件传参"></a>子组件向父组件传参</h4><p><strong>通过 [$emit]传递数据 (推荐)</strong><br>通过 $emit 传递父组件数据与父组件到子组件通讯中的$on配套使用，可以向父组件中触发的方法传递参数供父组件使用。</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;!-- 父组件  Father --&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    </span><br><span class="line">    &lt;h1&gt;{{data}}&lt;/h1&gt;</span><br><span class="line"></span><br><span class="line">    &lt;Son @event="change"&gt;&lt;/Son&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">import Son from "./Son";</span><br><span class="line"></span><br><span class="line">export default {</span><br><span class="line">  components: {</span><br><span class="line">    Son</span><br><span class="line">  },</span><br><span class="line">  data() {</span><br><span class="line">    return {</span><br><span class="line">      data:"我是父组件"</span><br><span class="line">    }</span><br><span class="line">  },</span><br><span class="line">    methods: {</span><br><span class="line">      change(event) {</span><br><span class="line">        this.data = event</span><br><span class="line">          console.log(event)</span><br><span class="line">      }</span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;style&gt;&lt;/style&gt;</span><br></pre></td></tr></tbody></table></figure>
-
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;!-- 子组件 Son  --&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">    &lt;div&gt;</span><br><span class="line">      &lt;button @click="toFather"&gt;向父组件传值&lt;/button&gt;</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">export default {</span><br><span class="line">  data(){</span><br><span class="line">    return{</span><br><span class="line">      data:"我是子组件"</span><br><span class="line">    }</span><br><span class="line">  },</span><br><span class="line">  methods:{</span><br><span class="line">      toFather(){</span><br><span class="line">        this.$emit('event', this.data)</span><br><span class="line">      }</span><br><span class="line">  },</span><br><span class="line">}</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;style&gt;&lt;/style&gt;</span><br></pre></td></tr></tbody></table></figure>
-<p>效果：<br><img src="/id_7/02.png" alt="子父组件传参"></p>
-]]></content>
-      <categories>
-        <category>前端</category>
-      </categories>
-      <tags>
-        <tag>vue</tag>
-        <tag>组件</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>VUE拦截器</title>
     <url>/id_8/</url>
     <content><![CDATA[<p>vue拦截器axios 是一个基于Promise 用于浏览器和 nodejs 的 HTTP 客户端,<br>他主要分为请求拦截器和响应拦截器…</p>
@@ -1364,356 +1692,28 @@
       </tags>
   </entry>
   <entry>
-    <title>Git分支</title>
-    <url>/id_33/</url>
-    <content><![CDATA[<h3 id="Git分支"><a href="#Git分支" class="headerlink" title="Git分支"></a>Git分支</h3><h4 id="什么是分支"><a href="#什么是分支" class="headerlink" title="什么是分支"></a>什么是分支</h4><p>分支是为了将修改记录的整体流程分叉保存。分叉后的分支不受其他分支的影响，所以在同一个数据库里可以同时进行多个修改。<br>简单理解：可以理解为复仇者联盟里面的多元宇宙，各个宇宙之间互不影响，到某一时间点会合并</p>
-<a id="more"></a>
-<h4 id="好处"><a href="#好处" class="headerlink" title="好处"></a>好处</h4><p>为了不受其他开发人员的影响，可以在主分支上建立自己专用的分支。<br>完成工作后，将自己分支上的修改合并到主分支。因为每一次提交的历史记录都会被保存，所以当发生问题时，定位和修改造成问题的提交就容易多了。</p>
-<h4 id="操作分支的简单命令"><a href="#操作分支的简单命令" class="headerlink" title="操作分支的简单命令"></a>操作分支的简单命令</h4><p>查看所有分支</p>
-<blockquote>
-<p>git branch -a</p>
-</blockquote>
-<p>查看云端分支</p>
-<blockquote>
-<p>git branch -r</p>
-</blockquote>
-<p>拉取云端代码or分支</p>
-<blockquote>
-<p>git pull</p>
-</blockquote>
-<p>创建分支</p>
-<blockquote>
-<p>git branch 分支名</p>
-</blockquote>
-<p>切换分支</p>
-<blockquote>
-<p>git checkout -b 或者git switch -c </p>
-</blockquote>
-<p>合并某分支到当前分支</p>
-<blockquote>
-<p>git merge 分支名 或者 git rebase 分支名</p>
-<p>merge可以保留所有提交，方便回滚，但不方便查看提交日志</p>
-<p>rebase 只保留主历史，线性历史，便于查看，但每次都会把平行的历史给抹掉</p>
-</blockquote>
-<p>删除分支</p>
-<blockquote>
-<p>git branch -d</p>
-</blockquote>
-<p>查看提交日志</p>
-<blockquote>
-<p>git log</p>
-</blockquote>
-<p>代码回退</p>
-<blockquote>
-<p>git reset –hard 提交ID</p>
-</blockquote>
-<p>回退完需要提交到线上 但是只需要提交头部 </p>
-<blockquote>
-<p>git push origin HEAD –force</p>
-<p>// force强制提交,注意：不能跳分支回退</p>
-</blockquote>
-<p>参考链接：<a href="https://backlog.com/git-tutorial/cn/">https://backlog.com/git-tutorial/cn/</a></p>
-]]></content>
-      <categories>
-        <category>代码库</category>
-      </categories>
-      <tags>
-        <tag>git</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>数据结构之二叉树</title>
-    <url>/id_34/</url>
-    <content><![CDATA[<h3 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h3><p>简单的三种数据结构：</p>
-<p><img src="/id_34/1.png" alt="数据结构"></p>
-<a id="more"></a>
-<p>树：由一个根节点分出许多子节点，最终的节点叫做叶子节点</p>
-<p>二叉树：每一个节点都会生出两个子节点(左节点or右节点)，最终的节点叫做叶子节点</p>
-<p>栈和队列想查询某个元素只有遍历查询，而树每个节点之间都有关联，便于高效查询</p>
-<p>查询效率第一位的时候需要用到树结构</p>
-<h4 id="遍历方式："><a href="#遍历方式：" class="headerlink" title="遍历方式："></a>遍历方式：</h4><p>树遍历的三种方式：前序遍历，中序遍历，后序遍历</p>
-<ul>
-<li>前序遍历 从根节点开始输出—&gt;左节点输出，继续向下左节点输出，直到叶子节点—&gt;右节点输出—&gt;   简单来说: 根—&gt;左—&gt;右</li>
-<li>中序遍历 先找左子树，找到叶子结点输出—&gt;上一级输出—-&gt;右节点的左叶子结点输出—&gt;上一级输出—右节点的左叶子节点输出—&gt;  简单来说: 左—&gt;根—&gt;右</li>
-<li>后序遍历 从子节点的左/右叶子节点，开始输出—&gt;右节点输出—&gt;上级节点—&gt;   简单来说: 左—&gt;右—&gt;根</li>
-</ul>
-<p>举个例子:<br><img src="/id_34/%E4%B8%89%E7%A7%8D%E9%81%8D%E5%8E%86.png" alt="数据结构"></p>
-<h4 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h4><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Tree</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        self.left = <span class="literal">None</span></span><br><span class="line">        self.right = <span class="literal">None</span></span><br><span class="line">        self.data = <span class="literal">None</span></span><br><span class="line">        self.lis = []</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">preface</span>(<span class="params">self, node</span>):</span></span><br><span class="line">        <span class="string">'''先序'''</span></span><br><span class="line">        self.lis.append(node.data)</span><br><span class="line">        <span class="keyword">if</span> node.left != <span class="literal">None</span>:</span><br><span class="line">            self.preface(node.left)</span><br><span class="line">        <span class="keyword">if</span> node.right != <span class="literal">None</span>:</span><br><span class="line">            self.preface(node.right)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">middleorder</span>(<span class="params">self, node</span>):</span></span><br><span class="line">        <span class="string">'''中序'''</span></span><br><span class="line">        <span class="keyword">if</span> node.left != <span class="literal">None</span>:</span><br><span class="line">            self.middleorder(node.left)</span><br><span class="line"></span><br><span class="line">        self.lis.append(node.data)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> node.right != <span class="literal">None</span>:</span><br><span class="line">            self.middleorder(node.right)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">postscript</span>(<span class="params">self, node</span>):</span></span><br><span class="line">        <span class="string">'''后序'''</span></span><br><span class="line">        <span class="keyword">if</span> node.left != <span class="literal">None</span>:</span><br><span class="line">            self.postscript(node.left)</span><br><span class="line">        <span class="keyword">if</span> node.right != <span class="literal">None</span>:</span><br><span class="line">            self.postscript(node.right)</span><br><span class="line"></span><br><span class="line">        self.lis.append(node.data)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">search</span>(<span class="params">self, node, lis, data</span>):</span></span><br><span class="line">        <span class="string">'''查找'''</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> node.left == <span class="literal">None</span>:</span><br><span class="line">            lis = self.search(node.left, lis, data)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> node.right == <span class="literal">None</span>:</span><br><span class="line">            lis = self.search(node.right, lis, data)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> lis != []:</span><br><span class="line">            <span class="comment"># 判断当前节点是否在查询节点的线上</span></span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> node.left != <span class="literal">None</span>:</span><br><span class="line">                <span class="keyword">if</span> lis[-<span class="number">1</span>] == node.left.data:</span><br><span class="line">                    lis.append(node.data)</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> node.right != <span class="literal">None</span>:</span><br><span class="line">                <span class="keyword">if</span> lis[-<span class="number">1</span>] == node.right.data:</span><br><span class="line">                    lis.append(node.data)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> node.data == data:</span><br><span class="line">            lis.append(data)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> lis</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    root = Tree()</span><br><span class="line"></span><br><span class="line">    root.data = <span class="string">'1'</span></span><br><span class="line"></span><br><span class="line">    root.left = Tree()</span><br><span class="line">    root.left.data = <span class="string">'2'</span></span><br><span class="line"></span><br><span class="line">    root.right = Tree()</span><br><span class="line">    root.right.data = <span class="string">'3'</span></span><br><span class="line"></span><br><span class="line">    root.left.left = Tree()</span><br><span class="line">    root.left.left.data = <span class="string">'4'</span></span><br><span class="line"></span><br><span class="line">    root.left.right = Tree()</span><br><span class="line">    root.left.right.data = <span class="string">'5'</span></span><br><span class="line"></span><br><span class="line">    root.right.left = Tree()</span><br><span class="line">    root.right.left.data = <span class="string">'6'</span></span><br><span class="line"></span><br><span class="line">    root.right.right = Tree()</span><br><span class="line">    root.right.right.data = <span class="string">'7'</span></span><br><span class="line"></span><br><span class="line">    root.left.left.left = Tree()</span><br><span class="line">    root.left.left.left.data = <span class="string">'8'</span></span><br><span class="line"></span><br><span class="line">    root.left.right.left = Tree()</span><br><span class="line">    root.left.right.left.data = <span class="string">'9'</span></span><br><span class="line"></span><br><span class="line">    root.right.left.right = Tree()</span><br><span class="line">    root.right.left.right.data = <span class="string">'10'</span></span><br><span class="line"></span><br><span class="line">    root.right.right.right = Tree()</span><br><span class="line">    root.right.right.right.data = <span class="string">'11'</span></span><br><span class="line"></span><br><span class="line">    print(<span class="string">'先序:'</span>)</span><br><span class="line">    root.lis = []</span><br><span class="line">    root.preface(root)</span><br><span class="line">    print(root.lis)</span><br><span class="line">    print(<span class="string">'中序:'</span>)</span><br><span class="line">    root.lis = []</span><br><span class="line">    root.middleorder(root)</span><br><span class="line">    print(root.lis)</span><br><span class="line">    print(<span class="string">'后序:'</span>)</span><br><span class="line">    root.lis = []</span><br><span class="line">    root.postscript(root)</span><br><span class="line">    print(root.lis)</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>]]></content>
-      <categories>
-        <category>数据结构</category>
-      </categories>
-      <tags>
-        <tag>二叉树</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>OpenLdap</title>
-    <url>/id_35/</url>
-    <content><![CDATA[<h4 id="什么是OpenLdap"><a href="#什么是OpenLdap" class="headerlink" title="什么是OpenLdap:"></a>什么是OpenLdap:</h4><p>轻型目录访问协议（英文： LightweightDirectoryAccessProtocol，缩写： LDAP）是一个开放的，中立的，工业标准的应用协议，通过IP协议提供访问控制和维护分布式信息的目录信息。OpenLDAP是轻型目录访问协议（ LightweightDirectoryAccessProtocol， LDAP）的自由和开源的实现，在其 OpenLDAP许可证下发行，并已经被包含在众多流行的 Linux发行版中。</p>
-<a id="more"></a>
-<h4 id="为什么要用OpenLdap"><a href="#为什么要用OpenLdap" class="headerlink" title="为什么要用OpenLdap:"></a>为什么要用OpenLdap:</h4><p>可以这样讲：市面上只要你能够想像得到的所有工具软件，全部都支持 LDAP协议。<br>比如说你公司要安装一个项目管理工具，那么这个工具几乎必然支持 LDAP协议，你公司要安装一个 bug管理工具，这工具必然也支持 LDAP协议，你公司要安装一套软件版本管理工具，这工具也必然支持 LDAP协议。 LDAP协议的好处就是你公司的所有员工在所有这些工具里共享同一套用户名和密码，来人的时候新增一个用户就能自动访问所有系统，走人的时候一键删除就取消了他对所有系统的访问权限，这就是 LDAP</p>
-<h4 id="相关概念-属性"><a href="#相关概念-属性" class="headerlink" title="相关概念(属性):"></a>相关概念(属性):</h4><table>
-<thead>
-<tr>
-<th align="left">英文简称</th>
-<th align="left">英文全称</th>
-<th align="left">含义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">DC</td>
-<td align="left">Domain Component</td>
-<td align="left">域名的部分，其格式是将完整的域名分成几部分，如域名为xxxx.com变成dc=xxxx,dc=com。简单理解把它理解成域名标识即可。</td>
-</tr>
-<tr>
-<td align="left">OU</td>
-<td align="left">Organization Unit</td>
-<td align="left">组织单位，组织单位可以包含其他各种对象，如“开发组”（一条记录的所属组织）。简单理解把他理解成公司的组织和部门：ou=开发一组，ou=技术研发部门</td>
-</tr>
-<tr>
-<td align="left">UID</td>
-<td align="left">User Id</td>
-<td align="left">用户ID zhangsan（一条记录的ID）</td>
-</tr>
-<tr>
-<td align="left">DN</td>
-<td align="left">Distinguished Name</td>
-<td align="left">“uid=zhangsan,ou=开发一组，ou=技术研发部门,dc=xxxx,dc=com”，一条记录的位置（唯一） DN的元素包含UID（或CN) + OU + DC</td>
-</tr>
-<tr>
-<td align="left">CN</td>
-<td align="left">Common Name</td>
-<td align="left">公共名称，如“张三”（一条记录的名称）。简单理解用于描述UID的</td>
-</tr>
-<tr>
-<td align="left">rdn</td>
-<td align="left">Relative dn</td>
-<td align="left">相对辨别名，类似于文件系统中的相对路径，它是与目录树结构无关的部分，如“uid=zhangsan”或“cn= 张三”</td>
-</tr>
-<tr>
-<td align="left">SN</td>
-<td align="left">Surname</td>
-<td align="left">姓，如“张”</td>
-</tr>
-</tbody></table>
-<h5 id="DN"><a href="#DN" class="headerlink" title="DN:"></a>DN:</h5><p>LDAP连接服务器的连接字串格式为：ldap://servername/DN  </p>
-<p>其中DN有三个属性，分别是CN,OU,DC  </p>
-<p>CN, OU, DC 都是 LDAP 连接服务器的端字符串中的区别名称（DN, distinguished  name） </p>
-<p>LDAP是一种通讯协议，如同HTTP是一种协议一样的！ </p>
-]]></content>
-      <categories>
-        <category>数据库</category>
-      </categories>
-      <tags>
-        <tag>OpenLdap</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Restful</title>
-    <url>/id_36/</url>
-    <content><![CDATA[<h3 id="Restful："><a href="#Restful：" class="headerlink" title="Restful："></a>Restful：</h3><p>一种软件架构风格、设计风格，而不是标准，只是提供了一组设计原则和约束条件。它主要用于客户端和服务器交互类的软件。基于这个风格设计的软件可以更简洁，更有层次，更易于实现缓存等机制。</p>
-<a id="more"></a>
-<p>这么理解试试看，也就是你听过建筑的复古风格，欧美风格之类的么，大体就是一个意思。如果你盖个别墅不按设计风格走，直接以小茅屋的形式，没有属于任何风格它也能盖成不是，这就是我们平时开发API不按RESTFUL风格也可以是一个道理。REST 指的是一组架构约束条件和原则，满足这些约束条件和原则的应用程序或设计就是RESTful。</p>
-<h4 id="Restful发展历程："><a href="#Restful发展历程：" class="headerlink" title="Restful发展历程："></a>Restful发展历程：</h4><p>详细发展历程：<a href="https://blog.csdn.net/a78270528/article/details/78469758">https://blog.csdn.net/a78270528/article/details/78469758</a><br>Restful风格==面向过程—&gt;面向资源—&gt;面向标签—&gt;面向文档</p>
-<p>面向过程==想起一出是一出，只要有功能就写新接口</p>
-<p>面向资源==封装单个接口，添加一个接口，删除一个接口，修改一个接口，多重逻辑需要多个if-else</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> request.method ==POST:</span><br><span class="line">	.....</span><br><span class="line"><span class="keyword">elif</span> request.method==GET:</span><br><span class="line">    </span><br></pre></td></tr></tbody></table></figure>
-<p>面向标签==封装单个接口，通过method进行语义化操作 post/put/delete/get</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Test</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span>:</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">post</span>:</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">put</span>:</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">delete</span>:</span></span><br><span class="line">        <span class="keyword">pass</span></span><br></pre></td></tr></tbody></table></figure>
-<p>面向文档==具备面向标签的功能语义化，在返回响应的时候告诉客户还可以做什么操作</p>
-<ul>
-<li>说这么多，到底restful是什么？<h4 id="接口规范"><a href="#接口规范" class="headerlink" title="接口规范"></a>接口规范</h4></li>
-</ul>
-<ol>
-<li><p>统一资源接口<br> RESTful架构应该遵循统一接口原则，统一接口包含了一组受限的预定义的操作，不论什么样的资源，都是通过使用相同的接口进行资源的访问。接口应该使用标准的HTTP方法如GET，PUT和POST，并遵循这些方法的语义。</p>
-</li>
-<li><p>URL中只使用名词来指定资源，原则上不使用动词</p>
-</li>
-<li><p>用HTTP协议里的动词来实现资源的添加，修改，删除等操作。即通过HTTP动词来实现资源的状态扭转<br> GET 用来获取资源，<br> POST 用来新建资源（也可以用于更新资源），<br> PUT 用来更新资源，<br> DELETE 用来删除资源。  </p>
-</li>
-<li><p>Server和Client之间传递某资源的一个表现形式，比如用JSON，XML传输文本，或者用JPG，WebP传输图片等。当然还可以压缩HTTP传输时的数据（on-wire data compression）。</p>
-</li>
-<li><p>用 HTTP Status Code传递Server的状态信息。比如最常用的 200 表示成功，500 表示Server内部错误等。</p>
-</li>
-</ol>
-<h4 id="一些其他规范："><a href="#一些其他规范：" class="headerlink" title="一些其他规范："></a>一些其他规范：</h4><p>规则1：URI结尾不应包含（/）<br>规则2：正斜杠分隔符（/）必须用来指示层级关系<br>规则3：应使用连字符（ - ）来提高URI的可读性<br>规则4：不得在URI中使用下划线（_）<br>规则5：URI路径中全都使用小写字母</p>
-]]></content>
-      <tags>
-        <tag>Restful</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Sort和Sorted区别</title>
-    <url>/id_38/</url>
-    <content><![CDATA[<h4 id="引入"><a href="#引入" class="headerlink" title="引入"></a>引入</h4><p>我们需要对List进行排序，Python提供了两个方法<br>对给定的List L进行排序，<br>方法1.用List的成员函数sort进行排序<br>方法2.用内建函数sorted进行排序（从python 2.4开始）</p>
-<a id="more"></a>
-<h4 id="语法："><a href="#语法：" class="headerlink" title="语法："></a>语法：</h4><p>sort函数定义：sort(cmp=None, key=None, reverse=False)<br>sorted函数定义：sorted(iterable, cmp=None, key=None, reverse=False)</p>
-<p>参数解析：<br>iterable：是可迭代类型;<br>cmp：用于比较的函数（大于时返回1，小于时返回-1，等于时返回0），比较什么由key决定,有默认值，迭代集合中的一项;<br>key：用列表元素的某个属性和函数进行作为关键字，有默认值，迭代集合中的一项;<br>reverse：排序规则. reverse = True 或者 reverse = False，有默认值。</p>
-<h4 id="区别"><a href="#区别" class="headerlink" title="区别:"></a>区别:</h4><ol>
-<li>sort( )函数时对已存在的列表进行操作，调用其没有返回值；<br>而sorted( )函数是返回一个新的list,不在原来的list上进行操作，调用其返回一个排好序的list。</li>
-<li>sorted()不会改变原来的list，而是会返回一个新的已经排序好的list<br>list.sort()方法仅仅被list所定义，sorted()可用于任何一个可迭代对象</li>
-</ol>
-<h4 id="举例说明："><a href="#举例说明：" class="headerlink" title="举例说明："></a>举例说明：</h4><p>示例1:</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">a = [<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">3</span>,<span class="number">5</span>,<span class="number">2</span>]</span><br><span class="line">a.sort()</span><br><span class="line">print(a)</span><br><span class="line"> </span><br><span class="line">c = [<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">3</span>,<span class="number">5</span>,<span class="number">2</span>]</span><br><span class="line">d = <span class="built_in">sorted</span>(c)</span><br><span class="line"></span><br><span class="line">print(d)</span><br><span class="line">print(c)</span><br></pre></td></tr></tbody></table></figure>
-<p>得：</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">[<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>]</span><br><span class="line">[<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>]</span><br><span class="line">[<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">2</span>]</span><br></pre></td></tr></tbody></table></figure>
-<p>示例1是采用函数默认的设置</p>
-<ul>
-<li>对于排序参数设置，主要有以下两种：基于key；基于reverse。<br>示例2: 基于key和reverse</li>
-</ul>
-<p>1.reverse实现降序排序，需要提供一个布尔值，默认为False（升序排列）。<br>2.key在使用时必须提供一个排序过程总调用的函数：</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">alist  =  [( <span class="string">'2'</span> ,  <span class="string">'3'</span> ,  <span class="string">'10'</span> ), ( <span class="string">'1'</span> ,  <span class="string">'2'</span> ,  <span class="string">'3'</span> ), ( <span class="string">'5'</span> ,  <span class="string">'6'</span> ,  <span class="string">'7'</span> ), ( <span class="string">'2'</span> ,  <span class="string">'5'</span> ,  <span class="string">'10'</span> ), ( <span class="string">'2'</span> ,  <span class="string">'4'</span> ,  <span class="string">'10'</span> )]</span><br><span class="line"><span class="comment"># 多级排序，先按照第3个元素排序，然后按照第2个元素排序：</span></span><br><span class="line"><span class="comment"># reverse = False 降序</span></span><br><span class="line">print(<span class="built_in">sorted</span>(alist, key=<span class="keyword">lambda</span>  x:( <span class="built_in">int</span> (x[ <span class="number">2</span> ]),<span class="built_in">int</span> (x[ <span class="number">1</span> ])),reverse  =  <span class="literal">False</span> )) </span><br><span class="line"><span class="comment"># reverse = False 升序</span></span><br><span class="line">alist.sort(key=<span class="keyword">lambda</span>  x:( <span class="built_in">int</span> (x[ <span class="number">2</span> ]),<span class="built_in">int</span> (x[ <span class="number">1</span> ])),reverse  =  <span class="literal">True</span> )</span><br><span class="line">print(alist)</span><br></pre></td></tr></tbody></table></figure>
-<p>得：</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">[(<span class="string">'1'</span>, <span class="string">'2'</span>, <span class="string">'3'</span>), (<span class="string">'5'</span>, <span class="string">'6'</span>, <span class="string">'7'</span>), (<span class="string">'2'</span>, <span class="string">'3'</span>, <span class="string">'10'</span>), (<span class="string">'2'</span>, <span class="string">'4'</span>, <span class="string">'10'</span>), (<span class="string">'2'</span>, <span class="string">'5'</span>, <span class="string">'10'</span>)]</span><br><span class="line">[(<span class="string">'2'</span>, <span class="string">'5'</span>, <span class="string">'10'</span>), (<span class="string">'2'</span>, <span class="string">'4'</span>, <span class="string">'10'</span>), (<span class="string">'2'</span>, <span class="string">'3'</span>, <span class="string">'10'</span>), (<span class="string">'5'</span>, <span class="string">'6'</span>, <span class="string">'7'</span>), (<span class="string">'1'</span>, <span class="string">'2'</span>, <span class="string">'3'</span>)]```</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
-<h5 id="结论："><a href="#结论：" class="headerlink" title="结论："></a>结论：</h5><p>1、函数sorted()不改变原来的list，而是返回一个新的排好序的list。<br>2、key可以采用lambda表达式<br>3、排序的key是函数自己选择；采用key是确定排序的key，排序方式是函数自己选择。</p>
-]]></content>
-      <categories>
-        <category>python</category>
-      </categories>
-      <tags>
-        <tag>python</tag>
-        <tag>内置方法</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>集合(SET)</title>
-    <url>/id_39/</url>
-    <content><![CDATA[<h3 id="集合"><a href="#集合" class="headerlink" title="集合"></a>集合</h3><p>集合（set）是一个无序的不重复元素序列。一般用于去重。<br>当元素的顺序性没有唯一性重要的时候，使用到SET去重</p>
+    <title>VUE父子组件</title>
+    <url>/id_7/</url>
+    <content><![CDATA[<h4 id="VUE父子组件使用"><a href="#VUE父子组件使用" class="headerlink" title="VUE父子组件使用"></a>VUE父子组件使用</h4><p>在vue组件通信中其中最常见通信方式就是父子组件之中的通信，而父子组件的设定方式在不同情况下又各有不同。<br>最常见的就是父组件为控制组件，子组件为视图组件。<br>父组件传递数据给子组件使用，遇到业务逻辑操作时子组件触发父组件的自定义事件。<br>但是，无论哪种组织方式父子组件的通信方式都是大同小异</p>
 <a id="more"></a>
 
-<p>集合又分为可变集合和不可变集合</p>
-<p>可变集合(set)：通过add等方法可以动态修改set中的内容</p>
-<p>不可变集合(frozenset)：顾名思义，他的元素是不可变的</p>
-<blockquote>
-<p>frozenset()是一个函数，会返回一个冻结的集合，冻结后集合不能再添加或删除任何元素。</p>
-</blockquote>
-<h4 id="特点"><a href="#特点" class="headerlink" title="特点:"></a>特点:</h4><ol>
-<li>不同元素组成（元素不能重复）</li>
-<li>无序（集合元素的顺序和定义、添加的顺序不一致）</li>
-<li>集合中的元素必须是不可变类型</li>
-</ol>
-<h4 id="底层实现"><a href="#底层实现" class="headerlink" title="底层实现"></a>底层实现</h4><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 集合SET去重操作原理: 必须要有另外一个容器作比对，</span></span><br><span class="line"><span class="comment"># 比如每样鱼我要来一条，那么我旁边就需要有一个新的鱼缸，然后把挑选出来的鱼放进新鱼缸中，捞第二条的时候用眼睛和第一条作比对</span></span><br><span class="line"></span><br><span class="line">l = [<span class="number">3</span>, <span class="number">3</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">6</span>]</span><br><span class="line">mylist = []</span><br><span class="line"></span><br><span class="line">[mylist.append(i) <span class="keyword">for</span> i <span class="keyword">in</span> l <span class="keyword">if</span> <span class="keyword">not</span> i <span class="keyword">in</span> mylist]</span><br><span class="line"></span><br><span class="line">print(mylist)</span><br></pre></td></tr></tbody></table></figure>
-<p>延伸一下append的底层原理：</p>
-<blockquote>
-<p>append其实是用到了队列,先进先出的概念</p>
-<p>跟append一起的还有insert，两个的差别在于一个从头部插入，一个从尾部插入</p>
-</blockquote>
-<h4 id="集合的创建："><a href="#集合的创建：" class="headerlink" title="集合的创建："></a>集合的创建：</h4><p>可以使用大括号 { } 或者 set() 函数创建集合，注意：创建一个空集合必须用 set() 而不是 { }，因为 { } 是用来创建一个空字典。</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 创建集合</span></span><br><span class="line">parame = {<span class="number">1</span>,<span class="number">2</span>}</span><br><span class="line">print(<span class="built_in">type</span>(parame))</span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">a = <span class="string">'hello'</span></span><br><span class="line">print(<span class="built_in">set</span>(a))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建空集合</span></span><br><span class="line">myset = <span class="built_in">set</span>()</span><br><span class="line">print(<span class="built_in">type</span>(myset))</span><br></pre></td></tr></tbody></table></figure>
-<h4 id="集合常用方法"><a href="#集合常用方法" class="headerlink" title="集合常用方法"></a>集合常用方法</h4><table>
-<thead>
-<tr>
-<th align="left">方法</th>
-<th align="left">描述</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><a href="https://www.runoob.com/python3/ref-set-add.html">add()</a></td>
-<td align="left">为集合添加元素</td>
-</tr>
-<tr>
-<td align="left"><a href="https://www.runoob.com/python3/ref-set-clear.html">clear()</a></td>
-<td align="left">移除集合中的所有元素</td>
-</tr>
-<tr>
-<td align="left"><a href="https://www.runoob.com/python3/ref-set-copy.html">copy()</a></td>
-<td align="left">拷贝一个集合</td>
-</tr>
-<tr>
-<td align="left"><a href="https://www.runoob.com/python3/ref-set-difference.html">difference()</a></td>
-<td align="left">返回多个集合的差集</td>
-</tr>
-<tr>
-<td align="left"><a href="https://www.runoob.com/python3/ref-set-difference_update.html">difference_update()</a></td>
-<td align="left">移除集合中的元素，该元素在指定的集合也存在。</td>
-</tr>
-<tr>
-<td align="left"><a href="https://www.runoob.com/python3/ref-set-discard.html">discard()</a></td>
-<td align="left">删除集合中指定的元素</td>
-</tr>
-<tr>
-<td align="left"><a href="https://www.runoob.com/python3/ref-set-intersection.html">intersection()</a></td>
-<td align="left">返回集合的交集</td>
-</tr>
-<tr>
-<td align="left"><a href="https://www.runoob.com/python3/ref-set-intersection_update.html">intersection_update()</a></td>
-<td align="left">返回集合的交集。</td>
-</tr>
-<tr>
-<td align="left"><a href="https://www.runoob.com/python3/ref-set-isdisjoint.html">isdisjoint()</a></td>
-<td align="left">判断两个集合是否包含相同的元素，如果没有返回 True，否则返回 False。</td>
-</tr>
-<tr>
-<td align="left"><a href="https://www.runoob.com/python3/ref-set-issubset.html">issubset()</a></td>
-<td align="left">判断指定集合是否为该方法参数集合的子集。</td>
-</tr>
-<tr>
-<td align="left"><a href="https://www.runoob.com/python3/ref-set-issuperset.html">issuperset()</a></td>
-<td align="left">判断该方法的参数集合是否为指定集合的子集</td>
-</tr>
-<tr>
-<td align="left"><a href="https://www.runoob.com/python3/ref-set-pop.html">pop()</a></td>
-<td align="left">随机移除元素</td>
-</tr>
-<tr>
-<td align="left"><a href="https://www.runoob.com/python3/ref-set-remove.html">remove()</a></td>
-<td align="left">移除指定元素</td>
-</tr>
-<tr>
-<td align="left"><a href="https://www.runoob.com/python3/ref-set-symmetric_difference.html">symmetric_difference()</a></td>
-<td align="left">返回两个集合中不重复的元素集合。</td>
-</tr>
-<tr>
-<td align="left"><a href="https://www.runoob.com/python3/ref-set-symmetric_difference_update.html">symmetric_difference_update()</a></td>
-<td align="left">移除当前集合中在另外一个指定集合相同的元素，并将另外一个指定集合中不同的元素插入到当前集合中。</td>
-</tr>
-<tr>
-<td align="left"><a href="https://www.runoob.com/python3/ref-set-union.html">union()</a></td>
-<td align="left">返回两个集合的并集</td>
-</tr>
-<tr>
-<td align="left"><a href="https://www.runoob.com/python3/ref-set-update.html">update()</a></td>
-<td align="left">给集合添加元素</td>
-</tr>
-</tbody></table>
-<h5 id="添加元素"><a href="#添加元素" class="headerlink" title="添加元素"></a>添加元素</h5><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 向一个空集合中添加元素</span></span><br><span class="line">myset = <span class="built_in">set</span>()</span><br><span class="line">myset.add(<span class="string">'hello'</span>)</span><br><span class="line">print(myset)</span><br><span class="line"></span><br><span class="line"><span class="comment"># update可以添加多个参数，可以是列表，元组，字典等，参数用逗号隔开</span></span><br><span class="line">myset = <span class="built_in">set</span>()</span><br><span class="line">myset.update(<span class="string">'hello'</span>,[<span class="number">1</span>,<span class="number">2</span>],{<span class="number">3</span>:<span class="number">4</span>},(<span class="number">5</span>,<span class="number">6</span>))</span><br><span class="line">print(myset)</span><br></pre></td></tr></tbody></table></figure>
-<h5 id="移除元素"><a href="#移除元素" class="headerlink" title="移除元素"></a>移除元素</h5><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 随机删除一个元素  pop</span></span><br><span class="line">parame = {<span class="number">1</span>,<span class="number">2</span>}</span><br><span class="line">parame.pop()</span><br><span class="line">print(parame)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除指定元素 remove,元素不存在报错</span></span><br><span class="line">myset = {<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>}</span><br><span class="line">myset.remove(<span class="number">4</span>)</span><br><span class="line">print(myset)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除指定元素 discard,元素不存在不会报错</span></span><br><span class="line">myset = {<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>}</span><br><span class="line">myset.discard(<span class="number">7</span>)</span><br><span class="line">print(myset)</span><br></pre></td></tr></tbody></table></figure>
-<h4 id="集合的运算符"><a href="#集合的运算符" class="headerlink" title="集合的运算符"></a>集合的运算符</h4><table>
-<thead>
-<tr>
-<th align="left">方法</th>
-<th align="left">描述</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><strong>-</strong></td>
-<td align="left">集合a中包含而集合b中不包含的元素</td>
-</tr>
-<tr>
-<td align="left">|</td>
-<td align="left">集合a或b中包含的所有元素</td>
-</tr>
-<tr>
-<td align="left">&amp;</td>
-<td align="left">集合a和b中都包含了的元素</td>
-</tr>
-<tr>
-<td align="left">^</td>
-<td align="left">不同时包含于a和b的元素</td>
-</tr>
-</tbody></table>
-<h5 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h5><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">a = <span class="built_in">set</span>(<span class="string">'123456'</span>)</span><br><span class="line">b = <span class="built_in">set</span>(<span class="string">'456789'</span>)</span><br></pre></td></tr></tbody></table></figure>
-<h5 id="集合a中包含而集合b中不包含的元素"><a href="#集合a中包含而集合b中不包含的元素" class="headerlink" title="集合a中包含而集合b中不包含的元素"></a>集合a中包含而集合b中不包含的元素</h5><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">print(a - b)</span><br><span class="line"><span class="comment"># {'1', '2', '3'}</span></span><br></pre></td></tr></tbody></table></figure>
-<h5 id="集合a或b中包含的所有元素"><a href="#集合a或b中包含的所有元素" class="headerlink" title="集合a或b中包含的所有元素"></a>集合a或b中包含的所有元素</h5><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">print(a | b)</span><br><span class="line"><span class="comment"># {'1', '4', '5', '2', '8', '3', '6', '7', '9'}</span></span><br></pre></td></tr></tbody></table></figure>
-<h5 id="集合a和b中都包含了的元素"><a href="#集合a和b中都包含了的元素" class="headerlink" title="集合a和b中都包含了的元素"></a>集合a和b中都包含了的元素</h5><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">print(a &amp; b)</span><br><span class="line"><span class="comment"># {'4', '5', '6'}</span></span><br></pre></td></tr></tbody></table></figure>
-<h5 id="不同时包含于a和b的元素"><a href="#不同时包含于a和b的元素" class="headerlink" title="不同时包含于a和b的元素"></a>不同时包含于a和b的元素</h5><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">print(a ^ b)</span><br><span class="line"><span class="comment"># {'8', '3', '7', '9', '1', '2'}</span></span><br></pre></td></tr></tbody></table></figure>
+<h4 id="父组件向子组件传参"><a href="#父组件向子组件传参" class="headerlink" title="父组件向子组件传参"></a>父组件向子组件传参</h4><p><strong>通过 [props]传递数据 (推荐)</strong></p>
+<p>父子通讯中最常见的数据传递方式就是通过props传递数据，就好像方法的传参一样，父组件调用子组件并传入数据，子组件接受到父组件传递的数据进行验证<br>使用props 可以是数组或对象，用于接收来自父组件的数据。<br>props 可以是简单的数组，或者使用对象作为替代，对象允许配置高级选项，如类型检测、自定义校验和设置默认值prop 的定义应该尽量详细，至少需要指定其类型</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;!-- 父组件  Father --&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;Son :parentMessage="parentMessage"&gt;&lt;/Son&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">import Son from "./Son";</span><br><span class="line"></span><br><span class="line">export default {</span><br><span class="line">  components: {</span><br><span class="line">    Son</span><br><span class="line">  },</span><br><span class="line">  data() {</span><br><span class="line">    return {</span><br><span class="line">      parentMessage: "我是来自父组件的消息，借用一下子组件的地方渲染一下"</span><br><span class="line">    }</span><br><span class="line">  }</span><br><span class="line">}</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;style&gt;&lt;/style&gt;</span><br></pre></td></tr></tbody></table></figure>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;!-- 子组件 Son  --&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;h1&gt;你好哇&lt;/h1&gt;</span><br><span class="line">    &lt;span&gt;{{ parentMessage }}&lt;/span&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">export default {</span><br><span class="line">  mounted() {</span><br><span class="line">    console.log(this.parentMessage)</span><br><span class="line">  },</span><br><span class="line">  //第一种方法  </span><br><span class="line">  // props: ['parentMessage']</span><br><span class="line">  //第二种方法</span><br><span class="line">    props: {</span><br><span class="line">      parentMessage: {</span><br><span class="line">        type: String,</span><br><span class="line">        default: '子组件默认显示的信息',</span><br><span class="line">        require: true</span><br><span class="line">      }</span><br><span class="line">    }  </span><br><span class="line"></span><br><span class="line">}</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;style&gt;&lt;/style&gt;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+<p>效果：<br><img src="/id_7/01.png" alt="父子组件传参"></p>
+<h4 id="子组件向父组件传参"><a href="#子组件向父组件传参" class="headerlink" title="子组件向父组件传参"></a>子组件向父组件传参</h4><p><strong>通过 [$emit]传递数据 (推荐)</strong><br>通过 $emit 传递父组件数据与父组件到子组件通讯中的$on配套使用，可以向父组件中触发的方法传递参数供父组件使用。</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;!-- 父组件  Father --&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    </span><br><span class="line">    &lt;h1&gt;{{data}}&lt;/h1&gt;</span><br><span class="line"></span><br><span class="line">    &lt;Son @event="change"&gt;&lt;/Son&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">import Son from "./Son";</span><br><span class="line"></span><br><span class="line">export default {</span><br><span class="line">  components: {</span><br><span class="line">    Son</span><br><span class="line">  },</span><br><span class="line">  data() {</span><br><span class="line">    return {</span><br><span class="line">      data:"我是父组件"</span><br><span class="line">    }</span><br><span class="line">  },</span><br><span class="line">    methods: {</span><br><span class="line">      change(event) {</span><br><span class="line">        this.data = event</span><br><span class="line">          console.log(event)</span><br><span class="line">      }</span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;style&gt;&lt;/style&gt;</span><br></pre></td></tr></tbody></table></figure>
+
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;!-- 子组件 Son  --&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">    &lt;div&gt;</span><br><span class="line">      &lt;button @click="toFather"&gt;向父组件传值&lt;/button&gt;</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">export default {</span><br><span class="line">  data(){</span><br><span class="line">    return{</span><br><span class="line">      data:"我是子组件"</span><br><span class="line">    }</span><br><span class="line">  },</span><br><span class="line">  methods:{</span><br><span class="line">      toFather(){</span><br><span class="line">        this.$emit('event', this.data)</span><br><span class="line">      }</span><br><span class="line">  },</span><br><span class="line">}</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;style&gt;&lt;/style&gt;</span><br></pre></td></tr></tbody></table></figure>
+<p>效果：<br><img src="/id_7/02.png" alt="子父组件传参"></p>
 ]]></content>
       <categories>
-        <category>python</category>
+        <category>前端</category>
       </categories>
       <tags>
-        <tag>python</tag>
-        <tag>类型</tag>
+        <tag>vue</tag>
+        <tag>组件</tag>
       </tags>
   </entry>
 </search>
