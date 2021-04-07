@@ -1333,7 +1333,7 @@
 <td align="left">集合a中包含而集合b中不包含的元素</td>
 </tr>
 <tr>
-<td align="left">|</td>
+<td align="left">\</td>
 <td align="left">集合a或b中包含的所有元素</td>
 </tr>
 <tr>
