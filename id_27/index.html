@@ -29,7 +29,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://www.hr915.xyz/id_27/%E4%BE%8B.png">
 <meta property="article:published_time" content="2018-09-05T12:43:25.000Z">
-<meta property="article:modified_time" content="2021-04-12T07:11:50.609Z">
+<meta property="article:modified_time" content="2021-04-12T07:15:25.051Z">
 <meta property="article:author" content="Before">
 <meta property="article:tag" content="python">
 <meta name="twitter:card" content="summary">
@@ -258,7 +258,7 @@
 <h4 id="引用计数的缺点"><a href="#引用计数的缺点" class="headerlink" title="引用计数的缺点"></a>引用计数的缺点</h4><p>那引用计数真的这么完美吗，不占内存地址，用完即释放，nonono,当然不是</p>
 <p>引用计数最大的缺点就是<strong>循环引用</strong></p>
 <p>那循环引用是什么呢？</p>
-<p>循环引用就是两个变量互相引用时假设已经被释放，但引用计数不为0，那就会导致这两个变量无法被直接回收</p>
+<p>循环引用就是两个变量互相引用时假设已经被释放，但引用计数不为0，那就会导致这两个变量无法被直接回收<br>循环引用可以使一种引用对象的引用计数不为0，然而这些对象实际上并没有被任何外部对象所引用，它们之间只是相互引用，这意味着这组对象所占用的内存空间是应该被回收的，但是由于循环引用导致的引用计数不为0，所以这组对象所占用的内存空间永远不会被释放</p>
 <p><strong>那循环引用有什么解决办法吗？</strong></p>
 <p>那肯定是有的，python中解决循环引用的方法就是<strong>标记-清除</strong><br>请移步下一节：<a href="https://www.hr915.xyz/id_28">https://www.hr915.xyz/id_28</a></p>
 
