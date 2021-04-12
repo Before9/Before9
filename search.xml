@@ -67,6 +67,32 @@
       </tags>
   </entry>
   <entry>
+    <title>无限级递归分类</title>
+    <url>/id_12/</url>
+    <content><![CDATA[<p>所谓的无限极分类是啥？其实简单点说就是一个人类可以繁衍出多个后代，然后一个后代又可以分另外多个后代这样无限繁衍下去（举例：家族族谱），就好象linux系统你可以新建一个文件夹，然后在这个文件夹里又可以建一些个文件夹，在文件夹底下还可以建一些文件夹一样，随后使用tree命令就可以查看文件夹目录层级。<br>那么这种层级结构也成为树结构在日常的开发需求里也是很常见的，比如美多商城系统的商品分类，课程的目录章节，以及以及论坛里的帖子回复等等</p>
+<a id="more"></a>
+<h3 id="话不多说，上案例："><a href="#话不多说，上案例：" class="headerlink" title="话不多说，上案例："></a>话不多说，上案例：</h3><h4 id="首先，打开django项目中的models-py，新建一个类别的模型类，这里我们以最简单的parentid的形式来建立"><a href="#首先，打开django项目中的models-py，新建一个类别的模型类，这里我们以最简单的parentid的形式来建立" class="headerlink" title="首先，打开django项目中的models.py，新建一个类别的模型类，这里我们以最简单的parentid的形式来建立"></a>首先，打开django项目中的models.py，新建一个类别的模型类，这里我们以最简单的parentid的形式来建立</h4><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Cate</span>(<span class="params">models.Model</span>):</span></span><br><span class="line">    <span class="comment"># 分类名称</span></span><br><span class="line">    name = models.CharField(max_length=<span class="number">500</span>)</span><br><span class="line">    <span class="comment"># 父级id</span></span><br><span class="line">    pid = models.IntegerField()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 表名</span></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Meta</span>:</span></span><br><span class="line">        db_table = <span class="string">'cate'</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__str__</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">return</span> self.name</span><br></pre></td></tr></tbody></table></figure>
+<h4 id="由于我们的项目基于drf框架，所以要增加一个序列器类"><a href="#由于我们的项目基于drf框架，所以要增加一个序列器类" class="headerlink" title="由于我们的项目基于drf框架，所以要增加一个序列器类"></a>由于我们的项目基于drf框架，所以要增加一个序列器类</h4><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> rest_framework <span class="keyword">import</span> serializers</span><br><span class="line"><span class="keyword">from</span> WXJapp.models <span class="keyword">import</span> Cate</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CateSer</span>(<span class="params">serializers.ModelSerializer</span>):</span></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Meta</span>:</span></span><br><span class="line">        model = Cate</span><br><span class="line">        fields = <span class="string">"__all__"</span></span><br></pre></td></tr></tbody></table></figure>
+<h4 id="由于django序列化出来的类不具备层级结构，所以我们提前写好一个用来递归的方法："><a href="#由于django序列化出来的类不具备层级结构，所以我们提前写好一个用来递归的方法：" class="headerlink" title="由于django序列化出来的类不具备层级结构，所以我们提前写好一个用来递归的方法："></a>由于django序列化出来的类不具备层级结构，所以我们提前写好一个用来递归的方法：</h4><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">xTree</span>(<span class="params">datas</span>):</span></span><br><span class="line">    lists = []</span><br><span class="line">    tree = {}</span><br><span class="line">    parent_id = <span class="string">''</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> datas:</span><br><span class="line">        item = i</span><br><span class="line">        print(item)</span><br><span class="line">        tree[item[<span class="string">'id'</span>]] = item</span><br><span class="line">    root = <span class="literal">None</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> datas:</span><br><span class="line">        obj = i</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> obj[<span class="string">'pid'</span>]:</span><br><span class="line">            root = tree[obj[<span class="string">'id'</span>]]</span><br><span class="line">            lists.append(root)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            parent_id = obj[<span class="string">'pid'</span>]</span><br><span class="line">            <span class="keyword">if</span> <span class="string">'childlist'</span> <span class="keyword">not</span> <span class="keyword">in</span> tree[parent_id]:</span><br><span class="line">                tree[parent_id][<span class="string">'childlist'</span>] = []</span><br><span class="line">            tree[parent_id][<span class="string">'childlist'</span>].append(tree[obj[<span class="string">'id'</span>]])</span><br><span class="line">    <span class="keyword">return</span> lists</span><br></pre></td></tr></tbody></table></figure>
+<h4 id="此时我们写一个视图接口，从数据库中读取数据就可以了"><a href="#此时我们写一个视图接口，从数据库中读取数据就可以了" class="headerlink" title="此时我们写一个视图接口，从数据库中读取数据就可以了"></a>此时我们写一个视图接口，从数据库中读取数据就可以了</h4><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyTree</span>(<span class="params">APIView</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">self, request</span>):</span></span><br><span class="line">        <span class="comment"># 获取订单列表</span></span><br><span class="line">        catelist = Cate.objects.<span class="built_in">all</span>()</span><br><span class="line">        <span class="comment"># 序列化</span></span><br><span class="line">        catelist_ser = CateSer(catelist, many=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">        mylist = xTree(catelist_ser.data)</span><br><span class="line">        print(mylist)</span><br><span class="line">        <span class="keyword">return</span> Response(mylist)</span><br></pre></td></tr></tbody></table></figure>
+<h4 id="最后，再配个路由"><a href="#最后，再配个路由" class="headerlink" title="最后，再配个路由"></a>最后，再配个路由</h4><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> WXJapp.views <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">urlpatterns = [</span><br><span class="line">    path(<span class="string">'admin/'</span>, admin.site.urls),</span><br><span class="line">    path(<span class="string">'mytree/'</span>, MyTree.as_view()),</span><br><span class="line">]</span><br></pre></td></tr></tbody></table></figure>
+<h3 id="这样我们的后端就写好了"><a href="#这样我们的后端就写好了" class="headerlink" title="这样我们的后端就写好了"></a>这样我们的后端就写好了</h3><h4 id="向数据库中添加测试数据"><a href="#向数据库中添加测试数据" class="headerlink" title="向数据库中添加测试数据"></a>向数据库中添加测试数据</h4><p><img src="/id_12/01.png" alt="测试数据"></p>
+<h4 id="Postman测试后端接口"><a href="#Postman测试后端接口" class="headerlink" title="Postman测试后端接口"></a>Postman测试后端接口</h4><p><img src="/id_12/02.png" alt="测试接口"></p>
+<h3 id="现在我们开始写前端，"><a href="#现在我们开始写前端，" class="headerlink" title="现在我们开始写前端，"></a>现在我们开始写前端，</h3><h4 id="打开vue项目，封装一个WXJcate-vue递归组件"><a href="#打开vue项目，封装一个WXJcate-vue递归组件" class="headerlink" title="打开vue项目，封装一个WXJcate.vue递归组件"></a>打开vue项目，封装一个WXJcate.vue递归组件</h4><p>所谓递归组件: 就是组件可以在它们自己的模板中调用自身，不过它们只能通过 name 选项来做这件事，例如给组件设置属性 name: ‘WJXcate’，然后在模板中就可以使用 WXJcate 调用自己进行递归调用了</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line"></span><br><span class="line">  &lt;div&gt;</span><br><span class="line"></span><br><span class="line">    &lt;ul&gt;</span><br><span class="line">      &lt;div :class="[data.id==0 ? 'root': '', 'wxjcate']"&gt;{{ data.name }}&lt;/div&gt;</span><br><span class="line"></span><br><span class="line">      &lt;ul v-if="data.childlist &amp;&amp; data.childlist.length&gt;0"&gt;</span><br><span class="line">        &lt;WXJcate v-for="child in data.childlist" :key="child.id" :data="child"/&gt;</span><br><span class="line">      &lt;/ul&gt;</span><br><span class="line">    &lt;/ul&gt;</span><br><span class="line"></span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">export default {</span><br><span class="line">  name: 'WXJcate', // 递归组件需要设置 name 属性，才能在模板中调用自己</span><br><span class="line">  props:['data'],</span><br><span class="line">};</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;style &gt;</span><br><span class="line">.wxjcate {</span><br><span class="line">  padding-left: 8px;</span><br><span class="line">  border-left: 1px solid gray;</span><br><span class="line">}</span><br><span class="line">ul {</span><br><span class="line">  padding-left: 20px;</span><br><span class="line">  list-style: none;</span><br><span class="line">}</span><br><span class="line">.root { display: none; }</span><br><span class="line"></span><br><span class="line">&lt;/style&gt;</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+<h4 id="然后就可以在其他页面中调用这个递归组件"><a href="#然后就可以在其他页面中调用这个递归组件" class="headerlink" title="然后就可以在其他页面中调用这个递归组件"></a>然后就可以在其他页面中调用这个递归组件</h4><p>在WXJ_Index调用递归组件并请求后端的数据</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line"></span><br><span class="line">    &lt;WXJcate :data="data" /&gt;</span><br><span class="line"></span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">import WXJcate from './WXJcate.vue';</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">export default {</span><br><span class="line">  data () {</span><br><span class="line">    return {</span><br><span class="line">      data:{},</span><br><span class="line">      online: 0</span><br><span class="line">    }</span><br><span class="line">  },</span><br><span class="line">  components: {</span><br><span class="line">    WXJcate</span><br><span class="line">  },</span><br><span class="line"></span><br><span class="line">  //钩子方法</span><br><span class="line">  mounted:function(){</span><br><span class="line"></span><br><span class="line">    this.get_token();</span><br><span class="line">  },</span><br><span class="line">  //绑定事件</span><br><span class="line">  methods:{</span><br><span class="line">    get_token(){</span><br><span class="line">      this.$axios.get('mytree/').then((result) =&gt;{</span><br><span class="line">        // console.log(result);</span><br><span class="line">        var mytree = {'id':0,name:'123'};</span><br><span class="line">        mytree['childlist'] = result.data;</span><br><span class="line">        this.data = mytree;</span><br><span class="line">      });</span><br><span class="line">    },</span><br><span class="line">  }</span><br><span class="line">}</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;style&gt;</span><br><span class="line"></span><br><span class="line">.on {</span><br><span class="line">  background: #cdcbff;</span><br><span class="line">}</span><br><span class="line">.off {</span><br><span class="line">  background: #fefdff;</span><br><span class="line"></span><br><span class="line">}</span><br><span class="line">&lt;/style&gt;</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+<h3 id="这样我们的Web端就写好了"><a href="#这样我们的Web端就写好了" class="headerlink" title="这样我们的Web端就写好了"></a>这样我们的Web端就写好了</h3><h4 id="最后我们来看一下页面效果"><a href="#最后我们来看一下页面效果" class="headerlink" title="最后我们来看一下页面效果"></a>最后我们来看一下页面效果</h4><p><img src="/id_12/03.png" alt="最终效果"></p>
+<p>django-git地址：<a href="https://gitee.com/before-l/celery-demo.git">https://gitee.com/before-l/celery-demo.git</a><br>vue-git地址：<a href="https://gitee.com/before-l/annual-leave-vue.git">https://gitee.com/before-l/annual-leave-vue.git</a></p>
+]]></content>
+      <categories>
+        <category>后端</category>
+      </categories>
+      <tags>
+        <tag>django</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>视频直播</title>
     <url>/id_11/</url>
     <content><![CDATA[<blockquote>
@@ -142,29 +168,35 @@
       </tags>
   </entry>
   <entry>
-    <title>无限级递归分类</title>
-    <url>/id_12/</url>
-    <content><![CDATA[<p>所谓的无限极分类是啥？其实简单点说就是一个人类可以繁衍出多个后代，然后一个后代又可以分另外多个后代这样无限繁衍下去（举例：家族族谱），就好象linux系统你可以新建一个文件夹，然后在这个文件夹里又可以建一些个文件夹，在文件夹底下还可以建一些文件夹一样，随后使用tree命令就可以查看文件夹目录层级。<br>那么这种层级结构也成为树结构在日常的开发需求里也是很常见的，比如美多商城系统的商品分类，课程的目录章节，以及以及论坛里的帖子回复等等</p>
+    <title>三方支付</title>
+    <url>/id_14/</url>
+    <content><![CDATA[<p>三方支付流程：</p>
+<pre><code>首先进入支付宝平台，点击开发中心-》研发服务
+
+获得沙箱的appid以及商户公钥和支付宝公钥
+
+然后利用秘钥生成软件生成私钥和公钥
+
+建立keys文件夹，  将私钥和公钥文件放入keys
+
+加入头部和尾部代码
+
+最后用支付宝公钥替换公钥文件</code></pre>
 <a id="more"></a>
-<h3 id="话不多说，上案例："><a href="#话不多说，上案例：" class="headerlink" title="话不多说，上案例："></a>话不多说，上案例：</h3><h4 id="首先，打开django项目中的models-py，新建一个类别的模型类，这里我们以最简单的parentid的形式来建立"><a href="#首先，打开django项目中的models-py，新建一个类别的模型类，这里我们以最简单的parentid的形式来建立" class="headerlink" title="首先，打开django项目中的models.py，新建一个类别的模型类，这里我们以最简单的parentid的形式来建立"></a>首先，打开django项目中的models.py，新建一个类别的模型类，这里我们以最简单的parentid的形式来建立</h4><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Cate</span>(<span class="params">models.Model</span>):</span></span><br><span class="line">    <span class="comment"># 分类名称</span></span><br><span class="line">    name = models.CharField(max_length=<span class="number">500</span>)</span><br><span class="line">    <span class="comment"># 父级id</span></span><br><span class="line">    pid = models.IntegerField()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 表名</span></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Meta</span>:</span></span><br><span class="line">        db_table = <span class="string">'cate'</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__str__</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">return</span> self.name</span><br></pre></td></tr></tbody></table></figure>
-<h4 id="由于我们的项目基于drf框架，所以要增加一个序列器类"><a href="#由于我们的项目基于drf框架，所以要增加一个序列器类" class="headerlink" title="由于我们的项目基于drf框架，所以要增加一个序列器类"></a>由于我们的项目基于drf框架，所以要增加一个序列器类</h4><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> rest_framework <span class="keyword">import</span> serializers</span><br><span class="line"><span class="keyword">from</span> WXJapp.models <span class="keyword">import</span> Cate</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CateSer</span>(<span class="params">serializers.ModelSerializer</span>):</span></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Meta</span>:</span></span><br><span class="line">        model = Cate</span><br><span class="line">        fields = <span class="string">"__all__"</span></span><br></pre></td></tr></tbody></table></figure>
-<h4 id="由于django序列化出来的类不具备层级结构，所以我们提前写好一个用来递归的方法："><a href="#由于django序列化出来的类不具备层级结构，所以我们提前写好一个用来递归的方法：" class="headerlink" title="由于django序列化出来的类不具备层级结构，所以我们提前写好一个用来递归的方法："></a>由于django序列化出来的类不具备层级结构，所以我们提前写好一个用来递归的方法：</h4><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">xTree</span>(<span class="params">datas</span>):</span></span><br><span class="line">    lists = []</span><br><span class="line">    tree = {}</span><br><span class="line">    parent_id = <span class="string">''</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> datas:</span><br><span class="line">        item = i</span><br><span class="line">        print(item)</span><br><span class="line">        tree[item[<span class="string">'id'</span>]] = item</span><br><span class="line">    root = <span class="literal">None</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> datas:</span><br><span class="line">        obj = i</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> obj[<span class="string">'pid'</span>]:</span><br><span class="line">            root = tree[obj[<span class="string">'id'</span>]]</span><br><span class="line">            lists.append(root)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            parent_id = obj[<span class="string">'pid'</span>]</span><br><span class="line">            <span class="keyword">if</span> <span class="string">'childlist'</span> <span class="keyword">not</span> <span class="keyword">in</span> tree[parent_id]:</span><br><span class="line">                tree[parent_id][<span class="string">'childlist'</span>] = []</span><br><span class="line">            tree[parent_id][<span class="string">'childlist'</span>].append(tree[obj[<span class="string">'id'</span>]])</span><br><span class="line">    <span class="keyword">return</span> lists</span><br></pre></td></tr></tbody></table></figure>
-<h4 id="此时我们写一个视图接口，从数据库中读取数据就可以了"><a href="#此时我们写一个视图接口，从数据库中读取数据就可以了" class="headerlink" title="此时我们写一个视图接口，从数据库中读取数据就可以了"></a>此时我们写一个视图接口，从数据库中读取数据就可以了</h4><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyTree</span>(<span class="params">APIView</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">self, request</span>):</span></span><br><span class="line">        <span class="comment"># 获取订单列表</span></span><br><span class="line">        catelist = Cate.objects.<span class="built_in">all</span>()</span><br><span class="line">        <span class="comment"># 序列化</span></span><br><span class="line">        catelist_ser = CateSer(catelist, many=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">        mylist = xTree(catelist_ser.data)</span><br><span class="line">        print(mylist)</span><br><span class="line">        <span class="keyword">return</span> Response(mylist)</span><br></pre></td></tr></tbody></table></figure>
-<h4 id="最后，再配个路由"><a href="#最后，再配个路由" class="headerlink" title="最后，再配个路由"></a>最后，再配个路由</h4><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> WXJapp.views <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">urlpatterns = [</span><br><span class="line">    path(<span class="string">'admin/'</span>, admin.site.urls),</span><br><span class="line">    path(<span class="string">'mytree/'</span>, MyTree.as_view()),</span><br><span class="line">]</span><br></pre></td></tr></tbody></table></figure>
-<h3 id="这样我们的后端就写好了"><a href="#这样我们的后端就写好了" class="headerlink" title="这样我们的后端就写好了"></a>这样我们的后端就写好了</h3><h4 id="向数据库中添加测试数据"><a href="#向数据库中添加测试数据" class="headerlink" title="向数据库中添加测试数据"></a>向数据库中添加测试数据</h4><p><img src="/id_12/01.png" alt="测试数据"></p>
-<h4 id="Postman测试后端接口"><a href="#Postman测试后端接口" class="headerlink" title="Postman测试后端接口"></a>Postman测试后端接口</h4><p><img src="/id_12/02.png" alt="测试接口"></p>
-<h3 id="现在我们开始写前端，"><a href="#现在我们开始写前端，" class="headerlink" title="现在我们开始写前端，"></a>现在我们开始写前端，</h3><h4 id="打开vue项目，封装一个WXJcate-vue递归组件"><a href="#打开vue项目，封装一个WXJcate-vue递归组件" class="headerlink" title="打开vue项目，封装一个WXJcate.vue递归组件"></a>打开vue项目，封装一个WXJcate.vue递归组件</h4><p>所谓递归组件: 就是组件可以在它们自己的模板中调用自身，不过它们只能通过 name 选项来做这件事，例如给组件设置属性 name: ‘WJXcate’，然后在模板中就可以使用 WXJcate 调用自己进行递归调用了</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line"></span><br><span class="line">  &lt;div&gt;</span><br><span class="line"></span><br><span class="line">    &lt;ul&gt;</span><br><span class="line">      &lt;div :class="[data.id==0 ? 'root': '', 'wxjcate']"&gt;{{ data.name }}&lt;/div&gt;</span><br><span class="line"></span><br><span class="line">      &lt;ul v-if="data.childlist &amp;&amp; data.childlist.length&gt;0"&gt;</span><br><span class="line">        &lt;WXJcate v-for="child in data.childlist" :key="child.id" :data="child"/&gt;</span><br><span class="line">      &lt;/ul&gt;</span><br><span class="line">    &lt;/ul&gt;</span><br><span class="line"></span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">export default {</span><br><span class="line">  name: 'WXJcate', // 递归组件需要设置 name 属性，才能在模板中调用自己</span><br><span class="line">  props:['data'],</span><br><span class="line">};</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;style &gt;</span><br><span class="line">.wxjcate {</span><br><span class="line">  padding-left: 8px;</span><br><span class="line">  border-left: 1px solid gray;</span><br><span class="line">}</span><br><span class="line">ul {</span><br><span class="line">  padding-left: 20px;</span><br><span class="line">  list-style: none;</span><br><span class="line">}</span><br><span class="line">.root { display: none; }</span><br><span class="line"></span><br><span class="line">&lt;/style&gt;</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
-<h4 id="然后就可以在其他页面中调用这个递归组件"><a href="#然后就可以在其他页面中调用这个递归组件" class="headerlink" title="然后就可以在其他页面中调用这个递归组件"></a>然后就可以在其他页面中调用这个递归组件</h4><p>在WXJ_Index调用递归组件并请求后端的数据</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line"></span><br><span class="line">    &lt;WXJcate :data="data" /&gt;</span><br><span class="line"></span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">import WXJcate from './WXJcate.vue';</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">export default {</span><br><span class="line">  data () {</span><br><span class="line">    return {</span><br><span class="line">      data:{},</span><br><span class="line">      online: 0</span><br><span class="line">    }</span><br><span class="line">  },</span><br><span class="line">  components: {</span><br><span class="line">    WXJcate</span><br><span class="line">  },</span><br><span class="line"></span><br><span class="line">  //钩子方法</span><br><span class="line">  mounted:function(){</span><br><span class="line"></span><br><span class="line">    this.get_token();</span><br><span class="line">  },</span><br><span class="line">  //绑定事件</span><br><span class="line">  methods:{</span><br><span class="line">    get_token(){</span><br><span class="line">      this.$axios.get('mytree/').then((result) =&gt;{</span><br><span class="line">        // console.log(result);</span><br><span class="line">        var mytree = {'id':0,name:'123'};</span><br><span class="line">        mytree['childlist'] = result.data;</span><br><span class="line">        this.data = mytree;</span><br><span class="line">      });</span><br><span class="line">    },</span><br><span class="line">  }</span><br><span class="line">}</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;style&gt;</span><br><span class="line"></span><br><span class="line">.on {</span><br><span class="line">  background: #cdcbff;</span><br><span class="line">}</span><br><span class="line">.off {</span><br><span class="line">  background: #fefdff;</span><br><span class="line"></span><br><span class="line">}</span><br><span class="line">&lt;/style&gt;</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
-<h3 id="这样我们的Web端就写好了"><a href="#这样我们的Web端就写好了" class="headerlink" title="这样我们的Web端就写好了"></a>这样我们的Web端就写好了</h3><h4 id="最后我们来看一下页面效果"><a href="#最后我们来看一下页面效果" class="headerlink" title="最后我们来看一下页面效果"></a>最后我们来看一下页面效果</h4><p><img src="/id_12/03.png" alt="最终效果"></p>
-<p>django-git地址：<a href="https://gitee.com/before-l/celery-demo.git">https://gitee.com/before-l/celery-demo.git</a><br>vue-git地址：<a href="https://gitee.com/before-l/annual-leave-vue.git">https://gitee.com/before-l/annual-leave-vue.git</a></p>
+
+<p>支付宝开放平台：<a href="https://open.alipay.com/platform/home.htm">https://open.alipay.com/platform/home.htm</a></p>
+<h4 id="1-支付宝沙箱商家应用RSA2密钥生成"><a href="#1-支付宝沙箱商家应用RSA2密钥生成" class="headerlink" title="1.支付宝沙箱商家应用RSA2密钥生成"></a>1.支付宝沙箱商家应用RSA2密钥生成</h4><p>可以使用支付宝开发助手来实现密钥的生成<br>具体步骤查看官方网站：<a href="https://opendocs.alipay.com/open/291/105971">https://opendocs.alipay.com/open/291/105971</a><br>同时配置到沙箱</p>
+<h4 id="2-安装支付宝SDK模块"><a href="#2-安装支付宝SDK模块" class="headerlink" title="2.安装支付宝SDK模块"></a>2.安装支付宝SDK模块</h4><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 支付宝的sdk已经集成为一个python模块，只需要安装模块进行开发。</span></span><br><span class="line">pip install pycryptodome</span><br><span class="line"></span><br><span class="line">pip install python-alipay-sdk --upgrade</span><br></pre></td></tr></tbody></table></figure>
+<h4 id="3-安装完成-测试支付功能"><a href="#3-安装完成-测试支付功能" class="headerlink" title="3.安装完成 测试支付功能"></a>3.安装完成 测试支付功能</h4><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">from</span> alipay <span class="keyword">import</span> AliPay</span><br><span class="line"></span><br><span class="line"><span class="comment"># 公钥</span></span><br><span class="line">alipay_public_key_string = <span class="string">"""-----BEGIN PUBLIC KEY-----</span></span><br><span class="line"><span class="string">此处填写公钥</span></span><br><span class="line"><span class="string">-----END PUBLIC KEY-----"""</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 私钥</span></span><br><span class="line">app_private_key_string = <span class="string">"""-----BEGIN RSA PRIVATE KEY-----</span></span><br><span class="line"><span class="string">此处填写私钥</span></span><br><span class="line"><span class="string">-----END RSA PRIVATE KEY-----"""</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例化支付请求</span></span><br><span class="line">alipay = AliPay(</span><br><span class="line">    appid = <span class="string">"xxxxxxxxx"</span>,     <span class="comment"># APPID</span></span><br><span class="line">    app_notify_url = <span class="literal">None</span>,</span><br><span class="line">    app_private_key_string = app_private_key_string,</span><br><span class="line">    alipay_public_key_string = alipay_public_key_string,</span><br><span class="line">    sign_type = <span class="string">"RSA2"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 发起支付请求</span></span><br><span class="line">order_string = alipay.api_alipay_trade_page_pay(</span><br><span class="line">    out_trade_no = <span class="string">'10001'</span>, <span class="comment">#订单号</span></span><br><span class="line">    total_amount= <span class="built_in">str</span>(<span class="number">10000</span>), <span class="comment">#支付金额</span></span><br><span class="line">    subject = <span class="string">'水果干果'</span>,</span><br><span class="line">    return_url=<span class="string">"http://127.0.0.1:8000/buyer/pr/"</span>,</span><br><span class="line">    <span class="comment"># 支付宝回调地址 </span></span><br><span class="line">    notify_url=<span class="string">"http://127.0.0.1:8000/buyer/pr/"</span></span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">return</span> HttpResponseRedirect(<span class="string">"https://openapi.alipaydev.com/gateway.do?"</span> + order_string)</span><br></pre></td></tr></tbody></table></figure>
+
+<h4 id="4-最后附上流程图："><a href="#4-最后附上流程图：" class="headerlink" title="4.最后附上流程图："></a>4.最后附上流程图：</h4><p><img src="/id_14/01.png" alt="三方支付流程图"></p>
 ]]></content>
       <categories>
         <category>后端</category>
       </categories>
       <tags>
         <tag>django</tag>
+        <tag>三方</tag>
       </tags>
   </entry>
   <entry>
@@ -196,38 +228,6 @@
 </ul>
 <h4 id="5-在后端写一个接口用来进行网络请求-使用requests三方模块"><a href="#5-在后端写一个接口用来进行网络请求-使用requests三方模块" class="headerlink" title="5.在后端写一个接口用来进行网络请求(使用requests三方模块)"></a>5.在后端写一个接口用来进行网络请求(使用requests三方模块)</h4><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">WeiboView</span>(<span class="params">APIView</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">self, request</span>):</span></span><br><span class="line">        code = request.GET.get(<span class="string">"code"</span>)</span><br><span class="line">        <span class="comment"># 通过python进行网络请求 requests</span></span><br><span class="line">        r = requests.post(<span class="string">"https://api.weibo.com/oauth2/access_token"</span>, {</span><br><span class="line">            <span class="comment"># App Key</span></span><br><span class="line">            <span class="string">"client_id"</span>: xxxx,</span><br><span class="line">            <span class="comment"># 密钥  App Secret</span></span><br><span class="line">            <span class="string">"client_secret"</span>: <span class="string">""</span>,</span><br><span class="line">            <span class="comment"># 请求的类型</span></span><br><span class="line">            <span class="string">"grant_type"</span>: <span class="string">"authorization_code"</span>,</span><br><span class="line">            <span class="comment"># 调用authorize获得的code值。</span></span><br><span class="line">            <span class="string">"code"</span>: code,</span><br><span class="line">            <span class="comment"># 回调地址</span></span><br><span class="line">            <span class="string">"redirect_uri"</span>: <span class="string">"http://127.0.0.1:8000/weibo/"</span></span><br><span class="line">        })</span><br><span class="line">        access_token = r.json()[<span class="string">'access_token'</span>]</span><br><span class="line">        uid = r.json()[<span class="string">'uid'</span>]</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 先判断微博账号是否登录过，没有登录过则把账号添加到第三方表中，登陆过则返回登录信息</span></span><br><span class="line">        open_user = OpenUser.objects.<span class="built_in">filter</span>(uid=uid).first()</span><br><span class="line">        <span class="keyword">if</span> open_user:</span><br><span class="line">            <span class="comment"># 已经登录过了</span></span><br><span class="line">            user = open_user.user</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            user = User.objects.create(username=uid, password=uid)</span><br><span class="line">            <span class="comment"># 没有登录</span></span><br><span class="line">            OpenUser.objects.create(uid=uid, cate=<span class="string">"微博"</span>, user=user)</span><br><span class="line">        <span class="comment"># 生成令牌</span></span><br><span class="line">        token = jwt.encode({<span class="string">"uid"</span>:user.<span class="built_in">id</span>},<span class="string">'123'</span>)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 跳转到前端首页</span></span><br><span class="line">        <span class="keyword">return</span> HttpResponse(<span class="string">"登录成功,点击跳转&lt;a href='http://127.0.0.1:8080/#/index?token=%s&amp;username=%s'&gt;跳转&lt;/a&gt;"</span>%(token.decode(),uid))</span><br></pre></td></tr></tbody></table></figure>
 <h4 id="6-OK-这样一个微博三方登录就做好啦"><a href="#6-OK-这样一个微博三方登录就做好啦" class="headerlink" title="6.OK 这样一个微博三方登录就做好啦"></a>6.OK 这样一个微博三方登录就做好啦</h4><h5 id="vue-git地址：https-gitee-com-before-l-annual-leave-vue-git"><a href="#vue-git地址：https-gitee-com-before-l-annual-leave-vue-git" class="headerlink" title="vue-git地址：https://gitee.com/before-l/annual-leave-vue.git"></a>vue-git地址：<a href="https://gitee.com/before-l/annual-leave-vue.git">https://gitee.com/before-l/annual-leave-vue.git</a></h5><h5 id="django-git地址-https-gitee-com-before-l-annual-leave-git"><a href="#django-git地址-https-gitee-com-before-l-annual-leave-git" class="headerlink" title="django-git地址:https://gitee.com/before-l/annual-leave.git"></a>django-git地址:<a href="https://gitee.com/before-l/annual-leave.git">https://gitee.com/before-l/annual-leave.git</a></h5>]]></content>
-      <categories>
-        <category>后端</category>
-      </categories>
-      <tags>
-        <tag>django</tag>
-        <tag>三方</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>三方支付</title>
-    <url>/id_14/</url>
-    <content><![CDATA[<p>三方支付流程：</p>
-<pre><code>首先进入支付宝平台，点击开发中心-》研发服务
-
-获得沙箱的appid以及商户公钥和支付宝公钥
-
-然后利用秘钥生成软件生成私钥和公钥
-
-建立keys文件夹，  将私钥和公钥文件放入keys
-
-加入头部和尾部代码
-
-最后用支付宝公钥替换公钥文件</code></pre>
-<a id="more"></a>
-
-<p>支付宝开放平台：<a href="https://open.alipay.com/platform/home.htm">https://open.alipay.com/platform/home.htm</a></p>
-<h4 id="1-支付宝沙箱商家应用RSA2密钥生成"><a href="#1-支付宝沙箱商家应用RSA2密钥生成" class="headerlink" title="1.支付宝沙箱商家应用RSA2密钥生成"></a>1.支付宝沙箱商家应用RSA2密钥生成</h4><p>可以使用支付宝开发助手来实现密钥的生成<br>具体步骤查看官方网站：<a href="https://opendocs.alipay.com/open/291/105971">https://opendocs.alipay.com/open/291/105971</a><br>同时配置到沙箱</p>
-<h4 id="2-安装支付宝SDK模块"><a href="#2-安装支付宝SDK模块" class="headerlink" title="2.安装支付宝SDK模块"></a>2.安装支付宝SDK模块</h4><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 支付宝的sdk已经集成为一个python模块，只需要安装模块进行开发。</span></span><br><span class="line">pip install pycryptodome</span><br><span class="line"></span><br><span class="line">pip install python-alipay-sdk --upgrade</span><br></pre></td></tr></tbody></table></figure>
-<h4 id="3-安装完成-测试支付功能"><a href="#3-安装完成-测试支付功能" class="headerlink" title="3.安装完成 测试支付功能"></a>3.安装完成 测试支付功能</h4><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">from</span> alipay <span class="keyword">import</span> AliPay</span><br><span class="line"></span><br><span class="line"><span class="comment"># 公钥</span></span><br><span class="line">alipay_public_key_string = <span class="string">"""-----BEGIN PUBLIC KEY-----</span></span><br><span class="line"><span class="string">此处填写公钥</span></span><br><span class="line"><span class="string">-----END PUBLIC KEY-----"""</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 私钥</span></span><br><span class="line">app_private_key_string = <span class="string">"""-----BEGIN RSA PRIVATE KEY-----</span></span><br><span class="line"><span class="string">此处填写私钥</span></span><br><span class="line"><span class="string">-----END RSA PRIVATE KEY-----"""</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例化支付请求</span></span><br><span class="line">alipay = AliPay(</span><br><span class="line">    appid = <span class="string">"xxxxxxxxx"</span>,     <span class="comment"># APPID</span></span><br><span class="line">    app_notify_url = <span class="literal">None</span>,</span><br><span class="line">    app_private_key_string = app_private_key_string,</span><br><span class="line">    alipay_public_key_string = alipay_public_key_string,</span><br><span class="line">    sign_type = <span class="string">"RSA2"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 发起支付请求</span></span><br><span class="line">order_string = alipay.api_alipay_trade_page_pay(</span><br><span class="line">    out_trade_no = <span class="string">'10001'</span>, <span class="comment">#订单号</span></span><br><span class="line">    total_amount= <span class="built_in">str</span>(<span class="number">10000</span>), <span class="comment">#支付金额</span></span><br><span class="line">    subject = <span class="string">'水果干果'</span>,</span><br><span class="line">    return_url=<span class="string">"http://127.0.0.1:8000/buyer/pr/"</span>,</span><br><span class="line">    <span class="comment"># 支付宝回调地址 </span></span><br><span class="line">    notify_url=<span class="string">"http://127.0.0.1:8000/buyer/pr/"</span></span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">return</span> HttpResponseRedirect(<span class="string">"https://openapi.alipaydev.com/gateway.do?"</span> + order_string)</span><br></pre></td></tr></tbody></table></figure>
-
-<h4 id="4-最后附上流程图："><a href="#4-最后附上流程图：" class="headerlink" title="4.最后附上流程图："></a>4.最后附上流程图：</h4><p><img src="/id_14/01.png" alt="三方支付流程图"></p>
-]]></content>
       <categories>
         <category>后端</category>
       </categories>
@@ -359,24 +359,6 @@
       </tags>
   </entry>
   <entry>
-    <title>用户注册</title>
-    <url>/id_18/</url>
-    <content><![CDATA[<h4 id="用户注册功能"><a href="#用户注册功能" class="headerlink" title="用户注册功能"></a>用户注册功能</h4><p>需求：实现用户注册功能，并将用户注册信息保存到磁盘文件中，用户注册时至少给定：用户名和密码<br>注意：用户名使用了唯一索引，不可重复</p>
-<a id="more"></a>
-<ul>
-<li>相关问题：</li>
-</ul>
-<p><strong>问</strong>：唯一索引干嘛用的 为什么用？<br><strong>答</strong>：指的是某个字段不能出现重复的值，比如身份证列，手机号。<br>使用唯一索引避免了注册时需要进数据库查询是否有重复的一次IO操作，节省时间，提高效率</p>
-<p>OK 上代码</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">register</span>(<span class="params">APIView</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">post</span>(<span class="params">self, request</span>):</span></span><br><span class="line">        username = request.data.get(<span class="string">"username"</span>)</span><br><span class="line">        password = request.data.get(<span class="string">"password"</span>)</span><br><span class="line">        leave = request.data.get(<span class="string">"leave"</span>)       <span class="comment"># 用户等级</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            UserModel.objects.create(username=username, password=password, leave=leave)</span><br><span class="line">            <span class="keyword">return</span> Response({<span class="string">"msg"</span>: <span class="string">"添加成功"</span>, <span class="string">"code"</span>: <span class="number">200</span>})</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            print(e)</span><br><span class="line">            <span class="keyword">return</span> Response({<span class="string">"msg"</span>: <span class="string">"该用户已存在"</span>, <span class="string">"code"</span>: <span class="number">400</span>})</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>]]></content>
-      <categories>
-        <category>后端</category>
-      </categories>
-      <tags>
-        <tag>django</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>接口测试中的异步调用和异步写入文件</title>
     <url>/id_19/</url>
     <content><![CDATA[<p>异步调用：<br>异步方法必须async 关键字声明<br>所有其他方法，耗时任务都需要加上await关键字，await必须依靠async<br>with用来建立工作流和关闭流对象</p>
@@ -431,28 +413,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Redis实现消息队列(Queue)</title>
-    <url>/id_21/</url>
-    <content><![CDATA[<ul>
-<li>相关问题：</li>
-</ul>
-<p><strong>问</strong>：为什么能用列表推导式的时候不用普通for循环？<br><strong>答</strong>：列表推导式比普通for循环性能好</p>
-<a id="more"></a>
-<p><strong>问</strong>：什么是lambda表达式？怎么用？<br><strong>答</strong>：lambda表达式又被称为匿名函数，一般在执行简单的逻辑时使用<br>lambda x:x<em>x   lambda关键字 x变量 x</em>x逻辑<br>注意：lambda的使用大量简化了代码，使代码简练清晰。但是值得注意的是，这会在一定程度上降低代码的可读性。还有lambda内不要包含循环，如果有，我宁愿定义函数来完成，使代码获得可重用性和更好的可读性。<br><strong>问</strong>：redis列表里只能存字符串，如果想存别的类型有什么办法？<br><strong>答</strong>：使用eval()</p>
-<blockquote>
-<p>eval() 原样输出字符串，将字符串强转成它包含的数据类型<br>例: a = “[1,2,3]”(字符串)<br>    a = eval(a)<br>结果：a=<a href="%E5%88%97%E8%A1%A8">1,2,3</a></p>
-</blockquote>
-<p><strong>加权队列</strong>：举个例子吧，在银行窗口办理业务的时候需要先取号==放进队列，然后排队等待。<br>但是这只是普通用户。如果有金卡用户取号，那么金卡用户的业务就可以插队==加权，先行办理金卡用户的业务<br>加权需要用到排序，并且Celery并没有加权这一功能<br>上代码！</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 首先进行方法封装</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyQueue</span>:</span></span><br><span class="line">    <span class="comment"># 队列遵循先进先出的原则</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, name, **redis_kwargs</span>):</span></span><br><span class="line">        <span class="comment"># **kwarys不定长参数  用于可传可不传的参数 </span></span><br><span class="line">        <span class="comment"># kwargs是用来传键值对，args 一般用来传列表和元祖</span></span><br><span class="line">        <span class="comment"># self.__变量名：使用双下划线开头的变量是私有变量，在类外不可以被调用</span></span><br><span class="line">        <span class="comment"># redis的默认参数为：host='localhost', port=6379, db=0， 其中db为定义redis的第几个库</span></span><br><span class="line">        self.__db = redis.Redis(**redis_kwargs, decode_responses=<span class="literal">True</span>)</span><br><span class="line">        self.key = name</span><br><span class="line">        <span class="comment"># llen:获取列表长度</span></span><br><span class="line">        <span class="comment"># lrange:获取列表指定范围内的元素</span></span><br><span class="line">        self.r_len = self.__db.llen(self.key)</span><br><span class="line">        self.l = self.__db.lrange(self.key, <span class="number">0</span>, -<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">push</span>(<span class="params">self, x: <span class="built_in">tuple</span></span>):</span></span><br><span class="line">        <span class="comment"># rpush:在列表中添加一个或多个值</span></span><br><span class="line">        self.__db.rpush(self.key, x)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">show</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(self.__db.lrange(self.key, <span class="number">0</span>, -<span class="number">1</span>))</span><br><span class="line">        <span class="keyword">return</span> self.__db.lrange(self.key, <span class="number">0</span>, -<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 排序用来加权(加权是celery没有的)</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">sort</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="comment"># 因为redis里存的是字符串，而排序的依据是元组中最后一个元素为int,所以使用-2下标</span></span><br><span class="line">        <span class="comment"># 此处可用eval </span></span><br><span class="line">        self.l = <span class="built_in">sorted</span>(self.l, key=<span class="keyword">lambda</span> x: x[-<span class="number">2</span>], reverse=<span class="literal">True</span>)</span><br><span class="line">        <span class="keyword">return</span> self.l</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">pop</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="comment"># pop(0):移出并获取列表的第一个元素</span></span><br><span class="line">        <span class="comment"># lrem 根据第二个参数的值，移除列表中与参数相等的元素。</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> self.l:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line">        item = self.l.pop(<span class="number">0</span>)</span><br><span class="line">        self.__db.lrem(self.key, item, <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> item</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">clear</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="comment"># 用来清空列表</span></span><br><span class="line">        <span class="keyword">return</span> self.__db.delete(self.key)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    m = MyQueue(<span class="string">'que'</span>)</span><br><span class="line">    <span class="comment"># 添加到redis</span></span><br><span class="line">    i = <span class="number">1</span></span><br><span class="line">    <span class="comment"># 列表推导式</span></span><br><span class="line">    [m.push(i,i+<span class="number">1</span>,i+<span class="number">2</span>) <span class="keyword">for</span> item <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>) i++]</span><br><span class="line">    <span class="comment"># 将添加进去的数据排序 </span></span><br><span class="line">    m.sort()</span><br><span class="line">    <span class="comment"># 删除排序后列表中的第一个元素</span></span><br><span class="line">    m.pop()</span><br><span class="line">    <span class="comment"># 清空列表</span></span><br><span class="line">    m.clear()</span><br></pre></td></tr></tbody></table></figure>]]></content>
-      <categories>
-        <category>数据结构</category>
-      </categories>
-      <tags>
-        <tag>redis</tag>
-        <tag>队列</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Redis封禁账号30分钟</title>
     <url>/id_20/</url>
     <content><![CDATA[<p><strong>问题</strong>： 账号锁定问题  五分钟以内输错五次密码，锁定账号30分钟</p>
@@ -499,6 +459,46 @@
       </categories>
       <tags>
         <tag>redis</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>用户注册</title>
+    <url>/id_18/</url>
+    <content><![CDATA[<h4 id="用户注册功能"><a href="#用户注册功能" class="headerlink" title="用户注册功能"></a>用户注册功能</h4><p>需求：实现用户注册功能，并将用户注册信息保存到磁盘文件中，用户注册时至少给定：用户名和密码<br>注意：用户名使用了唯一索引，不可重复</p>
+<a id="more"></a>
+<ul>
+<li>相关问题：</li>
+</ul>
+<p><strong>问</strong>：唯一索引干嘛用的 为什么用？<br><strong>答</strong>：指的是某个字段不能出现重复的值，比如身份证列，手机号。<br>使用唯一索引避免了注册时需要进数据库查询是否有重复的一次IO操作，节省时间，提高效率</p>
+<p>OK 上代码</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">register</span>(<span class="params">APIView</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">post</span>(<span class="params">self, request</span>):</span></span><br><span class="line">        username = request.data.get(<span class="string">"username"</span>)</span><br><span class="line">        password = request.data.get(<span class="string">"password"</span>)</span><br><span class="line">        leave = request.data.get(<span class="string">"leave"</span>)       <span class="comment"># 用户等级</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            UserModel.objects.create(username=username, password=password, leave=leave)</span><br><span class="line">            <span class="keyword">return</span> Response({<span class="string">"msg"</span>: <span class="string">"添加成功"</span>, <span class="string">"code"</span>: <span class="number">200</span>})</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            print(e)</span><br><span class="line">            <span class="keyword">return</span> Response({<span class="string">"msg"</span>: <span class="string">"该用户已存在"</span>, <span class="string">"code"</span>: <span class="number">400</span>})</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>]]></content>
+      <categories>
+        <category>后端</category>
+      </categories>
+      <tags>
+        <tag>django</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Redis实现消息队列(Queue)</title>
+    <url>/id_21/</url>
+    <content><![CDATA[<ul>
+<li>相关问题：</li>
+</ul>
+<p><strong>问</strong>：为什么能用列表推导式的时候不用普通for循环？<br><strong>答</strong>：列表推导式比普通for循环性能好</p>
+<a id="more"></a>
+<p><strong>问</strong>：什么是lambda表达式？怎么用？<br><strong>答</strong>：lambda表达式又被称为匿名函数，一般在执行简单的逻辑时使用<br>lambda x:x<em>x   lambda关键字 x变量 x</em>x逻辑<br>注意：lambda的使用大量简化了代码，使代码简练清晰。但是值得注意的是，这会在一定程度上降低代码的可读性。还有lambda内不要包含循环，如果有，我宁愿定义函数来完成，使代码获得可重用性和更好的可读性。<br><strong>问</strong>：redis列表里只能存字符串，如果想存别的类型有什么办法？<br><strong>答</strong>：使用eval()</p>
+<blockquote>
+<p>eval() 原样输出字符串，将字符串强转成它包含的数据类型<br>例: a = “[1,2,3]”(字符串)<br>    a = eval(a)<br>结果：a=<a href="%E5%88%97%E8%A1%A8">1,2,3</a></p>
+</blockquote>
+<p><strong>加权队列</strong>：举个例子吧，在银行窗口办理业务的时候需要先取号==放进队列，然后排队等待。<br>但是这只是普通用户。如果有金卡用户取号，那么金卡用户的业务就可以插队==加权，先行办理金卡用户的业务<br>加权需要用到排序，并且Celery并没有加权这一功能<br>上代码！</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 首先进行方法封装</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyQueue</span>:</span></span><br><span class="line">    <span class="comment"># 队列遵循先进先出的原则</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, name, **redis_kwargs</span>):</span></span><br><span class="line">        <span class="comment"># **kwarys不定长参数  用于可传可不传的参数 </span></span><br><span class="line">        <span class="comment"># kwargs是用来传键值对，args 一般用来传列表和元祖</span></span><br><span class="line">        <span class="comment"># self.__变量名：使用双下划线开头的变量是私有变量，在类外不可以被调用</span></span><br><span class="line">        <span class="comment"># redis的默认参数为：host='localhost', port=6379, db=0， 其中db为定义redis的第几个库</span></span><br><span class="line">        self.__db = redis.Redis(**redis_kwargs, decode_responses=<span class="literal">True</span>)</span><br><span class="line">        self.key = name</span><br><span class="line">        <span class="comment"># llen:获取列表长度</span></span><br><span class="line">        <span class="comment"># lrange:获取列表指定范围内的元素</span></span><br><span class="line">        self.r_len = self.__db.llen(self.key)</span><br><span class="line">        self.l = self.__db.lrange(self.key, <span class="number">0</span>, -<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">push</span>(<span class="params">self, x: <span class="built_in">tuple</span></span>):</span></span><br><span class="line">        <span class="comment"># rpush:在列表中添加一个或多个值</span></span><br><span class="line">        self.__db.rpush(self.key, x)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">show</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(self.__db.lrange(self.key, <span class="number">0</span>, -<span class="number">1</span>))</span><br><span class="line">        <span class="keyword">return</span> self.__db.lrange(self.key, <span class="number">0</span>, -<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 排序用来加权(加权是celery没有的)</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">sort</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="comment"># 因为redis里存的是字符串，而排序的依据是元组中最后一个元素为int,所以使用-2下标</span></span><br><span class="line">        <span class="comment"># 此处可用eval </span></span><br><span class="line">        self.l = <span class="built_in">sorted</span>(self.l, key=<span class="keyword">lambda</span> x: x[-<span class="number">2</span>], reverse=<span class="literal">True</span>)</span><br><span class="line">        <span class="keyword">return</span> self.l</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">pop</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="comment"># pop(0):移出并获取列表的第一个元素</span></span><br><span class="line">        <span class="comment"># lrem 根据第二个参数的值，移除列表中与参数相等的元素。</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> self.l:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line">        item = self.l.pop(<span class="number">0</span>)</span><br><span class="line">        self.__db.lrem(self.key, item, <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> item</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">clear</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="comment"># 用来清空列表</span></span><br><span class="line">        <span class="keyword">return</span> self.__db.delete(self.key)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    m = MyQueue(<span class="string">'que'</span>)</span><br><span class="line">    <span class="comment"># 添加到redis</span></span><br><span class="line">    i = <span class="number">1</span></span><br><span class="line">    <span class="comment"># 列表推导式</span></span><br><span class="line">    [m.push(i,i+<span class="number">1</span>,i+<span class="number">2</span>) <span class="keyword">for</span> item <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>) i++]</span><br><span class="line">    <span class="comment"># 将添加进去的数据排序 </span></span><br><span class="line">    m.sort()</span><br><span class="line">    <span class="comment"># 删除排序后列表中的第一个元素</span></span><br><span class="line">    m.pop()</span><br><span class="line">    <span class="comment"># 清空列表</span></span><br><span class="line">    m.clear()</span><br></pre></td></tr></tbody></table></figure>]]></content>
+      <categories>
+        <category>数据结构</category>
+      </categories>
+      <tags>
+        <tag>redis</tag>
+        <tag>队列</tag>
       </tags>
   </entry>
   <entry>
@@ -553,29 +553,6 @@
       </categories>
       <tags>
         <tag>进制</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>栈的使用</title>
-    <url>/id_25/</url>
-    <content><![CDATA[<h3 id="栈"><a href="#栈" class="headerlink" title="栈"></a>栈</h3><p>栈（stack）又名堆栈，它是一种运算受限的<strong>线性表</strong>。限定仅在表尾进行插入和删除操作的线性表。<br>这一端被称为栈顶，相对地，把另一端称为栈底。向一个栈插入新元素又称作进栈、入栈或压栈，它是把新元素放到栈顶元素的上面，使之成为新的栈顶元素；<br>从一个栈删除元素又称作出栈或退栈，它是把栈顶元素删除掉，使其相邻的元素成为新的栈顶元素。</p>
-<a id="more"></a>
-<p>栈作为一种数据结构，是一种只能在一端进行插入和删除操作的特殊线性表。<br>它按照<strong>先进后出</strong>，<strong>后进先出</strong>的原则存储数据</p>
-<h4 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h4><ul>
-<li>银行ATM自动存取款机<br>  假设取款机下有一个用来钱的箱子，箱子只有一个口供用户存取现金<br>  当你存钱的时候，ATM会把钱放在最上面<br>  当你取钱的时候，ATM会把最上面的钱吐出来</li>
-</ul>
-<h4 id="案例"><a href="#案例" class="headerlink" title="案例"></a>案例</h4><h5 id="将十进制的数转换为二进制的数"><a href="#将十进制的数转换为二进制的数" class="headerlink" title="将十进制的数转换为二进制的数"></a>将十进制的数转换为二进制的数</h5><p>我们都知道，通过求余法，可以将十进制数转换为其他进制，比如要转为二进制，将十进制数除以2，记录余数，然后继续将商除以2，一直到商等于0为止，最后将余数倒着写数来就可以了。</p>
-<p>比如13的二进制，13首先除以2商6余1,1首先进栈，然后6除以2商3余0，第二个余数0进栈，接着3除以2，商1余1，第三个余数1进栈，继续1除以2商0余1，第四个余数1进栈。最后将四个余数出栈，就得到了13的二进制1101。<br>实现代码如下</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Stack</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        self.item = []</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">push</span>(<span class="params">self, key</span>):</span></span><br><span class="line">        self.item.append(key)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">pop</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">while</span> <span class="number">1</span>:</span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">len</span>(self.item) != <span class="number">0</span>:</span><br><span class="line">                print(self.item.pop(),end=<span class="string">''</span>)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">exe</span>(<span class="params">self, key</span>):</span></span><br><span class="line">        key = <span class="built_in">int</span>(key)</span><br><span class="line">        <span class="keyword">while</span> <span class="number">1</span>:</span><br><span class="line">            self.push(key % <span class="number">2</span>)</span><br><span class="line">            key //= <span class="number">2</span></span><br><span class="line">            <span class="keyword">if</span> key == <span class="number">0</span>:</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">s = Stack()</span><br><span class="line">s.exe(<span class="built_in">input</span>(<span class="string">"请输入您要进行换算的数字："</span>))</span><br><span class="line">s.pop()</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
-<h3 id="栈和队列的异同点"><a href="#栈和队列的异同点" class="headerlink" title="栈和队列的异同点"></a>栈和队列的异同点</h3><h4 id="首先，栈（Stack）和队列（Queue）是两种操作受限的线性表。"><a href="#首先，栈（Stack）和队列（Queue）是两种操作受限的线性表。" class="headerlink" title="首先，栈（Stack）和队列（Queue）是两种操作受限的线性表。"></a>首先，栈（Stack）和队列（Queue）是两种操作受限的线性表。</h4><h4 id="栈与队列的相同点："><a href="#栈与队列的相同点：" class="headerlink" title="栈与队列的相同点："></a>栈与队列的相同点：</h4><p>1.都是线性结构。<br>2.插入操作都是限定在表尾进行。<br>3.都可以通过顺序结构和链式结构实现。<br>4.插入与删除的时间复杂度都是O（1），在空间复杂度上两者也一样。<br>5.多链栈和多链队列的管理模式可以相同。</p>
-<h4 id="栈与队列的不同点："><a href="#栈与队列的不同点：" class="headerlink" title="栈与队列的不同点："></a>栈与队列的不同点：</h4><p>1.删除数据元素的位置不同，栈的删除操作在表尾进行，队列的删除操作在表头进行。<br>2.应用场景不同；常见栈的应用场景包括括号问题的求解，表达式的转换和求值，函数调用和递归实现，深度优先搜索遍历等；常见的队列的应用场景包括计算机系统中各种资源的管理，消息缓冲器的管理和广度优先搜索遍历等。<br>3.顺序栈能够实现多栈空间共享，而顺序队列不能。</p>
-]]></content>
-      <categories>
-        <category>数据结构</category>
-      </categories>
-      <tags>
-        <tag>进制</tag>
-        <tag>栈</tag>
       </tags>
   </entry>
   <entry>
@@ -660,36 +637,6 @@
       </categories>
       <tags>
         <tag>mongodb</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>分代回收</title>
-    <url>/id_29/</url>
-    <content><![CDATA[<h3 id="分代回收"><a href="#分代回收" class="headerlink" title="分代回收"></a>分代回收</h3><p>标记-清除会在大规模遍历内存中会使程序暂停 ，程序暂停会导致我们程序出现很多我们意想不到的错误和问题出现，所以pyt hon引入了我们的分代回收来解决这个问题，分代回收也应该是我们在面试过程中主动向面试官阐述出来的。</p>
-<a id="more"></a>
-<h4 id="分代回收原理："><a href="#分代回收原理：" class="headerlink" title="分代回收原理："></a>分代回收原理：</h4><p>分代回收主要是将我们的内存根据对象的时候或被标记的次数进行分代他是一种典型是<strong>时间换空间</strong>的行为，那么他主要分为三代，<strong>青年代</strong>、<strong>中年代</strong>、<strong>老年代</strong>。那么我们可以认为一个对象在内存中存在的时间越长，越不容易被回收，越不是一个垃圾，这里我们认为<strong>老年代</strong>是存活在三代中最长的，那也是最不容易被回收掉的。</p>
-<h4 id="举例说明"><a href="#举例说明" class="headerlink" title="举例说明"></a>举例说明</h4><p>那么我们可以来看一下，假设下图是一块内存： </p>
-<p><img src="/id_29/01.png" alt="内存"></p>
-<p>那我们现在有一个变量a=1首先进入青年代，然后陆陆续续的我们会有变量存入青年代之后，青年代觉得他自己快要满了，那么此时会触发我们的标记清除动作。</p>
-<p><img src="/id_29/02.png" alt="青年代"></p>
-<p>那么触发我们的回收机制，标记-清除之后会在青年代中找到所有引用计数为0的元素，并将其释放。把剩余可以继续往下的元素沉淀到中年代，那么这就是分代回收的技术。</p>
-<p><img src="/id_29/03.png" alt="沉淀中年代"></p>
-<p>他是结合了我们引用计数和标记清除在内的，那每一次对比于之前，现在我们标记清除不需要遍历整段内存，只需要将其对应代遍历即可，那么这样就间接节约了我们遍历所花费的暂停时间，让我们的程序尽可能不要的过多整段内存去遍历，去过滤。</p>
-<p>那么当然呢，更加细节的来说：</p>
-<ul>
-<li>其实是在我们的第0代，也就是青年代满的时候呢将会触发清理我们所有的三代，</li>
-<li>而在中年代满时，将会触发清理我们的中年代和老年代，</li>
-<li>而在我们老年代满的时候呢，只会触发清理我们的老年代，</li>
-<li>也就是说呢，每一层在满了之后，他就会触发<strong>当前及当前之后的每代</strong>的回收动作，</li>
-</ul>
-<p><strong>目的</strong>：那么分代回收他的主要目的是为了解决我们标记-清除所带来的一些额外操作，我们上一节也说过，标记-清除如果需要遍历的内存节点较多的时候，那么每一次回收他都要花费大量的时间，那么利用我们的分代回收就可以减少这些情况</p>
-<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>我们python管理内存是以引用计数为主，标记清除和分代回收为辅的方法来管理内存的</p>
-]]></content>
-      <categories>
-        <category>后端</category>
-      </categories>
-      <tags>
-        <tag>python</tag>
       </tags>
   </entry>
   <entry>
@@ -789,31 +736,6 @@
       </tags>
   </entry>
   <entry>
-    <title>垃圾回收机制之标记-清除</title>
-    <url>/id_28/</url>
-    <content><![CDATA[<h3 id="垃圾回收机制"><a href="#垃圾回收机制" class="headerlink" title="垃圾回收机制"></a>垃圾回收机制</h3><p>垃圾自动回收机制的出现使编程更加的简单，使得我们不需要再去考虑内存分配和释放的问题，而是更加的专注在我们产品功能的实现上</p>
-<p>目前最基本的垃圾收集算法有四种,标记-清除算法(mark-sweep),标记-压缩算法(mark-compact),复制算法(copying)以及引用计数算法(reference counting).而现代流行的垃圾收集算法一般是由这四种中的其中几种算法相互组合而成，比如说，对堆(heap)的一部分采用标记-清除算法，对堆(heap)的另外一部分则采用复制算法等等。今天我们主要来看下标记-清除算法的原理。</p>
-<a id="more"></a>
-<h4 id="标记-清除"><a href="#标记-清除" class="headerlink" title="标记-清除"></a>标记-清除</h4><p>标记-清除算法分为两个阶段，标记(mark)和清除(sweep)</p>
-<h5 id="标记："><a href="#标记：" class="headerlink" title="标记："></a>标记：</h5><p>在内存中对每一个被使用到的变量来进行标记</p>
-<p>标记是从根对象开始工作，所有能够和根对象联系的变量我们都会有相应的标记。</p>
-<h5 id="标记举例"><a href="#标记举例" class="headerlink" title="标记举例"></a>标记举例</h5><p><img src="/id_28/01.png" alt="标记"></p>
-<p><img src="/id_28/02.png" alt="标记"></p>
-<p><img src="/id_28/03.png" alt="标记"></p>
-<h5 id="清除"><a href="#清除" class="headerlink" title="清除:"></a>清除:</h5><p>清除主要是将内存中无关联根对象的并且没有被标记的变量给杀死，释放掉</p>
-<p><img src="/id_28/04.png" alt="image-20210324190403266"></p>
-<p>图中a和b已经和根对象没有关系了，而且并没有被标记，所以就会被清除掉</p>
-<h4 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h4><p>总的来说，在标记-清除过程中,他会扫描整个内存空间，扫描过程中python程序会暂停，被标记的对象不会被回收，没有标记的对象会被回收掉。<br>但是我们整个python程序暂停，暂停会导致程序无法正常运行，让程序运行时出现一些问题从而造成程序阻塞问题<br>那python呢就引入了<strong>分代回收</strong>来避免标记-清除，由于每一次过程都需要去大量的遍历整块内存而造成的程序阻塞问题</p>
-<p>分代回收参考下一篇文章：<a href="https://www.hr915.xyz/id_29">https://www.hr915.xyz/id_29</a></p>
-]]></content>
-      <categories>
-        <category>后端</category>
-      </categories>
-      <tags>
-        <tag>python</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>引用计数</title>
     <url>/id_27/</url>
     <content><![CDATA[<h3 id="引用计数"><a href="#引用计数" class="headerlink" title="引用计数"></a>引用计数</h3><h5 id="问"><a href="#问" class="headerlink" title="问"></a>问</h5><p>引用计数这个问题是我们在面试中经常会遇到的。通常面试官会这样问：</p>
@@ -839,13 +761,17 @@
 </ul>
 <h4 id="查看引用计数"><a href="#查看引用计数" class="headerlink" title="查看引用计数"></a>查看引用计数</h4><p>查看引用计数我们是使用了sys模块中getrefcount方法</p>
 <figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">C:\Users\Lenovo&gt;python.exe</span><br><span class="line">Python <span class="number">3.7</span><span class="number">.0</span> (v3<span class="number">.7</span><span class="number">.0</span>:1bf9cc5093, Jun <span class="number">27</span> <span class="number">2018</span>, 04:<span class="number">59</span>:<span class="number">51</span>) [MSC v<span class="number">.1914</span> <span class="number">64</span> bit (AMD64)] on win32</span><br><span class="line">Type <span class="string">"help"</span>, <span class="string">"copyright"</span>, <span class="string">"credits"</span> <span class="keyword">or</span> <span class="string">"license"</span> <span class="keyword">for</span> more information.</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> sys</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sys.getrefcount(<span class="number">1</span>)</span><br><span class="line"><span class="number">119</span></span><br><span class="line"><span class="comment"># 得出常量1在内存中的引用计数为119</span></span><br></pre></td></tr></tbody></table></figure>
-<h4 id="那什么时候会用到引用计数呢"><a href="#那什么时候会用到引用计数呢" class="headerlink" title="那什么时候会用到引用计数呢"></a>那什么时候会用到引用计数呢</h4><p>有两点：</p>
-<p>1、 变量互相赋值的时候</p>
+<h4 id="那什么时候会用到引用计数呢"><a href="#那什么时候会用到引用计数呢" class="headerlink" title="那什么时候会用到引用计数呢"></a>那什么时候会用到引用计数呢</h4><p>当发生以下四种情况的时候，该对象的引用计数器+1</p>
+<p>对象被创建 a=14<br>对象被引用 b=a<br>对象被作为参数,传到函数中 func(a)<br>对象作为一个元素，存储在容器中  List={a,”a”,”b”,2}</p>
+<h5 id="取两点举例："><a href="#取两点举例：" class="headerlink" title="取两点举例："></a>取两点举例：</h5><p>1、 变量互相赋值的时候</p>
 <figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="string">'x'</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = a</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">id</span>(a)</span><br><span class="line"><span class="number">3242716434928</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">id</span>(b)</span><br><span class="line"><span class="number">3242716434928</span></span><br><span class="line"><span class="comment"># 此时我们可以看出两个变量指向的内存地址是完全一样的 。可得变量互相赋值的时候用到了引用计数</span></span><br></pre></td></tr></tbody></table></figure>
 <p>2、常用对象创建时</p>
 <p>python本身含有a-z,A-Z,0-9等常见值的引用</p>
 <figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>c = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>d = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">id</span>(a)</span><br><span class="line"><span class="number">140707666383904</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">id</span>(b)</span><br><span class="line"><span class="number">140707666383904</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">id</span>(c)</span><br><span class="line"><span class="number">140707666383904</span></span><br><span class="line"><span class="comment"># 此时我们可以看出a,b,c的内存地址都是完全一致的， 可得常用对象创建时用到了引用计数</span></span><br></pre></td></tr></tbody></table></figure>
-<h4 id="如何减少引用次数"><a href="#如何减少引用次数" class="headerlink" title="如何减少引用次数"></a>如何减少引用次数</h4><p>有两点</p>
+<h4 id="如何减少引用次数"><a href="#如何减少引用次数" class="headerlink" title="如何减少引用次数"></a>如何减少引用次数</h4><p>与上述情况相对应，当发生以下四种情况时，该对象的引用计数器-1</p>
+<p>当该对象的别名被显式销毁时 del a<br>当该对象的引别名被赋予新的对象，  a=26<br>一个对象离开它的作用域，例如 func函数执行完毕时，函数里面的局部变量的引用计数器就会减一（但是全局变量不会）<br>将该元素从容器中删除时，或者容器被销毁时。</p>
+<p>.当指向该对象的内存的引用计数器为0的时候，该内存将会被Python虚拟机销毁</p>
+<p>有两点</p>
 <p>1、变量被重新赋值为别的值</p>
 <figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>c = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>d = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sys.getrefcount(<span class="number">1</span>)</span><br><span class="line"><span class="number">123</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="string">'a'</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sys.getrefcount(<span class="number">1</span>)</span><br><span class="line"><span class="number">122</span></span><br><span class="line"><span class="comment"># 可以看出，当a被重新赋值后再次查看1的引用计数是减少了1的</span></span><br></pre></td></tr></tbody></table></figure>
 <p>2、del  删除变量</p>
@@ -856,6 +782,84 @@
 <p>循环引用就是两个变量互相引用时假设已经被释放，但引用计数不为0，那就会导致这两个变量无法被直接回收</p>
 <p><strong>那循环引用有什么解决办法吗？</strong></p>
 <p>那肯定是有的，python中解决循环引用的方法就是<strong>标记-清除</strong><br>请移步下一节：<a href="https://www.hr915.xyz/id_28">https://www.hr915.xyz/id_28</a></p>
+]]></content>
+      <categories>
+        <category>后端</category>
+      </categories>
+      <tags>
+        <tag>python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>栈的使用</title>
+    <url>/id_25/</url>
+    <content><![CDATA[<h3 id="栈"><a href="#栈" class="headerlink" title="栈"></a>栈</h3><p>栈（stack）又名堆栈，它是一种运算受限的<strong>线性表</strong>。限定仅在表尾进行插入和删除操作的线性表。<br>这一端被称为栈顶，相对地，把另一端称为栈底。向一个栈插入新元素又称作进栈、入栈或压栈，它是把新元素放到栈顶元素的上面，使之成为新的栈顶元素；<br>从一个栈删除元素又称作出栈或退栈，它是把栈顶元素删除掉，使其相邻的元素成为新的栈顶元素。</p>
+<a id="more"></a>
+<p>栈作为一种数据结构，是一种只能在一端进行插入和删除操作的特殊线性表。<br>它按照<strong>先进后出</strong>，<strong>后进先出</strong>的原则存储数据</p>
+<h4 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h4><ul>
+<li>银行ATM自动存取款机<br>  假设取款机下有一个用来钱的箱子，箱子只有一个口供用户存取现金<br>  当你存钱的时候，ATM会把钱放在最上面<br>  当你取钱的时候，ATM会把最上面的钱吐出来</li>
+</ul>
+<h4 id="案例"><a href="#案例" class="headerlink" title="案例"></a>案例</h4><h5 id="将十进制的数转换为二进制的数"><a href="#将十进制的数转换为二进制的数" class="headerlink" title="将十进制的数转换为二进制的数"></a>将十进制的数转换为二进制的数</h5><p>我们都知道，通过求余法，可以将十进制数转换为其他进制，比如要转为二进制，将十进制数除以2，记录余数，然后继续将商除以2，一直到商等于0为止，最后将余数倒着写数来就可以了。</p>
+<p>比如13的二进制，13首先除以2商6余1,1首先进栈，然后6除以2商3余0，第二个余数0进栈，接着3除以2，商1余1，第三个余数1进栈，继续1除以2商0余1，第四个余数1进栈。最后将四个余数出栈，就得到了13的二进制1101。<br>实现代码如下</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Stack</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        self.item = []</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">push</span>(<span class="params">self, key</span>):</span></span><br><span class="line">        self.item.append(key)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">pop</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">while</span> <span class="number">1</span>:</span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">len</span>(self.item) != <span class="number">0</span>:</span><br><span class="line">                print(self.item.pop(),end=<span class="string">''</span>)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">exe</span>(<span class="params">self, key</span>):</span></span><br><span class="line">        key = <span class="built_in">int</span>(key)</span><br><span class="line">        <span class="keyword">while</span> <span class="number">1</span>:</span><br><span class="line">            self.push(key % <span class="number">2</span>)</span><br><span class="line">            key //= <span class="number">2</span></span><br><span class="line">            <span class="keyword">if</span> key == <span class="number">0</span>:</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">s = Stack()</span><br><span class="line">s.exe(<span class="built_in">input</span>(<span class="string">"请输入您要进行换算的数字："</span>))</span><br><span class="line">s.pop()</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+<h3 id="栈和队列的异同点"><a href="#栈和队列的异同点" class="headerlink" title="栈和队列的异同点"></a>栈和队列的异同点</h3><h4 id="首先，栈（Stack）和队列（Queue）是两种操作受限的线性表。"><a href="#首先，栈（Stack）和队列（Queue）是两种操作受限的线性表。" class="headerlink" title="首先，栈（Stack）和队列（Queue）是两种操作受限的线性表。"></a>首先，栈（Stack）和队列（Queue）是两种操作受限的线性表。</h4><h4 id="栈与队列的相同点："><a href="#栈与队列的相同点：" class="headerlink" title="栈与队列的相同点："></a>栈与队列的相同点：</h4><p>1.都是线性结构。<br>2.插入操作都是限定在表尾进行。<br>3.都可以通过顺序结构和链式结构实现。<br>4.插入与删除的时间复杂度都是O（1），在空间复杂度上两者也一样。<br>5.多链栈和多链队列的管理模式可以相同。</p>
+<h4 id="栈与队列的不同点："><a href="#栈与队列的不同点：" class="headerlink" title="栈与队列的不同点："></a>栈与队列的不同点：</h4><p>1.删除数据元素的位置不同，栈的删除操作在表尾进行，队列的删除操作在表头进行。<br>2.应用场景不同；常见栈的应用场景包括括号问题的求解，表达式的转换和求值，函数调用和递归实现，深度优先搜索遍历等；常见的队列的应用场景包括计算机系统中各种资源的管理，消息缓冲器的管理和广度优先搜索遍历等。<br>3.顺序栈能够实现多栈空间共享，而顺序队列不能。</p>
+]]></content>
+      <categories>
+        <category>数据结构</category>
+      </categories>
+      <tags>
+        <tag>进制</tag>
+        <tag>栈</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>垃圾回收机制之标记-清除</title>
+    <url>/id_28/</url>
+    <content><![CDATA[<h3 id="垃圾回收机制"><a href="#垃圾回收机制" class="headerlink" title="垃圾回收机制"></a>垃圾回收机制</h3><p>垃圾自动回收机制的出现使编程更加的简单，使得我们不需要再去考虑内存分配和释放的问题，而是更加的专注在我们产品功能的实现上</p>
+<p>目前最基本的垃圾收集算法有四种,标记-清除算法(mark-sweep),标记-压缩算法(mark-compact),复制算法(copying)以及引用计数算法(reference counting).而现代流行的垃圾收集算法一般是由这四种中的其中几种算法相互组合而成，比如说，对堆(heap)的一部分采用标记-清除算法，对堆(heap)的另外一部分则采用复制算法等等。今天我们主要来看下标记-清除算法的原理。</p>
+<a id="more"></a>
+<h4 id="标记-清除"><a href="#标记-清除" class="headerlink" title="标记-清除"></a>标记-清除</h4><p>标记-清除算法分为两个阶段，标记(mark)和清除(sweep)</p>
+<h5 id="标记："><a href="#标记：" class="headerlink" title="标记："></a>标记：</h5><p>在内存中对每一个被使用到的变量来进行标记</p>
+<p>标记是从根对象开始工作，所有能够和根对象联系的变量我们都会有相应的标记。</p>
+<h5 id="标记举例"><a href="#标记举例" class="headerlink" title="标记举例"></a>标记举例</h5><p><img src="/id_28/01.png" alt="标记"></p>
+<p><img src="/id_28/02.png" alt="标记"></p>
+<p><img src="/id_28/03.png" alt="标记"></p>
+<h5 id="清除"><a href="#清除" class="headerlink" title="清除:"></a>清除:</h5><p>清除主要是将内存中无关联根对象的并且没有被标记的变量给杀死，释放掉</p>
+<p><img src="/id_28/04.png" alt="image-20210324190403266"></p>
+<p>图中a和b已经和根对象没有关系了，而且并没有被标记，所以就会被清除掉</p>
+<h4 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h4><p>总的来说，在标记-清除过程中,他会扫描整个内存空间，扫描过程中python程序会暂停，被标记的对象不会被回收，没有标记的对象会被回收掉。<br>但是我们整个python程序暂停，暂停会导致程序无法正常运行，让程序运行时出现一些问题从而造成程序阻塞问题<br>那python呢就引入了<strong>分代回收</strong>来避免标记-清除，由于每一次过程都需要去大量的遍历整块内存而造成的程序阻塞问题</p>
+<p>分代回收参考下一篇文章：<a href="https://www.hr915.xyz/id_29">https://www.hr915.xyz/id_29</a></p>
+]]></content>
+      <categories>
+        <category>后端</category>
+      </categories>
+      <tags>
+        <tag>python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>分代回收</title>
+    <url>/id_29/</url>
+    <content><![CDATA[<h3 id="分代回收"><a href="#分代回收" class="headerlink" title="分代回收"></a>分代回收</h3><p>标记-清除会在大规模遍历内存中会使程序暂停 ，程序暂停会导致我们程序出现很多我们意想不到的错误和问题出现，所以pyt hon引入了我们的分代回收来解决这个问题，分代回收也应该是我们在面试过程中主动向面试官阐述出来的。</p>
+<a id="more"></a>
+<h4 id="分代回收原理："><a href="#分代回收原理：" class="headerlink" title="分代回收原理："></a>分代回收原理：</h4><p>分代回收主要是将我们的内存根据对象的时候或被标记的次数进行分代他是一种典型是<strong>时间换空间</strong>的行为，那么他主要分为三代，<strong>青年代</strong>、<strong>中年代</strong>、<strong>老年代</strong>。那么我们可以认为一个对象在内存中存在的时间越长，越不容易被回收，越不是一个垃圾，这里我们认为<strong>老年代</strong>是存活在三代中最长的，那也是最不容易被回收掉的。</p>
+<h4 id="举例说明"><a href="#举例说明" class="headerlink" title="举例说明"></a>举例说明</h4><p>那么我们可以来看一下，假设下图是一块内存： </p>
+<p><img src="/id_29/01.png" alt="内存"></p>
+<p>那我们现在有一个变量a=1首先进入青年代，然后陆陆续续的我们会有变量存入青年代之后，青年代觉得他自己快要满了，那么此时会触发我们的标记清除动作。</p>
+<p><img src="/id_29/02.png" alt="青年代"></p>
+<p>那么触发我们的回收机制，标记-清除之后会在青年代中找到所有引用计数为0的元素，并将其释放。把剩余可以继续往下的元素沉淀到中年代，那么这就是分代回收的技术。</p>
+<p><img src="/id_29/03.png" alt="沉淀中年代"></p>
+<p>他是结合了我们引用计数和标记清除在内的，那每一次对比于之前，现在我们标记清除不需要遍历整段内存，只需要将其对应代遍历即可，那么这样就间接节约了我们遍历所花费的暂停时间，让我们的程序尽可能不要的过多整段内存去遍历，去过滤。</p>
+<p>那么当然呢，更加细节的来说：</p>
+<ul>
+<li>其实是在我们的第0代，也就是青年代满的时候呢将会触发清理我们所有的三代，</li>
+<li>而在中年代满时，将会触发清理我们的中年代和老年代，</li>
+<li>而在我们老年代满的时候呢，只会触发清理我们的老年代，</li>
+<li>也就是说呢，每一层在满了之后，他就会触发<strong>当前及当前之后的每代</strong>的回收动作，</li>
+</ul>
+<p><strong>目的</strong>：那么分代回收他的主要目的是为了解决我们标记-清除所带来的一些额外操作，我们上一节也说过，标记-清除如果需要遍历的内存节点较多的时候，那么每一次回收他都要花费大量的时间，那么利用我们的分代回收就可以减少这些情况</p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>我们python管理内存是以引用计数为主，标记清除和分代回收为辅的方法来管理内存的</p>
 ]]></content>
       <categories>
         <category>后端</category>
@@ -930,39 +934,6 @@
       </tags>
   </entry>
   <entry>
-    <title>周期总结</title>
-    <url>/id_30/</url>
-    <content><![CDATA[<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>转眼一个周期过去了，学了很多零碎的知识点。有遇到困难，有得到解惑。</p>
-<a id="more"></a>
-
-<p>day01: 在vue中使用ant_design<br>ant_design+vue官方文档：<a href="https://antdv.com/docs/vue/introduce-cn/">https://antdv.com/docs/vue/introduce-cn/</a></p>
-<p>day02: IT新闻资讯<br>网址: <a href="https://www.cnbeta.com/">https://www.cnbeta.com/</a></p>
-<p>day03: redis实现输入密码错误五次封禁账号<br>移步: <a href="https://www.hr915.xyz/id_20/">https://www.hr915.xyz/id_20/</a></p>
-<p>day04: httpx编写测试脚本<br>移步: <a href="https://www.hr915.xyz/id_6/">https://www.hr915.xyz/id_6/</a></p>
-<p>day05: 异步任务队列<br>移步: <a href="https://www.hr915.xyz/id_19/">https://www.hr915.xyz/id_19/</a></p>
-<p>day06: 加权队列<br>移步: <a href="https://www.hr915.xyz/id_21/">https://www.hr915.xyz/id_21/</a></p>
-<p>day07: 异步消费<br>移步: <a href="https://www.hr915.xyz/id_22/">https://www.hr915.xyz/id_22/</a></p>
-<p>day08: 权限模型</p>
-<p>day09: 三方登录<br>移步: <a href="https://www.hr915.xyz/id_13/">https://www.hr915.xyz/id_13/</a></p>
-<p>day10: 位运算<br>移步: <a href="https://www.hr915.xyz/id_23/">https://www.hr915.xyz/id_23/</a></p>
-<p>day11: 工单分类</p>
-<p>day12: Mongodb<br>移步: <a href="https://www.hr915.xyz/id_24/">https://www.hr915.xyz/id_24/</a></p>
-<p>day13: 审批流程</p>
-<p>day14: 栈的使用<br>移步: <a href="https://www.hr915.xyz/id_25/">https://www.hr915.xyz/id_25/</a></p>
-<p>day15: 设计模式<br>移步: <a href="https://www.hr915.xyz/id_26/">https://www.hr915.xyz/id_26/</a></p>
-<p>day16: 消息盒子</p>
-<p>day17: websocket<br>移步: <a href="https://www.hr915.xyz/id_10/">https://www.hr915.xyz/id_10/</a></p>
-<p>day18: 客服系统</p>
-<p>day19: 部署</p>
-]]></content>
-      <categories>
-        <category>总结</category>
-      </categories>
-      <tags>
-        <tag>python</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>axios封装</title>
     <url>/id_31/</url>
     <content><![CDATA[<p>在vue项目中，和后台交互获取数据这块，我们通常使用的是axios库，它是基于promise的http库，可运行在浏览器端和node.js中。<br>他有很多优秀的特性，例如拦截请求和响应、取消请求、转换json、客户端防御CSRF等。<br>axios文档：<a href="https://www.npmjs.com/package/axios">https://www.npmjs.com/package/axios</a></p>
@@ -1005,6 +976,39 @@
       </categories>
       <tags>
         <tag>axios</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>周期总结</title>
+    <url>/id_30/</url>
+    <content><![CDATA[<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>转眼一个周期过去了，学了很多零碎的知识点。有遇到困难，有得到解惑。</p>
+<a id="more"></a>
+
+<p>day01: 在vue中使用ant_design<br>ant_design+vue官方文档：<a href="https://antdv.com/docs/vue/introduce-cn/">https://antdv.com/docs/vue/introduce-cn/</a></p>
+<p>day02: IT新闻资讯<br>网址: <a href="https://www.cnbeta.com/">https://www.cnbeta.com/</a></p>
+<p>day03: redis实现输入密码错误五次封禁账号<br>移步: <a href="https://www.hr915.xyz/id_20/">https://www.hr915.xyz/id_20/</a></p>
+<p>day04: httpx编写测试脚本<br>移步: <a href="https://www.hr915.xyz/id_6/">https://www.hr915.xyz/id_6/</a></p>
+<p>day05: 异步任务队列<br>移步: <a href="https://www.hr915.xyz/id_19/">https://www.hr915.xyz/id_19/</a></p>
+<p>day06: 加权队列<br>移步: <a href="https://www.hr915.xyz/id_21/">https://www.hr915.xyz/id_21/</a></p>
+<p>day07: 异步消费<br>移步: <a href="https://www.hr915.xyz/id_22/">https://www.hr915.xyz/id_22/</a></p>
+<p>day08: 权限模型</p>
+<p>day09: 三方登录<br>移步: <a href="https://www.hr915.xyz/id_13/">https://www.hr915.xyz/id_13/</a></p>
+<p>day10: 位运算<br>移步: <a href="https://www.hr915.xyz/id_23/">https://www.hr915.xyz/id_23/</a></p>
+<p>day11: 工单分类</p>
+<p>day12: Mongodb<br>移步: <a href="https://www.hr915.xyz/id_24/">https://www.hr915.xyz/id_24/</a></p>
+<p>day13: 审批流程</p>
+<p>day14: 栈的使用<br>移步: <a href="https://www.hr915.xyz/id_25/">https://www.hr915.xyz/id_25/</a></p>
+<p>day15: 设计模式<br>移步: <a href="https://www.hr915.xyz/id_26/">https://www.hr915.xyz/id_26/</a></p>
+<p>day16: 消息盒子</p>
+<p>day17: websocket<br>移步: <a href="https://www.hr915.xyz/id_10/">https://www.hr915.xyz/id_10/</a></p>
+<p>day18: 客服系统</p>
+<p>day19: 部署</p>
+]]></content>
+      <categories>
+        <category>总结</category>
+      </categories>
+      <tags>
+        <tag>python</tag>
       </tags>
   </entry>
   <entry>
@@ -1553,6 +1557,31 @@
       </tags>
   </entry>
   <entry>
+    <title>Httpx测试脚本</title>
+    <url>/id_6/</url>
+    <content><![CDATA[<p>在 Python 众多的 HTTP 客户端中，最有名的莫过于<strong>requests</strong>、<strong>aiohttp</strong>和<strong>httpx</strong>。<br>在不借助其他第三方库的情况下，<strong>requests</strong>只能发送同步请求；<strong>aiohttp</strong>只能发送异步请求；<br><strong>httpx</strong>既能发送同步请求，又能发送异步请求</p>
+<a id="more"></a>
+<blockquote>
+<p>所谓的<strong>同步</strong>请求，是指在单进程单线程的代码中，发起一次请求后，在收到返回结果之前，不能发起下一次请求。<br>所谓<strong>异步</strong>请求，是指在单进程单线程的代码中，发起一次请求后，在等待网站返回结果的时间里，可以继续发送更多请求</p>
+</blockquote>
+<p>那么我们篇文章就来介绍一下使用<strong>httpx</strong>编写测试脚本发送请求</p>
+<ul>
+<li>相关问题：</li>
+</ul>
+<p><strong>问</strong>：怎么在终端运行python文件？<br><strong>答</strong>：在终端运行python文件，需要先进到要运行的文件目录下，然后 python 文件名<br>废话不多说，上代码。</p>
+<h3 id="用httpx发送同步请求-和requests就差个关键字"><a href="#用httpx发送同步请求-和requests就差个关键字" class="headerlink" title="用httpx发送同步请求(和requests就差个关键字)"></a>用httpx发送同步请求(和requests就差个关键字)</h3><p>httpx由于支持异步请求，所以发送大量的请求时，httpx的效率是优于requests的</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># httpx发送请求</span></span><br><span class="line"></span><br><span class="line">url = <span class="string">'http://127.0.0.1:8000/p8/user/'</span></span><br><span class="line">data = {</span><br><span class="line">    <span class="string">'username'</span>: <span class="string">'admin'</span>,</span><br><span class="line">    <span class="string">'password'</span>: <span class="string">'123456'</span></span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">r = httpx.post(url=url,data=data)</span><br><span class="line"><span class="comment"># requests发送请求</span></span><br><span class="line"><span class="comment"># r = requests.post(url=url,data=data)</span></span><br><span class="line">print(r.text)</span><br></pre></td></tr></tbody></table></figure>
+<h3 id="用httpx发送异步请求"><a href="#用httpx发送异步请求" class="headerlink" title="用httpx发送异步请求"></a>用httpx发送异步请求</h3><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> httpx</span><br><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line">url = <span class="string">'http://127.0.0.1:8000/p8/user/'</span></span><br><span class="line">data = {</span><br><span class="line">    <span class="string">'username'</span>: <span class="string">'before'</span>,</span><br><span class="line">    <span class="string">'password'</span>: <span class="string">'123456'</span></span><br><span class="line">}</span><br><span class="line">update = {</span><br><span class="line">    <span class="string">'uid'</span>: <span class="number">2</span>,</span><br><span class="line">    <span class="string">'username'</span>: <span class="string">'abc'</span>,</span><br><span class="line">    <span class="string">'password'</span>: <span class="string">'123456'</span></span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">fun</span>():</span></span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">with</span> httpx.AsyncClient() <span class="keyword">as</span> client:</span><br><span class="line">        r = <span class="keyword">await</span> client.get(url)</span><br><span class="line">        c = <span class="keyword">await</span> client.post(url, data=data)</span><br><span class="line">        u = <span class="keyword">await</span> client.put(url, data=update)</span><br><span class="line">        d = <span class="keyword">await</span> client.delete(url, params={<span class="string">'uid'</span>: <span class="number">1</span>})</span><br><span class="line">        print(<span class="string">"查"</span>, r.json())</span><br><span class="line">        print(<span class="string">"填"</span>, c.json())</span><br><span class="line">        print(<span class="string">"改"</span>, u.json())</span><br><span class="line">        print(<span class="string">"删"</span>, d.json())</span><br><span class="line"></span><br><span class="line">asyncio.run(fun())</span><br></pre></td></tr></tbody></table></figure>
+<h3 id="快拿去测试接口吧"><a href="#快拿去测试接口吧" class="headerlink" title="快拿去测试接口吧"></a>快拿去测试接口吧</h3>]]></content>
+      <categories>
+        <category>后端</category>
+      </categories>
+      <tags>
+        <tag>python</tag>
+        <tag>httpx</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>docker打包镜像</title>
     <url>/id_5/</url>
     <content><![CDATA[<p>在docker hub上有时我们找不到想要的image,或自己想要打包纯净的image ( 怕投毒?? ).</p>
@@ -1619,28 +1648,28 @@
       </tags>
   </entry>
   <entry>
-    <title>Httpx测试脚本</title>
-    <url>/id_6/</url>
-    <content><![CDATA[<p>在 Python 众多的 HTTP 客户端中，最有名的莫过于<strong>requests</strong>、<strong>aiohttp</strong>和<strong>httpx</strong>。<br>在不借助其他第三方库的情况下，<strong>requests</strong>只能发送同步请求；<strong>aiohttp</strong>只能发送异步请求；<br><strong>httpx</strong>既能发送同步请求，又能发送异步请求</p>
+    <title>VUE父子组件</title>
+    <url>/id_7/</url>
+    <content><![CDATA[<h4 id="VUE父子组件使用"><a href="#VUE父子组件使用" class="headerlink" title="VUE父子组件使用"></a>VUE父子组件使用</h4><p>在vue组件通信中其中最常见通信方式就是父子组件之中的通信，而父子组件的设定方式在不同情况下又各有不同。<br>最常见的就是父组件为控制组件，子组件为视图组件。<br>父组件传递数据给子组件使用，遇到业务逻辑操作时子组件触发父组件的自定义事件。<br>但是，无论哪种组织方式父子组件的通信方式都是大同小异</p>
 <a id="more"></a>
-<blockquote>
-<p>所谓的<strong>同步</strong>请求，是指在单进程单线程的代码中，发起一次请求后，在收到返回结果之前，不能发起下一次请求。<br>所谓<strong>异步</strong>请求，是指在单进程单线程的代码中，发起一次请求后，在等待网站返回结果的时间里，可以继续发送更多请求</p>
-</blockquote>
-<p>那么我们篇文章就来介绍一下使用<strong>httpx</strong>编写测试脚本发送请求</p>
-<ul>
-<li>相关问题：</li>
-</ul>
-<p><strong>问</strong>：怎么在终端运行python文件？<br><strong>答</strong>：在终端运行python文件，需要先进到要运行的文件目录下，然后 python 文件名<br>废话不多说，上代码。</p>
-<h3 id="用httpx发送同步请求-和requests就差个关键字"><a href="#用httpx发送同步请求-和requests就差个关键字" class="headerlink" title="用httpx发送同步请求(和requests就差个关键字)"></a>用httpx发送同步请求(和requests就差个关键字)</h3><p>httpx由于支持异步请求，所以发送大量的请求时，httpx的效率是优于requests的</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># httpx发送请求</span></span><br><span class="line"></span><br><span class="line">url = <span class="string">'http://127.0.0.1:8000/p8/user/'</span></span><br><span class="line">data = {</span><br><span class="line">    <span class="string">'username'</span>: <span class="string">'admin'</span>,</span><br><span class="line">    <span class="string">'password'</span>: <span class="string">'123456'</span></span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">r = httpx.post(url=url,data=data)</span><br><span class="line"><span class="comment"># requests发送请求</span></span><br><span class="line"><span class="comment"># r = requests.post(url=url,data=data)</span></span><br><span class="line">print(r.text)</span><br></pre></td></tr></tbody></table></figure>
-<h3 id="用httpx发送异步请求"><a href="#用httpx发送异步请求" class="headerlink" title="用httpx发送异步请求"></a>用httpx发送异步请求</h3><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> httpx</span><br><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line">url = <span class="string">'http://127.0.0.1:8000/p8/user/'</span></span><br><span class="line">data = {</span><br><span class="line">    <span class="string">'username'</span>: <span class="string">'before'</span>,</span><br><span class="line">    <span class="string">'password'</span>: <span class="string">'123456'</span></span><br><span class="line">}</span><br><span class="line">update = {</span><br><span class="line">    <span class="string">'uid'</span>: <span class="number">2</span>,</span><br><span class="line">    <span class="string">'username'</span>: <span class="string">'abc'</span>,</span><br><span class="line">    <span class="string">'password'</span>: <span class="string">'123456'</span></span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">fun</span>():</span></span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">with</span> httpx.AsyncClient() <span class="keyword">as</span> client:</span><br><span class="line">        r = <span class="keyword">await</span> client.get(url)</span><br><span class="line">        c = <span class="keyword">await</span> client.post(url, data=data)</span><br><span class="line">        u = <span class="keyword">await</span> client.put(url, data=update)</span><br><span class="line">        d = <span class="keyword">await</span> client.delete(url, params={<span class="string">'uid'</span>: <span class="number">1</span>})</span><br><span class="line">        print(<span class="string">"查"</span>, r.json())</span><br><span class="line">        print(<span class="string">"填"</span>, c.json())</span><br><span class="line">        print(<span class="string">"改"</span>, u.json())</span><br><span class="line">        print(<span class="string">"删"</span>, d.json())</span><br><span class="line"></span><br><span class="line">asyncio.run(fun())</span><br></pre></td></tr></tbody></table></figure>
-<h3 id="快拿去测试接口吧"><a href="#快拿去测试接口吧" class="headerlink" title="快拿去测试接口吧"></a>快拿去测试接口吧</h3>]]></content>
+
+<h4 id="父组件向子组件传参"><a href="#父组件向子组件传参" class="headerlink" title="父组件向子组件传参"></a>父组件向子组件传参</h4><p><strong>通过 [props]传递数据 (推荐)</strong></p>
+<p>父子通讯中最常见的数据传递方式就是通过props传递数据，就好像方法的传参一样，父组件调用子组件并传入数据，子组件接受到父组件传递的数据进行验证<br>使用props 可以是数组或对象，用于接收来自父组件的数据。<br>props 可以是简单的数组，或者使用对象作为替代，对象允许配置高级选项，如类型检测、自定义校验和设置默认值prop 的定义应该尽量详细，至少需要指定其类型</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;!-- 父组件  Father --&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;Son :parentMessage="parentMessage"&gt;&lt;/Son&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">import Son from "./Son";</span><br><span class="line"></span><br><span class="line">export default {</span><br><span class="line">  components: {</span><br><span class="line">    Son</span><br><span class="line">  },</span><br><span class="line">  data() {</span><br><span class="line">    return {</span><br><span class="line">      parentMessage: "我是来自父组件的消息，借用一下子组件的地方渲染一下"</span><br><span class="line">    }</span><br><span class="line">  }</span><br><span class="line">}</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;style&gt;&lt;/style&gt;</span><br></pre></td></tr></tbody></table></figure>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;!-- 子组件 Son  --&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;h1&gt;你好哇&lt;/h1&gt;</span><br><span class="line">    &lt;span&gt;{{ parentMessage }}&lt;/span&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">export default {</span><br><span class="line">  mounted() {</span><br><span class="line">    console.log(this.parentMessage)</span><br><span class="line">  },</span><br><span class="line">  //第一种方法  </span><br><span class="line">  // props: ['parentMessage']</span><br><span class="line">  //第二种方法</span><br><span class="line">    props: {</span><br><span class="line">      parentMessage: {</span><br><span class="line">        type: String,</span><br><span class="line">        default: '子组件默认显示的信息',</span><br><span class="line">        require: true</span><br><span class="line">      }</span><br><span class="line">    }  </span><br><span class="line"></span><br><span class="line">}</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;style&gt;&lt;/style&gt;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+<p>效果：<br><img src="/id_7/01.png" alt="父子组件传参"></p>
+<h4 id="子组件向父组件传参"><a href="#子组件向父组件传参" class="headerlink" title="子组件向父组件传参"></a>子组件向父组件传参</h4><p><strong>通过 [$emit]传递数据 (推荐)</strong><br>通过 $emit 传递父组件数据与父组件到子组件通讯中的$on配套使用，可以向父组件中触发的方法传递参数供父组件使用。</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;!-- 父组件  Father --&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    </span><br><span class="line">    &lt;h1&gt;{{data}}&lt;/h1&gt;</span><br><span class="line"></span><br><span class="line">    &lt;Son @event="change"&gt;&lt;/Son&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">import Son from "./Son";</span><br><span class="line"></span><br><span class="line">export default {</span><br><span class="line">  components: {</span><br><span class="line">    Son</span><br><span class="line">  },</span><br><span class="line">  data() {</span><br><span class="line">    return {</span><br><span class="line">      data:"我是父组件"</span><br><span class="line">    }</span><br><span class="line">  },</span><br><span class="line">    methods: {</span><br><span class="line">      change(event) {</span><br><span class="line">        this.data = event</span><br><span class="line">          console.log(event)</span><br><span class="line">      }</span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;style&gt;&lt;/style&gt;</span><br></pre></td></tr></tbody></table></figure>
+
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;!-- 子组件 Son  --&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">    &lt;div&gt;</span><br><span class="line">      &lt;button @click="toFather"&gt;向父组件传值&lt;/button&gt;</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">export default {</span><br><span class="line">  data(){</span><br><span class="line">    return{</span><br><span class="line">      data:"我是子组件"</span><br><span class="line">    }</span><br><span class="line">  },</span><br><span class="line">  methods:{</span><br><span class="line">      toFather(){</span><br><span class="line">        this.$emit('event', this.data)</span><br><span class="line">      }</span><br><span class="line">  },</span><br><span class="line">}</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;style&gt;&lt;/style&gt;</span><br></pre></td></tr></tbody></table></figure>
+<p>效果：<br><img src="/id_7/02.png" alt="子父组件传参"></p>
+]]></content>
       <categories>
-        <category>后端</category>
+        <category>前端</category>
       </categories>
       <tags>
-        <tag>python</tag>
-        <tag>httpx</tag>
+        <tag>vue</tag>
+        <tag>组件</tag>
       </tags>
   </entry>
   <entry>
@@ -1690,31 +1719,6 @@
       </categories>
       <tags>
         <tag>vue</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>VUE父子组件</title>
-    <url>/id_7/</url>
-    <content><![CDATA[<h4 id="VUE父子组件使用"><a href="#VUE父子组件使用" class="headerlink" title="VUE父子组件使用"></a>VUE父子组件使用</h4><p>在vue组件通信中其中最常见通信方式就是父子组件之中的通信，而父子组件的设定方式在不同情况下又各有不同。<br>最常见的就是父组件为控制组件，子组件为视图组件。<br>父组件传递数据给子组件使用，遇到业务逻辑操作时子组件触发父组件的自定义事件。<br>但是，无论哪种组织方式父子组件的通信方式都是大同小异</p>
-<a id="more"></a>
-
-<h4 id="父组件向子组件传参"><a href="#父组件向子组件传参" class="headerlink" title="父组件向子组件传参"></a>父组件向子组件传参</h4><p><strong>通过 [props]传递数据 (推荐)</strong></p>
-<p>父子通讯中最常见的数据传递方式就是通过props传递数据，就好像方法的传参一样，父组件调用子组件并传入数据，子组件接受到父组件传递的数据进行验证<br>使用props 可以是数组或对象，用于接收来自父组件的数据。<br>props 可以是简单的数组，或者使用对象作为替代，对象允许配置高级选项，如类型检测、自定义校验和设置默认值prop 的定义应该尽量详细，至少需要指定其类型</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;!-- 父组件  Father --&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;Son :parentMessage="parentMessage"&gt;&lt;/Son&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">import Son from "./Son";</span><br><span class="line"></span><br><span class="line">export default {</span><br><span class="line">  components: {</span><br><span class="line">    Son</span><br><span class="line">  },</span><br><span class="line">  data() {</span><br><span class="line">    return {</span><br><span class="line">      parentMessage: "我是来自父组件的消息，借用一下子组件的地方渲染一下"</span><br><span class="line">    }</span><br><span class="line">  }</span><br><span class="line">}</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;style&gt;&lt;/style&gt;</span><br></pre></td></tr></tbody></table></figure>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;!-- 子组件 Son  --&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;h1&gt;你好哇&lt;/h1&gt;</span><br><span class="line">    &lt;span&gt;{{ parentMessage }}&lt;/span&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">export default {</span><br><span class="line">  mounted() {</span><br><span class="line">    console.log(this.parentMessage)</span><br><span class="line">  },</span><br><span class="line">  //第一种方法  </span><br><span class="line">  // props: ['parentMessage']</span><br><span class="line">  //第二种方法</span><br><span class="line">    props: {</span><br><span class="line">      parentMessage: {</span><br><span class="line">        type: String,</span><br><span class="line">        default: '子组件默认显示的信息',</span><br><span class="line">        require: true</span><br><span class="line">      }</span><br><span class="line">    }  </span><br><span class="line"></span><br><span class="line">}</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;style&gt;&lt;/style&gt;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
-<p>效果：<br><img src="/id_7/01.png" alt="父子组件传参"></p>
-<h4 id="子组件向父组件传参"><a href="#子组件向父组件传参" class="headerlink" title="子组件向父组件传参"></a>子组件向父组件传参</h4><p><strong>通过 [$emit]传递数据 (推荐)</strong><br>通过 $emit 传递父组件数据与父组件到子组件通讯中的$on配套使用，可以向父组件中触发的方法传递参数供父组件使用。</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;!-- 父组件  Father --&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    </span><br><span class="line">    &lt;h1&gt;{{data}}&lt;/h1&gt;</span><br><span class="line"></span><br><span class="line">    &lt;Son @event="change"&gt;&lt;/Son&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">import Son from "./Son";</span><br><span class="line"></span><br><span class="line">export default {</span><br><span class="line">  components: {</span><br><span class="line">    Son</span><br><span class="line">  },</span><br><span class="line">  data() {</span><br><span class="line">    return {</span><br><span class="line">      data:"我是父组件"</span><br><span class="line">    }</span><br><span class="line">  },</span><br><span class="line">    methods: {</span><br><span class="line">      change(event) {</span><br><span class="line">        this.data = event</span><br><span class="line">          console.log(event)</span><br><span class="line">      }</span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;style&gt;&lt;/style&gt;</span><br></pre></td></tr></tbody></table></figure>
-
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;!-- 子组件 Son  --&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">    &lt;div&gt;</span><br><span class="line">      &lt;button @click="toFather"&gt;向父组件传值&lt;/button&gt;</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">export default {</span><br><span class="line">  data(){</span><br><span class="line">    return{</span><br><span class="line">      data:"我是子组件"</span><br><span class="line">    }</span><br><span class="line">  },</span><br><span class="line">  methods:{</span><br><span class="line">      toFather(){</span><br><span class="line">        this.$emit('event', this.data)</span><br><span class="line">      }</span><br><span class="line">  },</span><br><span class="line">}</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;style&gt;&lt;/style&gt;</span><br></pre></td></tr></tbody></table></figure>
-<p>效果：<br><img src="/id_7/02.png" alt="子父组件传参"></p>
-]]></content>
-      <categories>
-        <category>前端</category>
-      </categories>
-      <tags>
-        <tag>vue</tag>
-        <tag>组件</tag>
       </tags>
   </entry>
 </search>
