@@ -1823,7 +1823,7 @@ flags:标志位，用于控制正则表达式的匹配方式</code></pre>
 <blockquote>
 <p>docker images</p>
 </blockquote>
-<p><img src="/id_41/%5Cid_41%5C1.png" alt="镜像"></p>
+<p><img src="/id_41/id_41%5C1.png" alt="镜像"></p>
 <p>我们可以看到确实PostgreSQL比MySQL小</p>
 <p>镜像拉取成功，我们现在可以启动容器了</p>
 <blockquote>
@@ -1834,14 +1834,14 @@ flags:标志位，用于控制正则表达式的匹配方式</code></pre>
 <blockquote>
 <p>docker ps</p>
 </blockquote>
-<p><img src="/id_41/%5Cid_41%5C2.png" alt="容器"></p>
+<p><img src="/id_41/id_41%5C2.png" alt="容器"></p>
 <p>可以，现在我们的容器已经正常运行了</p>
 <p>我们进入容器的命令行看一看</p>
 <blockquote>
 <p>docker exec -it dev-postgres bash </p>
 <p>psql -h localhost -U postgres</p>
 </blockquote>
-<p>现在我们已经进入命令行了，在命令行输入PostgrelSQL的命令\l 就可以查看数据库列表。<br><img src="/id_41/%5Cid_41%5C3.png" alt="数据库"></p>
+<p>现在我们已经进入命令行了，在命令行输入PostgrelSQL的命令\l 就可以查看数据库列表。<br><img src="/id_41/id_41%5C3.png" alt="数据库"></p>
 <p>建立数据库</p>
 <blockquote>
 <p>CREATE DATABASE mytest;</p>
@@ -1858,7 +1858,7 @@ flags:标志位，用于控制正则表达式的匹配方式</code></pre>
 <blockquote>
 <p>\d</p>
 </blockquote>
-<p>如果不习惯使用命令行，也可以用可视化工具来进行链接，比如Navicat<br><img src="/id_41/%5Cid_41%5C4.png" alt="可视化工具"><br>这里因为我们用的是云主机所以IP地址不能写本地，还有密码是我们上边指定的密码</p>
+<p>如果不习惯使用命令行，也可以用可视化工具来进行链接，比如Navicat<br><img src="/id_41/id_41%5C4.png" alt="可视化工具"><br>这里因为我们用的是云主机所以IP地址不能写本地，还有密码是我们上边指定的密码</p>
 <p><strong>注意</strong> 默认用户是postgres，值得一提的是，使用navicat无法像Mysql一样手动设置属性自增长(auto-increment)，PostgreSQL使用的是序列的形式来实现自增长：</p>
 <blockquote>
 <p>CREATE SEQUENCE serial START 1;</p>
@@ -1869,7 +1869,7 @@ flags:标志位，用于控制正则表达式的匹配方式</code></pre>
 <p>ALTER TABLE “public”.”article” ALTER COLUMN “id” SET DEFAULT nextval(‘serial’);</p>
 </blockquote>
 <p><strong>OVER子句</strong></p>
-<p>我们现在有一个部门表empsal<br><img src="/id_41/%5Cid_41%5C5.png" alt="部门表"><br> 现在我想将每一个员工的工资与他所在部门的平均工资做个比较，怎么做？<br> 其实这也是leetcode原题，用mysql只能用子查询，而用PostgreSQL该查询可以很容易的实现</p>
+<p>我们现在有一个部门表empsal<br><img src="/id_41/id_41%5C5.png" alt="部门表"><br> 现在我想将每一个员工的工资与他所在部门的平均工资做个比较，怎么做？<br> 其实这也是leetcode原题，用mysql只能用子查询，而用PostgreSQL该查询可以很容易的实现</p>
 <blockquote>
 <p>mysql：</p>
 <p>select t1.depname, t1.userid,t1.salary,t2.sal FROM empsalary t1 INNER JOIN (select depname,avg(salary) sal FROM empsalary group by depname) t2 ON t1.depname=t2.depname</p>
