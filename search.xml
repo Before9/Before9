@@ -205,36 +205,35 @@
       </tags>
   </entry>
   <entry>
-    <title>redis发布订阅</title>
-    <url>/id_16/</url>
-    <content><![CDATA[<p>Redis提供了发布订阅功能，跟消息中间件是类似的，可以用于消息的传输，Redis提供了一组命令可以让开发者实现“发布/订阅”模式 (publish/subscribe) ，该模式同样可以实现进程间的消息传递。<br>它的实现原理是发布/订阅模式包含两种角色，分别是发布者和订阅者。订阅者可以订阅一个或多个频道，而发布者可以向指定的 频道发送消息，所有订阅此频道的订阅者都会收到该消息。</p>
+    <title>三方支付</title>
+    <url>/id_14/</url>
+    <content><![CDATA[<p>三方支付流程：</p>
+<pre><code>首先进入支付宝平台，点击开发中心-》研发服务
+
+获得沙箱的appid以及商户公钥和支付宝公钥
+
+然后利用秘钥生成软件生成私钥和公钥
+
+建立keys文件夹，  将私钥和公钥文件放入keys
+
+加入头部和尾部代码
+
+最后用支付宝公钥替换公钥文件</code></pre>
 <a id="more"></a>
-<h4 id="关系图"><a href="#关系图" class="headerlink" title="关系图"></a>关系图</h4><p><img src="/id_16/01.png" alt="发布订阅"></p>
-<h4 id="redis-消息订阅和发布命令："><a href="#redis-消息订阅和发布命令：" class="headerlink" title="redis 消息订阅和发布命令："></a>redis 消息订阅和发布命令：</h4><ol>
-<li>psubscribe pattern [pattern…] ：订阅一个或多个给定模式的 频道</li>
-<li>punsubscribe [pattern [pttern…]]：退订所有频道给定模式的频道</li>
-<li>pubsub subcommand [argument [argument…]]：查看订阅与发布系统状态</li>
-<li>publish channel message：将信息发送到指定的频道</li>
-<li>subscribe channel [channel…]：订阅给定的一个或多个频道信息。</li>
-<li>unsubscribe [channel [channel…]]：指退订给定的频道。</li>
-</ol>
-<h4 id="案例-for-example-："><a href="#案例-for-example-：" class="headerlink" title="案例 for example ："></a>案例 for example ：</h4><p><strong>注意</strong>：需要打开两个小黑窗口哦！</p>
-<ol>
-<li><p>一次订阅多个频道 c1,c2,c3 (subscribe c1 c2 c3)<br><img src="/id_16/02.png" alt="订阅多个频道"></p>
-</li>
-<li><p>消息发布，向c2频道发布消息 (publish c2 hello-redis)<br><img src="/id_16/03.png" alt="向指定频道发布消息"></p>
-</li>
-<li><p>订阅给定模式的频道，通配符* (psubscribe new*)<br><img src="/id_16/04.png" alt="订阅特定模式的频道"></p>
-</li>
-<li><p>发布消息 (publish new1 redis-hello)<br><img src="/id_16/05.png" alt="发布消息"></p>
-</li>
-</ol>
-<h4 id="OK-本文到此结束"><a href="#OK-本文到此结束" class="headerlink" title="OK 本文到此结束"></a>OK 本文到此结束</h4>]]></content>
+
+<p>支付宝开放平台：<a href="https://open.alipay.com/platform/home.htm">https://open.alipay.com/platform/home.htm</a></p>
+<h4 id="1-支付宝沙箱商家应用RSA2密钥生成"><a href="#1-支付宝沙箱商家应用RSA2密钥生成" class="headerlink" title="1.支付宝沙箱商家应用RSA2密钥生成"></a>1.支付宝沙箱商家应用RSA2密钥生成</h4><p>可以使用支付宝开发助手来实现密钥的生成<br>具体步骤查看官方网站：<a href="https://opendocs.alipay.com/open/291/105971">https://opendocs.alipay.com/open/291/105971</a><br>同时配置到沙箱</p>
+<h4 id="2-安装支付宝SDK模块"><a href="#2-安装支付宝SDK模块" class="headerlink" title="2.安装支付宝SDK模块"></a>2.安装支付宝SDK模块</h4><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 支付宝的sdk已经集成为一个python模块，只需要安装模块进行开发。</span></span><br><span class="line">pip install pycryptodome</span><br><span class="line"></span><br><span class="line">pip install python-alipay-sdk --upgrade</span><br></pre></td></tr></tbody></table></figure>
+<h4 id="3-安装完成-测试支付功能"><a href="#3-安装完成-测试支付功能" class="headerlink" title="3.安装完成 测试支付功能"></a>3.安装完成 测试支付功能</h4><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">from</span> alipay <span class="keyword">import</span> AliPay</span><br><span class="line"></span><br><span class="line"><span class="comment"># 公钥</span></span><br><span class="line">alipay_public_key_string = <span class="string">"""-----BEGIN PUBLIC KEY-----</span></span><br><span class="line"><span class="string">此处填写公钥</span></span><br><span class="line"><span class="string">-----END PUBLIC KEY-----"""</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 私钥</span></span><br><span class="line">app_private_key_string = <span class="string">"""-----BEGIN RSA PRIVATE KEY-----</span></span><br><span class="line"><span class="string">此处填写私钥</span></span><br><span class="line"><span class="string">-----END RSA PRIVATE KEY-----"""</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例化支付请求</span></span><br><span class="line">alipay = AliPay(</span><br><span class="line">    appid = <span class="string">"xxxxxxxxx"</span>,     <span class="comment"># APPID</span></span><br><span class="line">    app_notify_url = <span class="literal">None</span>,</span><br><span class="line">    app_private_key_string = app_private_key_string,</span><br><span class="line">    alipay_public_key_string = alipay_public_key_string,</span><br><span class="line">    sign_type = <span class="string">"RSA2"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 发起支付请求</span></span><br><span class="line">order_string = alipay.api_alipay_trade_page_pay(</span><br><span class="line">    out_trade_no = <span class="string">'10001'</span>, <span class="comment">#订单号</span></span><br><span class="line">    total_amount= <span class="built_in">str</span>(<span class="number">10000</span>), <span class="comment">#支付金额</span></span><br><span class="line">    subject = <span class="string">'水果干果'</span>,</span><br><span class="line">    return_url=<span class="string">"http://127.0.0.1:8000/buyer/pr/"</span>,</span><br><span class="line">    <span class="comment"># 支付宝回调地址 </span></span><br><span class="line">    notify_url=<span class="string">"http://127.0.0.1:8000/buyer/pr/"</span></span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">return</span> HttpResponseRedirect(<span class="string">"https://openapi.alipaydev.com/gateway.do?"</span> + order_string)</span><br></pre></td></tr></tbody></table></figure>
+
+<h4 id="4-最后附上流程图："><a href="#4-最后附上流程图：" class="headerlink" title="4.最后附上流程图："></a>4.最后附上流程图：</h4><p><img src="/id_14/01.png" alt="三方支付流程图"></p>
+]]></content>
       <categories>
-        <category>数据库</category>
+        <category>后端</category>
       </categories>
       <tags>
-        <tag>redis</tag>
+        <tag>django</tag>
+        <tag>三方</tag>
       </tags>
   </entry>
   <entry>
@@ -283,6 +282,39 @@
       </tags>
   </entry>
   <entry>
+    <title>redis发布订阅</title>
+    <url>/id_16/</url>
+    <content><![CDATA[<p>Redis提供了发布订阅功能，跟消息中间件是类似的，可以用于消息的传输，Redis提供了一组命令可以让开发者实现“发布/订阅”模式 (publish/subscribe) ，该模式同样可以实现进程间的消息传递。<br>它的实现原理是发布/订阅模式包含两种角色，分别是发布者和订阅者。订阅者可以订阅一个或多个频道，而发布者可以向指定的 频道发送消息，所有订阅此频道的订阅者都会收到该消息。</p>
+<a id="more"></a>
+<h4 id="关系图"><a href="#关系图" class="headerlink" title="关系图"></a>关系图</h4><p><img src="/id_16/01.png" alt="发布订阅"></p>
+<h4 id="redis-消息订阅和发布命令："><a href="#redis-消息订阅和发布命令：" class="headerlink" title="redis 消息订阅和发布命令："></a>redis 消息订阅和发布命令：</h4><ol>
+<li>psubscribe pattern [pattern…] ：订阅一个或多个给定模式的 频道</li>
+<li>punsubscribe [pattern [pttern…]]：退订所有频道给定模式的频道</li>
+<li>pubsub subcommand [argument [argument…]]：查看订阅与发布系统状态</li>
+<li>publish channel message：将信息发送到指定的频道</li>
+<li>subscribe channel [channel…]：订阅给定的一个或多个频道信息。</li>
+<li>unsubscribe [channel [channel…]]：指退订给定的频道。</li>
+</ol>
+<h4 id="案例-for-example-："><a href="#案例-for-example-：" class="headerlink" title="案例 for example ："></a>案例 for example ：</h4><p><strong>注意</strong>：需要打开两个小黑窗口哦！</p>
+<ol>
+<li><p>一次订阅多个频道 c1,c2,c3 (subscribe c1 c2 c3)<br><img src="/id_16/02.png" alt="订阅多个频道"></p>
+</li>
+<li><p>消息发布，向c2频道发布消息 (publish c2 hello-redis)<br><img src="/id_16/03.png" alt="向指定频道发布消息"></p>
+</li>
+<li><p>订阅给定模式的频道，通配符* (psubscribe new*)<br><img src="/id_16/04.png" alt="订阅特定模式的频道"></p>
+</li>
+<li><p>发布消息 (publish new1 redis-hello)<br><img src="/id_16/05.png" alt="发布消息"></p>
+</li>
+</ol>
+<h4 id="OK-本文到此结束"><a href="#OK-本文到此结束" class="headerlink" title="OK 本文到此结束"></a>OK 本文到此结束</h4>]]></content>
+      <categories>
+        <category>数据库</category>
+      </categories>
+      <tags>
+        <tag>redis</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>redis键空间事件</title>
     <url>/id_17/</url>
     <content><![CDATA[<p>Redis的键空间通知(keyspace notifications)功能是自2.8.0版本开始加入的，客户端可以通过订阅/发布(Pub/Sub)机制，接收那些以某种方式改变了Redis数据空间的事件通知。比如：所有改变给定key的命令；所有经过lpush操作的key；所有在0号数据库中过期的key等等。<br>通知是通过Redis的订阅/发布机制发送的，因此，所有支持订阅/发布功能的客户端都可在无需调整的情况下，使用键空间通知功能。</p>
@@ -327,52 +359,6 @@
       </tags>
   </entry>
   <entry>
-    <title>三方支付</title>
-    <url>/id_14/</url>
-    <content><![CDATA[<p>三方支付流程：</p>
-<pre><code>首先进入支付宝平台，点击开发中心-》研发服务
-
-获得沙箱的appid以及商户公钥和支付宝公钥
-
-然后利用秘钥生成软件生成私钥和公钥
-
-建立keys文件夹，  将私钥和公钥文件放入keys
-
-加入头部和尾部代码
-
-最后用支付宝公钥替换公钥文件</code></pre>
-<a id="more"></a>
-
-<p>支付宝开放平台：<a href="https://open.alipay.com/platform/home.htm">https://open.alipay.com/platform/home.htm</a></p>
-<h4 id="1-支付宝沙箱商家应用RSA2密钥生成"><a href="#1-支付宝沙箱商家应用RSA2密钥生成" class="headerlink" title="1.支付宝沙箱商家应用RSA2密钥生成"></a>1.支付宝沙箱商家应用RSA2密钥生成</h4><p>可以使用支付宝开发助手来实现密钥的生成<br>具体步骤查看官方网站：<a href="https://opendocs.alipay.com/open/291/105971">https://opendocs.alipay.com/open/291/105971</a><br>同时配置到沙箱</p>
-<h4 id="2-安装支付宝SDK模块"><a href="#2-安装支付宝SDK模块" class="headerlink" title="2.安装支付宝SDK模块"></a>2.安装支付宝SDK模块</h4><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 支付宝的sdk已经集成为一个python模块，只需要安装模块进行开发。</span></span><br><span class="line">pip install pycryptodome</span><br><span class="line"></span><br><span class="line">pip install python-alipay-sdk --upgrade</span><br></pre></td></tr></tbody></table></figure>
-<h4 id="3-安装完成-测试支付功能"><a href="#3-安装完成-测试支付功能" class="headerlink" title="3.安装完成 测试支付功能"></a>3.安装完成 测试支付功能</h4><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">from</span> alipay <span class="keyword">import</span> AliPay</span><br><span class="line"></span><br><span class="line"><span class="comment"># 公钥</span></span><br><span class="line">alipay_public_key_string = <span class="string">"""-----BEGIN PUBLIC KEY-----</span></span><br><span class="line"><span class="string">此处填写公钥</span></span><br><span class="line"><span class="string">-----END PUBLIC KEY-----"""</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 私钥</span></span><br><span class="line">app_private_key_string = <span class="string">"""-----BEGIN RSA PRIVATE KEY-----</span></span><br><span class="line"><span class="string">此处填写私钥</span></span><br><span class="line"><span class="string">-----END RSA PRIVATE KEY-----"""</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例化支付请求</span></span><br><span class="line">alipay = AliPay(</span><br><span class="line">    appid = <span class="string">"xxxxxxxxx"</span>,     <span class="comment"># APPID</span></span><br><span class="line">    app_notify_url = <span class="literal">None</span>,</span><br><span class="line">    app_private_key_string = app_private_key_string,</span><br><span class="line">    alipay_public_key_string = alipay_public_key_string,</span><br><span class="line">    sign_type = <span class="string">"RSA2"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 发起支付请求</span></span><br><span class="line">order_string = alipay.api_alipay_trade_page_pay(</span><br><span class="line">    out_trade_no = <span class="string">'10001'</span>, <span class="comment">#订单号</span></span><br><span class="line">    total_amount= <span class="built_in">str</span>(<span class="number">10000</span>), <span class="comment">#支付金额</span></span><br><span class="line">    subject = <span class="string">'水果干果'</span>,</span><br><span class="line">    return_url=<span class="string">"http://127.0.0.1:8000/buyer/pr/"</span>,</span><br><span class="line">    <span class="comment"># 支付宝回调地址 </span></span><br><span class="line">    notify_url=<span class="string">"http://127.0.0.1:8000/buyer/pr/"</span></span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">return</span> HttpResponseRedirect(<span class="string">"https://openapi.alipaydev.com/gateway.do?"</span> + order_string)</span><br></pre></td></tr></tbody></table></figure>
-
-<h4 id="4-最后附上流程图："><a href="#4-最后附上流程图：" class="headerlink" title="4.最后附上流程图："></a>4.最后附上流程图：</h4><p><img src="/id_14/01.png" alt="三方支付流程图"></p>
-]]></content>
-      <categories>
-        <category>后端</category>
-      </categories>
-      <tags>
-        <tag>django</tag>
-        <tag>三方</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>接口测试中的异步调用和异步写入文件</title>
-    <url>/id_19/</url>
-    <content><![CDATA[<p>异步调用：<br>异步方法必须async 关键字声明<br>所有其他方法，耗时任务都需要加上await关键字，await必须依靠async<br>with用来建立工作流和关闭流对象</p>
-<a id="more"></a>
-<h4 id="异步发送100次请求"><a href="#异步发送100次请求" class="headerlink" title="异步发送100次请求"></a>异步发送100次请求</h4><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 异步调用</span></span><br><span class="line"><span class="keyword">import</span> httpx</span><br><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line">url = <span class="string">'http://127.0.0.1:8000/p8/user'</span></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">request</span>(<span class="params">client</span>):</span></span><br><span class="line">    r = <span class="keyword">await</span> client.get(url)</span><br><span class="line">    print(r.json())</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">with</span> httpx.AsyncClient() <span class="keyword">as</span> client:</span><br><span class="line">        <span class="comment"># 100 次调用</span></span><br><span class="line">        task_list = []</span><br><span class="line">        <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">100</span>):</span><br><span class="line">            req = request(client)</span><br><span class="line">            task = asyncio.create_task(req)</span><br><span class="line">            task_list.append(task)</span><br><span class="line">        <span class="keyword">await</span> asyncio.gather(*task_list)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    <span class="comment">#开始</span></span><br><span class="line">    start = time.time()</span><br><span class="line">    asyncio.run(main())</span><br><span class="line">    <span class="comment"># 结束</span></span><br><span class="line">    end = time.time()</span><br><span class="line">    print(<span class="string">f'异步：发送100次请求，耗时：<span class="subst">{end - start}</span>'</span>)</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
-<h4 id="异步写文件"><a href="#异步写文件" class="headerlink" title="异步写文件"></a>异步写文件</h4><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">write</span>(<span class="params">f</span>):</span></span><br><span class="line">    <span class="keyword">await</span> f.write(<span class="string">"欢迎来到缅甸北部\n"</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">fun</span>():</span></span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">with</span> aiofiles.<span class="built_in">open</span>(<span class="string">"10000.txt"</span>, <span class="string">'a'</span>) <span class="keyword">as</span> f:</span><br><span class="line">        <span class="comment"># 列表推导式调用，更快，效率更高 </span></span><br><span class="line">        task = [asyncio.create_task(write(f)) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10000</span>)]</span><br><span class="line">        <span class="comment"># 普通列表 相对于列表推导式要慢一点</span></span><br><span class="line">        <span class="comment"># test_list = []</span></span><br><span class="line">        <span class="comment"># for i in range(10000):</span></span><br><span class="line">        <span class="comment">#     w = write(f)</span></span><br><span class="line">        <span class="comment">#     task = asyncio.create_task(w)</span></span><br><span class="line">        <span class="comment">#     test_list.append(task)</span></span><br><span class="line">        <span class="keyword">await</span> asyncio.gather(*task)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    start = time.time()</span><br><span class="line">    asyncio.run(fun())</span><br><span class="line">    end = time.time()</span><br><span class="line">    print(<span class="string">"执行了%d秒"</span> % (end - start))</span><br></pre></td></tr></tbody></table></figure>]]></content>
-      <categories>
-        <category>后端</category>
-      </categories>
-      <tags>
-        <tag>异步</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>用户注册</title>
     <url>/id_18/</url>
     <content><![CDATA[<h4 id="用户注册功能"><a href="#用户注册功能" class="headerlink" title="用户注册功能"></a>用户注册功能</h4><p>需求：实现用户注册功能，并将用户注册信息保存到磁盘文件中，用户注册时至少给定：用户名和密码<br>注意：用户名使用了唯一索引，不可重复</p>
@@ -388,6 +374,20 @@
       </categories>
       <tags>
         <tag>django</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>接口测试中的异步调用和异步写入文件</title>
+    <url>/id_19/</url>
+    <content><![CDATA[<p>异步调用：<br>异步方法必须async 关键字声明<br>所有其他方法，耗时任务都需要加上await关键字，await必须依靠async<br>with用来建立工作流和关闭流对象</p>
+<a id="more"></a>
+<h4 id="异步发送100次请求"><a href="#异步发送100次请求" class="headerlink" title="异步发送100次请求"></a>异步发送100次请求</h4><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 异步调用</span></span><br><span class="line"><span class="keyword">import</span> httpx</span><br><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line">url = <span class="string">'http://127.0.0.1:8000/p8/user'</span></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">request</span>(<span class="params">client</span>):</span></span><br><span class="line">    r = <span class="keyword">await</span> client.get(url)</span><br><span class="line">    print(r.json())</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">with</span> httpx.AsyncClient() <span class="keyword">as</span> client:</span><br><span class="line">        <span class="comment"># 100 次调用</span></span><br><span class="line">        task_list = []</span><br><span class="line">        <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">100</span>):</span><br><span class="line">            req = request(client)</span><br><span class="line">            task = asyncio.create_task(req)</span><br><span class="line">            task_list.append(task)</span><br><span class="line">        <span class="keyword">await</span> asyncio.gather(*task_list)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    <span class="comment">#开始</span></span><br><span class="line">    start = time.time()</span><br><span class="line">    asyncio.run(main())</span><br><span class="line">    <span class="comment"># 结束</span></span><br><span class="line">    end = time.time()</span><br><span class="line">    print(<span class="string">f'异步：发送100次请求，耗时：<span class="subst">{end - start}</span>'</span>)</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+<h4 id="异步写文件"><a href="#异步写文件" class="headerlink" title="异步写文件"></a>异步写文件</h4><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">write</span>(<span class="params">f</span>):</span></span><br><span class="line">    <span class="keyword">await</span> f.write(<span class="string">"欢迎来到缅甸北部\n"</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">fun</span>():</span></span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">with</span> aiofiles.<span class="built_in">open</span>(<span class="string">"10000.txt"</span>, <span class="string">'a'</span>) <span class="keyword">as</span> f:</span><br><span class="line">        <span class="comment"># 列表推导式调用，更快，效率更高 </span></span><br><span class="line">        task = [asyncio.create_task(write(f)) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10000</span>)]</span><br><span class="line">        <span class="comment"># 普通列表 相对于列表推导式要慢一点</span></span><br><span class="line">        <span class="comment"># test_list = []</span></span><br><span class="line">        <span class="comment"># for i in range(10000):</span></span><br><span class="line">        <span class="comment">#     w = write(f)</span></span><br><span class="line">        <span class="comment">#     task = asyncio.create_task(w)</span></span><br><span class="line">        <span class="comment">#     test_list.append(task)</span></span><br><span class="line">        <span class="keyword">await</span> asyncio.gather(*task)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    start = time.time()</span><br><span class="line">    asyncio.run(fun())</span><br><span class="line">    end = time.time()</span><br><span class="line">    print(<span class="string">"执行了%d秒"</span> % (end - start))</span><br></pre></td></tr></tbody></table></figure>]]></content>
+      <categories>
+        <category>后端</category>
+      </categories>
+      <tags>
+        <tag>异步</tag>
       </tags>
   </entry>
   <entry>
@@ -502,51 +502,6 @@
       </tags>
   </entry>
   <entry>
-    <title>位运算</title>
-    <url>/id_23/</url>
-    <content><![CDATA[<p>位运算是一切算法的基础<br>位运算是对二进制进行操作<br>使用位运算来判断奇偶数的时候效率要快一些，性能会高一些，因为二进制是计算机识别的语言，计算机不需要去强转然后判断，直接判断即可<br>例如；判断4是不是奇数或偶数</p>
-<a id="more"></a>
-<p>可以二进制直接和1进行比较<br>0b100 &amp; 1<br>0<br>也可以使用十进制直接和1比较<br>4 &amp; 1<br>0</p>
-<blockquote>
-<p> 返回为0 证明是偶数</p>
-</blockquote>
-<p>0b11 &amp; 1<br>1<br>3 &amp; 1<br>1</p>
-<blockquote>
-<p>返回为1 证明是奇数 </p>
-</blockquote>
-<h4 id="运算符"><a href="#运算符" class="headerlink" title="运算符"></a>运算符</h4><p>符号    描述    运算规则<br>&amp;    与    两个位都为1时，结果才为1<br>|    或    两个位都为0时，结果才为0<br>^    异或    两个位相同为0，相异为1<br>~    取反    0变1，1变0</p>
-]]></content>
-      <categories>
-        <category>后端</category>
-      </categories>
-      <tags>
-        <tag>进制</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>栈的使用</title>
-    <url>/id_25/</url>
-    <content><![CDATA[<h3 id="栈"><a href="#栈" class="headerlink" title="栈"></a>栈</h3><p>栈（stack）又名堆栈，它是一种运算受限的<strong>线性表</strong>。限定仅在表尾进行插入和删除操作的线性表。<br>这一端被称为栈顶，相对地，把另一端称为栈底。向一个栈插入新元素又称作进栈、入栈或压栈，它是把新元素放到栈顶元素的上面，使之成为新的栈顶元素；<br>从一个栈删除元素又称作出栈或退栈，它是把栈顶元素删除掉，使其相邻的元素成为新的栈顶元素。</p>
-<a id="more"></a>
-<p>栈作为一种数据结构，是一种只能在一端进行插入和删除操作的特殊线性表。<br>它按照<strong>先进后出</strong>，<strong>后进先出</strong>的原则存储数据</p>
-<h4 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h4><ul>
-<li>银行ATM自动存取款机<br>  假设取款机下有一个用来钱的箱子，箱子只有一个口供用户存取现金<br>  当你存钱的时候，ATM会把钱放在最上面<br>  当你取钱的时候，ATM会把最上面的钱吐出来</li>
-</ul>
-<h4 id="案例"><a href="#案例" class="headerlink" title="案例"></a>案例</h4><h5 id="将十进制的数转换为二进制的数"><a href="#将十进制的数转换为二进制的数" class="headerlink" title="将十进制的数转换为二进制的数"></a>将十进制的数转换为二进制的数</h5><p>我们都知道，通过求余法，可以将十进制数转换为其他进制，比如要转为二进制，将十进制数除以2，记录余数，然后继续将商除以2，一直到商等于0为止，最后将余数倒着写数来就可以了。</p>
-<p>比如13的二进制，13首先除以2商6余1,1首先进栈，然后6除以2商3余0，第二个余数0进栈，接着3除以2，商1余1，第三个余数1进栈，继续1除以2商0余1，第四个余数1进栈。最后将四个余数出栈，就得到了13的二进制1101。<br>实现代码如下</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Stack</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        self.item = []</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">push</span>(<span class="params">self, key</span>):</span></span><br><span class="line">        self.item.append(key)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">pop</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">while</span> <span class="number">1</span>:</span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">len</span>(self.item) != <span class="number">0</span>:</span><br><span class="line">                print(self.item.pop(),end=<span class="string">''</span>)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">exe</span>(<span class="params">self, key</span>):</span></span><br><span class="line">        key = <span class="built_in">int</span>(key)</span><br><span class="line">        <span class="keyword">while</span> <span class="number">1</span>:</span><br><span class="line">            self.push(key % <span class="number">2</span>)</span><br><span class="line">            key //= <span class="number">2</span></span><br><span class="line">            <span class="keyword">if</span> key == <span class="number">0</span>:</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">s = Stack()</span><br><span class="line">s.exe(<span class="built_in">input</span>(<span class="string">"请输入您要进行换算的数字："</span>))</span><br><span class="line">s.pop()</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
-<h3 id="栈和队列的异同点"><a href="#栈和队列的异同点" class="headerlink" title="栈和队列的异同点"></a>栈和队列的异同点</h3><h4 id="首先，栈（Stack）和队列（Queue）是两种操作受限的线性表。"><a href="#首先，栈（Stack）和队列（Queue）是两种操作受限的线性表。" class="headerlink" title="首先，栈（Stack）和队列（Queue）是两种操作受限的线性表。"></a>首先，栈（Stack）和队列（Queue）是两种操作受限的线性表。</h4><h4 id="栈与队列的相同点："><a href="#栈与队列的相同点：" class="headerlink" title="栈与队列的相同点："></a>栈与队列的相同点：</h4><p>1.都是线性结构。<br>2.插入操作都是限定在表尾进行。<br>3.都可以通过顺序结构和链式结构实现。<br>4.插入与删除的时间复杂度都是O（1），在空间复杂度上两者也一样。<br>5.多链栈和多链队列的管理模式可以相同。</p>
-<h4 id="栈与队列的不同点："><a href="#栈与队列的不同点：" class="headerlink" title="栈与队列的不同点："></a>栈与队列的不同点：</h4><p>1.删除数据元素的位置不同，栈的删除操作在表尾进行，队列的删除操作在表头进行。<br>2.应用场景不同；常见栈的应用场景包括括号问题的求解，表达式的转换和求值，函数调用和递归实现，深度优先搜索遍历等；常见的队列的应用场景包括计算机系统中各种资源的管理，消息缓冲器的管理和广度优先搜索遍历等。<br>3.顺序栈能够实现多栈空间共享，而顺序队列不能。</p>
-]]></content>
-      <categories>
-        <category>数据结构</category>
-      </categories>
-      <tags>
-        <tag>进制</tag>
-        <tag>栈</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>异步消费</title>
     <url>/id_22/</url>
     <content><![CDATA[<p>异步消费可以使用很多方式来实现，我们今天就来说说异步消费的其中三种实现方式:</p>
@@ -576,6 +531,28 @@
       </categories>
       <tags>
         <tag>异步</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>位运算</title>
+    <url>/id_23/</url>
+    <content><![CDATA[<p>位运算是一切算法的基础<br>位运算是对二进制进行操作<br>使用位运算来判断奇偶数的时候效率要快一些，性能会高一些，因为二进制是计算机识别的语言，计算机不需要去强转然后判断，直接判断即可<br>例如；判断4是不是奇数或偶数</p>
+<a id="more"></a>
+<p>可以二进制直接和1进行比较<br>0b100 &amp; 1<br>0<br>也可以使用十进制直接和1比较<br>4 &amp; 1<br>0</p>
+<blockquote>
+<p> 返回为0 证明是偶数</p>
+</blockquote>
+<p>0b11 &amp; 1<br>1<br>3 &amp; 1<br>1</p>
+<blockquote>
+<p>返回为1 证明是奇数 </p>
+</blockquote>
+<h4 id="运算符"><a href="#运算符" class="headerlink" title="运算符"></a>运算符</h4><p>符号    描述    运算规则<br>&amp;    与    两个位都为1时，结果才为1<br>|    或    两个位都为0时，结果才为0<br>^    异或    两个位相同为0，相异为1<br>~    取反    0变1，1变0</p>
+]]></content>
+      <categories>
+        <category>后端</category>
+      </categories>
+      <tags>
+        <tag>进制</tag>
       </tags>
   </entry>
   <entry>
@@ -663,57 +640,26 @@
       </tags>
   </entry>
   <entry>
-    <title>引用计数</title>
-    <url>/id_27/</url>
-    <content><![CDATA[<h3 id="引用计数"><a href="#引用计数" class="headerlink" title="引用计数"></a>引用计数</h3><h5 id="问"><a href="#问" class="headerlink" title="问"></a>问</h5><p>引用计数这个问题是我们在面试中经常会遇到的。通常面试官会这样问：</p>
-<ol>
-<li>python中是如何管理内存的？</li>
-<li>你知道引用计数吗？<a id="more"></a>
-
-</li>
-</ol>
-<h5 id="答"><a href="#答" class="headerlink" title="答"></a>答</h5><p>引用计数是内存管理机制，将资源的使用次数保存起来，在引用次数变为<strong>零</strong>时进行释放</p>
-<p>比如说我们现在有一个变量a，指向内存中的字符 ‘x’ ，此时x在内存中的引用计数为1，然后又有一个变量b，b=a</p>
-<p>此时(b=a)和(a=’x’)是相等的，那这个时候x在内存中的引用计数就会+1变为2</p>
-<p><img src="/id_27/%E4%BE%8B.png" alt="案例"></p>
-<h4 id="引用计数的好处"><a href="#引用计数的好处" class="headerlink" title="引用计数的好处"></a>引用计数的好处</h4><p>我们可以举一些生活中的场景，比如说我们出去<strong>旅游</strong>，朋友提前抵达并开好了房间，这样我们就可以免费跟朋友住一间房，这样既节约了我们的时间，又节约了我们另外开房需要支付的资金。</p>
-<ul>
-<li>可知：减少了内存碎片的产生，</li>
-<li>并且可以对于我们在创建和释放内存中有一定的资源开销的节省。</li>
-<li>可以更快的进行资源管理</li>
+    <title>栈的使用</title>
+    <url>/id_25/</url>
+    <content><![CDATA[<h3 id="栈"><a href="#栈" class="headerlink" title="栈"></a>栈</h3><p>栈（stack）又名堆栈，它是一种运算受限的<strong>线性表</strong>。限定仅在表尾进行插入和删除操作的线性表。<br>这一端被称为栈顶，相对地，把另一端称为栈底。向一个栈插入新元素又称作进栈、入栈或压栈，它是把新元素放到栈顶元素的上面，使之成为新的栈顶元素；<br>从一个栈删除元素又称作出栈或退栈，它是把栈顶元素删除掉，使其相邻的元素成为新的栈顶元素。</p>
+<a id="more"></a>
+<p>栈作为一种数据结构，是一种只能在一端进行插入和删除操作的特殊线性表。<br>它按照<strong>先进后出</strong>，<strong>后进先出</strong>的原则存储数据</p>
+<h4 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h4><ul>
+<li>银行ATM自动存取款机<br>  假设取款机下有一个用来钱的箱子，箱子只有一个口供用户存取现金<br>  当你存钱的时候，ATM会把钱放在最上面<br>  当你取钱的时候，ATM会把最上面的钱吐出来</li>
 </ul>
-<p>那同样，当我们旅途结束，不需要再居住的时候，所有人离开酒店，那这个房间就会被酒店的人员进行清理，处理。</p>
-<ul>
-<li>这样就像引用计数中计数为0时，内存会被回收掉是一样的</li>
-</ul>
-<h4 id="查看引用计数"><a href="#查看引用计数" class="headerlink" title="查看引用计数"></a>查看引用计数</h4><p>查看引用计数我们是使用了sys模块中getrefcount方法<br>sys.getrefcount返回的计数，总是比实际多1，因为包含了调用此函数的临时计数。</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">C:\Users\Lenovo&gt;python.exe</span><br><span class="line">Python <span class="number">3.7</span><span class="number">.0</span> (v3<span class="number">.7</span><span class="number">.0</span>:1bf9cc5093, Jun <span class="number">27</span> <span class="number">2018</span>, 04:<span class="number">59</span>:<span class="number">51</span>) [MSC v<span class="number">.1914</span> <span class="number">64</span> bit (AMD64)] on win32</span><br><span class="line">Type <span class="string">"help"</span>, <span class="string">"copyright"</span>, <span class="string">"credits"</span> <span class="keyword">or</span> <span class="string">"license"</span> <span class="keyword">for</span> more information.</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> sys</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sys.getrefcount(<span class="number">1</span>)</span><br><span class="line"><span class="number">119</span></span><br><span class="line"><span class="comment"># 得出常量1在内存中的引用计数为119</span></span><br></pre></td></tr></tbody></table></figure>
-<h4 id="那什么时候会用到引用计数呢"><a href="#那什么时候会用到引用计数呢" class="headerlink" title="那什么时候会用到引用计数呢"></a>那什么时候会用到引用计数呢</h4><p>当发生以下四种情况的时候，该对象的引用计数器+1</p>
-<p>对象被创建 a=14<br>对象被引用 b=a<br>对象被作为参数,传到函数中 func(a)<br>对象作为一个元素，存储在容器中  List={a,”a”,”b”,2}</p>
-<h5 id="取两点举例："><a href="#取两点举例：" class="headerlink" title="取两点举例："></a>取两点举例：</h5><p>1、 变量互相赋值的时候</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="string">'x'</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = a</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">id</span>(a)</span><br><span class="line"><span class="number">3242716434928</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">id</span>(b)</span><br><span class="line"><span class="number">3242716434928</span></span><br><span class="line"><span class="comment"># 此时我们可以看出两个变量指向的内存地址是完全一样的 。可得变量互相赋值的时候用到了引用计数</span></span><br></pre></td></tr></tbody></table></figure>
-<p>2、常用对象创建时</p>
-<p>python本身含有a-z,A-Z,0-9等常见值的引用</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>c = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>d = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">id</span>(a)</span><br><span class="line"><span class="number">140707666383904</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">id</span>(b)</span><br><span class="line"><span class="number">140707666383904</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">id</span>(c)</span><br><span class="line"><span class="number">140707666383904</span></span><br><span class="line"><span class="comment"># 此时我们可以看出a,b,c的内存地址都是完全一致的， 可得常用对象创建时用到了引用计数</span></span><br></pre></td></tr></tbody></table></figure>
-<h4 id="如何减少引用次数"><a href="#如何减少引用次数" class="headerlink" title="如何减少引用次数"></a>如何减少引用次数</h4><p>与上述情况相对应，当发生以下四种情况时，该对象的引用计数器-1</p>
-<p>当该对象的别名被显式销毁时 del a<br>当该对象的引别名被赋予新的对象，  a=26<br>一个对象离开它的作用域，例如 func函数执行完毕时，函数里面的局部变量的引用计数器就会减一（但是全局变量不会）<br>将该元素从容器中删除时，或者容器被销毁时。</p>
-<p>.当指向该对象的内存的引用计数器为0的时候，该内存将会被Python虚拟机销毁</p>
-<h5 id="取两点举例"><a href="#取两点举例" class="headerlink" title="取两点举例:"></a>取两点举例:</h5><p>1、变量被重新赋值为别的值</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>c = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>d = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sys.getrefcount(<span class="number">1</span>)</span><br><span class="line"><span class="number">123</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="string">'a'</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sys.getrefcount(<span class="number">1</span>)</span><br><span class="line"><span class="number">122</span></span><br><span class="line"><span class="comment"># 可以看出，当a被重新赋值后再次查看1的引用计数是减少了1的</span></span><br></pre></td></tr></tbody></table></figure>
-<p>2、del  删除变量</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>c = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>d = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sys.getrefcount(<span class="number">1</span>)</span><br><span class="line"><span class="number">123</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">del</span> a</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sys.getrefcount(<span class="number">1</span>)</span><br><span class="line"><span class="number">122</span></span><br><span class="line"><span class="comment"># 可以看出，当a被del删除后再次查看1的引用计数是减少了1的</span></span><br></pre></td></tr></tbody></table></figure>
-<h4 id="引用计数的缺点"><a href="#引用计数的缺点" class="headerlink" title="引用计数的缺点"></a>引用计数的缺点</h4><p>那引用计数真的这么完美吗，不占内存地址，用完即释放，nonono,当然不是</p>
-<p>引用计数最大的缺点就是<strong>循环引用</strong></p>
-<p>那循环引用是什么呢？</p>
-<p>循环引用就是两个变量互相引用时假设已经被释放，但引用计数不为0，那就会导致这两个变量无法被直接回收<br>循环引用可以使一种引用对象的引用计数不为0，然而这些对象实际上并没有被任何外部对象所引用，它们之间只是相互引用，这意味着这组对象所占用的内存空间是应该被回收的，但是由于循环引用导致的引用计数不为0，所以这组对象所占用的内存空间永远不会被释放</p>
-<p><strong>那循环引用有什么解决办法吗？</strong></p>
-<p>那肯定是有的，python中解决循环引用的方法就是<strong>标记-清除</strong><br>请移步下一节：<a href="https://www.hr915.xyz/id_28">https://www.hr915.xyz/id_28</a></p>
+<h4 id="案例"><a href="#案例" class="headerlink" title="案例"></a>案例</h4><h5 id="将十进制的数转换为二进制的数"><a href="#将十进制的数转换为二进制的数" class="headerlink" title="将十进制的数转换为二进制的数"></a>将十进制的数转换为二进制的数</h5><p>我们都知道，通过求余法，可以将十进制数转换为其他进制，比如要转为二进制，将十进制数除以2，记录余数，然后继续将商除以2，一直到商等于0为止，最后将余数倒着写数来就可以了。</p>
+<p>比如13的二进制，13首先除以2商6余1,1首先进栈，然后6除以2商3余0，第二个余数0进栈，接着3除以2，商1余1，第三个余数1进栈，继续1除以2商0余1，第四个余数1进栈。最后将四个余数出栈，就得到了13的二进制1101。<br>实现代码如下</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Stack</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        self.item = []</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">push</span>(<span class="params">self, key</span>):</span></span><br><span class="line">        self.item.append(key)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">pop</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">while</span> <span class="number">1</span>:</span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">len</span>(self.item) != <span class="number">0</span>:</span><br><span class="line">                print(self.item.pop(),end=<span class="string">''</span>)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">exe</span>(<span class="params">self, key</span>):</span></span><br><span class="line">        key = <span class="built_in">int</span>(key)</span><br><span class="line">        <span class="keyword">while</span> <span class="number">1</span>:</span><br><span class="line">            self.push(key % <span class="number">2</span>)</span><br><span class="line">            key //= <span class="number">2</span></span><br><span class="line">            <span class="keyword">if</span> key == <span class="number">0</span>:</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">s = Stack()</span><br><span class="line">s.exe(<span class="built_in">input</span>(<span class="string">"请输入您要进行换算的数字："</span>))</span><br><span class="line">s.pop()</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+<h3 id="栈和队列的异同点"><a href="#栈和队列的异同点" class="headerlink" title="栈和队列的异同点"></a>栈和队列的异同点</h3><h4 id="首先，栈（Stack）和队列（Queue）是两种操作受限的线性表。"><a href="#首先，栈（Stack）和队列（Queue）是两种操作受限的线性表。" class="headerlink" title="首先，栈（Stack）和队列（Queue）是两种操作受限的线性表。"></a>首先，栈（Stack）和队列（Queue）是两种操作受限的线性表。</h4><h4 id="栈与队列的相同点："><a href="#栈与队列的相同点：" class="headerlink" title="栈与队列的相同点："></a>栈与队列的相同点：</h4><p>1.都是线性结构。<br>2.插入操作都是限定在表尾进行。<br>3.都可以通过顺序结构和链式结构实现。<br>4.插入与删除的时间复杂度都是O（1），在空间复杂度上两者也一样。<br>5.多链栈和多链队列的管理模式可以相同。</p>
+<h4 id="栈与队列的不同点："><a href="#栈与队列的不同点：" class="headerlink" title="栈与队列的不同点："></a>栈与队列的不同点：</h4><p>1.删除数据元素的位置不同，栈的删除操作在表尾进行，队列的删除操作在表头进行。<br>2.应用场景不同；常见栈的应用场景包括括号问题的求解，表达式的转换和求值，函数调用和递归实现，深度优先搜索遍历等；常见的队列的应用场景包括计算机系统中各种资源的管理，消息缓冲器的管理和广度优先搜索遍历等。<br>3.顺序栈能够实现多栈空间共享，而顺序队列不能。</p>
 ]]></content>
       <categories>
-        <category>后端</category>
+        <category>数据结构</category>
       </categories>
       <tags>
-        <tag>python</tag>
+        <tag>进制</tag>
+        <tag>栈</tag>
       </tags>
   </entry>
   <entry>
@@ -797,6 +743,60 @@
 <p><img src="/id_26/%E5%8D%95%E4%BE%8B.png" alt="单例模式"></p>
 <p><strong>实现：</strong></p>
 <figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 装饰器实现</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">Singleton</span>(<span class="params">cls</span>):</span>  <span class="comment"># 这是一个函数，目的是要实现一个“装饰器”，而且是对类型的装饰器</span></span><br><span class="line">    <span class="string">'''</span></span><br><span class="line"><span class="string">    cls:表示一个类名，即所要设计的单例类名称，</span></span><br><span class="line"><span class="string">        因为python一切皆对象，故而类名同样可以作为参数传递</span></span><br><span class="line"><span class="string">    '''</span></span><br><span class="line">    instance = {}</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">singleton</span>(<span class="params">*args, **kargs</span>):</span></span><br><span class="line">        <span class="keyword">if</span> cls <span class="keyword">not</span> <span class="keyword">in</span> instance:</span><br><span class="line">            instance[cls] = cls(*args, **kargs)  <span class="comment"># 如果没有cls这个类，则创建，并且将这个cls所创建的实例，保存在一个字典中</span></span><br><span class="line">        <span class="keyword">return</span> instance[cls]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> singleton</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@Singleton</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, name, age</span>):</span></span><br><span class="line">        self.name = name</span><br><span class="line">        self.age = age</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">s1 = Student(<span class="string">'张三'</span>, <span class="number">23</span>)</span><br><span class="line">s2 = Student(<span class="string">'李四'</span>, <span class="number">24</span>)</span><br><span class="line">print((s1 == s2))</span><br><span class="line">print(s1 <span class="keyword">is</span> s2)</span><br><span class="line">print(<span class="built_in">id</span>(s1), <span class="built_in">id</span>(s2), sep=<span class="string">'   '</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># __new__方法实现</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span>(<span class="params"><span class="built_in">object</span></span>):</span></span><br><span class="line">    instance = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__new__</span>(<span class="params">cls, name, age</span>):</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> cls.instance:</span><br><span class="line">            cls.instance = <span class="built_in">super</span>(Student, cls).__new__(cls)</span><br><span class="line">        <span class="keyword">return</span> cls.instance</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, name, age</span>):</span></span><br><span class="line">        self.name = name</span><br><span class="line">        self.age = age</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">s1 = Student(<span class="string">'张三'</span>, <span class="number">23</span>)</span><br><span class="line">s2 = Student(<span class="string">'李四'</span>, <span class="number">24</span>)</span><br><span class="line">print((s1 == s2))</span><br><span class="line">print(s1 <span class="keyword">is</span> s2)</span><br><span class="line">print(<span class="built_in">id</span>(s1), <span class="built_in">id</span>(s2), sep=<span class="string">'   '</span>)</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>]]></content>
+      <categories>
+        <category>后端</category>
+      </categories>
+      <tags>
+        <tag>python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>引用计数</title>
+    <url>/id_27/</url>
+    <content><![CDATA[<h3 id="引用计数"><a href="#引用计数" class="headerlink" title="引用计数"></a>引用计数</h3><h5 id="问"><a href="#问" class="headerlink" title="问"></a>问</h5><p>引用计数这个问题是我们在面试中经常会遇到的。通常面试官会这样问：</p>
+<ol>
+<li>python中是如何管理内存的？</li>
+<li>你知道引用计数吗？<a id="more"></a>
+
+</li>
+</ol>
+<h5 id="答"><a href="#答" class="headerlink" title="答"></a>答</h5><p>引用计数是内存管理机制，将资源的使用次数保存起来，在引用次数变为<strong>零</strong>时进行释放</p>
+<p>比如说我们现在有一个变量a，指向内存中的字符 ‘x’ ，此时x在内存中的引用计数为1，然后又有一个变量b，b=a</p>
+<p>此时(b=a)和(a=’x’)是相等的，那这个时候x在内存中的引用计数就会+1变为2</p>
+<p><img src="/id_27/%E4%BE%8B.png" alt="案例"></p>
+<h4 id="引用计数的好处"><a href="#引用计数的好处" class="headerlink" title="引用计数的好处"></a>引用计数的好处</h4><p>我们可以举一些生活中的场景，比如说我们出去<strong>旅游</strong>，朋友提前抵达并开好了房间，这样我们就可以免费跟朋友住一间房，这样既节约了我们的时间，又节约了我们另外开房需要支付的资金。</p>
+<ul>
+<li>可知：减少了内存碎片的产生，</li>
+<li>并且可以对于我们在创建和释放内存中有一定的资源开销的节省。</li>
+<li>可以更快的进行资源管理</li>
+</ul>
+<p>那同样，当我们旅途结束，不需要再居住的时候，所有人离开酒店，那这个房间就会被酒店的人员进行清理，处理。</p>
+<ul>
+<li>这样就像引用计数中计数为0时，内存会被回收掉是一样的</li>
+</ul>
+<h4 id="查看引用计数"><a href="#查看引用计数" class="headerlink" title="查看引用计数"></a>查看引用计数</h4><p>查看引用计数我们是使用了sys模块中getrefcount方法<br>sys.getrefcount返回的计数，总是比实际多1，因为包含了调用此函数的临时计数。</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">C:\Users\Lenovo&gt;python.exe</span><br><span class="line">Python <span class="number">3.7</span><span class="number">.0</span> (v3<span class="number">.7</span><span class="number">.0</span>:1bf9cc5093, Jun <span class="number">27</span> <span class="number">2018</span>, 04:<span class="number">59</span>:<span class="number">51</span>) [MSC v<span class="number">.1914</span> <span class="number">64</span> bit (AMD64)] on win32</span><br><span class="line">Type <span class="string">"help"</span>, <span class="string">"copyright"</span>, <span class="string">"credits"</span> <span class="keyword">or</span> <span class="string">"license"</span> <span class="keyword">for</span> more information.</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> sys</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sys.getrefcount(<span class="number">1</span>)</span><br><span class="line"><span class="number">119</span></span><br><span class="line"><span class="comment"># 得出常量1在内存中的引用计数为119</span></span><br></pre></td></tr></tbody></table></figure>
+<h4 id="那什么时候会用到引用计数呢"><a href="#那什么时候会用到引用计数呢" class="headerlink" title="那什么时候会用到引用计数呢"></a>那什么时候会用到引用计数呢</h4><p>当发生以下四种情况的时候，该对象的引用计数器+1</p>
+<p>对象被创建 a=14<br>对象被引用 b=a<br>对象被作为参数,传到函数中 func(a)<br>对象作为一个元素，存储在容器中  List={a,”a”,”b”,2}</p>
+<h5 id="取两点举例："><a href="#取两点举例：" class="headerlink" title="取两点举例："></a>取两点举例：</h5><p>1、 变量互相赋值的时候</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="string">'x'</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = a</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">id</span>(a)</span><br><span class="line"><span class="number">3242716434928</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">id</span>(b)</span><br><span class="line"><span class="number">3242716434928</span></span><br><span class="line"><span class="comment"># 此时我们可以看出两个变量指向的内存地址是完全一样的 。可得变量互相赋值的时候用到了引用计数</span></span><br></pre></td></tr></tbody></table></figure>
+<p>2、常用对象创建时</p>
+<p>python本身含有a-z,A-Z,0-9等常见值的引用</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>c = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>d = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">id</span>(a)</span><br><span class="line"><span class="number">140707666383904</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">id</span>(b)</span><br><span class="line"><span class="number">140707666383904</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">id</span>(c)</span><br><span class="line"><span class="number">140707666383904</span></span><br><span class="line"><span class="comment"># 此时我们可以看出a,b,c的内存地址都是完全一致的， 可得常用对象创建时用到了引用计数</span></span><br></pre></td></tr></tbody></table></figure>
+<h4 id="如何减少引用次数"><a href="#如何减少引用次数" class="headerlink" title="如何减少引用次数"></a>如何减少引用次数</h4><p>与上述情况相对应，当发生以下四种情况时，该对象的引用计数器-1</p>
+<p>当该对象的别名被显式销毁时 del a<br>当该对象的引别名被赋予新的对象，  a=26<br>一个对象离开它的作用域，例如 func函数执行完毕时，函数里面的局部变量的引用计数器就会减一（但是全局变量不会）<br>将该元素从容器中删除时，或者容器被销毁时。</p>
+<p>.当指向该对象的内存的引用计数器为0的时候，该内存将会被Python虚拟机销毁</p>
+<h5 id="取两点举例"><a href="#取两点举例" class="headerlink" title="取两点举例:"></a>取两点举例:</h5><p>1、变量被重新赋值为别的值</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>c = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>d = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sys.getrefcount(<span class="number">1</span>)</span><br><span class="line"><span class="number">123</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="string">'a'</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sys.getrefcount(<span class="number">1</span>)</span><br><span class="line"><span class="number">122</span></span><br><span class="line"><span class="comment"># 可以看出，当a被重新赋值后再次查看1的引用计数是减少了1的</span></span><br></pre></td></tr></tbody></table></figure>
+<p>2、del  删除变量</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>c = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>d = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sys.getrefcount(<span class="number">1</span>)</span><br><span class="line"><span class="number">123</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">del</span> a</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sys.getrefcount(<span class="number">1</span>)</span><br><span class="line"><span class="number">122</span></span><br><span class="line"><span class="comment"># 可以看出，当a被del删除后再次查看1的引用计数是减少了1的</span></span><br></pre></td></tr></tbody></table></figure>
+<h4 id="引用计数的缺点"><a href="#引用计数的缺点" class="headerlink" title="引用计数的缺点"></a>引用计数的缺点</h4><p>那引用计数真的这么完美吗，不占内存地址，用完即释放，nonono,当然不是</p>
+<p>引用计数最大的缺点就是<strong>循环引用</strong></p>
+<p>那循环引用是什么呢？</p>
+<p>循环引用就是两个变量互相引用时假设已经被释放，但引用计数不为0，那就会导致这两个变量无法被直接回收<br>循环引用可以使一种引用对象的引用计数不为0，然而这些对象实际上并没有被任何外部对象所引用，它们之间只是相互引用，这意味着这组对象所占用的内存空间是应该被回收的，但是由于循环引用导致的引用计数不为0，所以这组对象所占用的内存空间永远不会被释放</p>
+<p><strong>那循环引用有什么解决办法吗？</strong></p>
+<p>那肯定是有的，python中解决循环引用的方法就是<strong>标记-清除</strong><br>请移步下一节：<a href="https://www.hr915.xyz/id_28">https://www.hr915.xyz/id_28</a></p>
+]]></content>
       <categories>
         <category>后端</category>
       </categories>
@@ -925,6 +925,39 @@
       </tags>
   </entry>
   <entry>
+    <title>周期总结</title>
+    <url>/id_30/</url>
+    <content><![CDATA[<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>转眼一个周期过去了，学了很多零碎的知识点。有遇到困难，有得到解惑。</p>
+<a id="more"></a>
+
+<p>day01: 在vue中使用ant_design<br>ant_design+vue官方文档：<a href="https://antdv.com/docs/vue/introduce-cn/">https://antdv.com/docs/vue/introduce-cn/</a></p>
+<p>day02: IT新闻资讯<br>网址: <a href="https://www.cnbeta.com/">https://www.cnbeta.com/</a></p>
+<p>day03: redis实现输入密码错误五次封禁账号<br>移步: <a href="https://www.hr915.xyz/id_20/">https://www.hr915.xyz/id_20/</a></p>
+<p>day04: httpx编写测试脚本<br>移步: <a href="https://www.hr915.xyz/id_6/">https://www.hr915.xyz/id_6/</a></p>
+<p>day05: 异步任务队列<br>移步: <a href="https://www.hr915.xyz/id_19/">https://www.hr915.xyz/id_19/</a></p>
+<p>day06: 加权队列<br>移步: <a href="https://www.hr915.xyz/id_21/">https://www.hr915.xyz/id_21/</a></p>
+<p>day07: 异步消费<br>移步: <a href="https://www.hr915.xyz/id_22/">https://www.hr915.xyz/id_22/</a></p>
+<p>day08: 权限模型</p>
+<p>day09: 三方登录<br>移步: <a href="https://www.hr915.xyz/id_13/">https://www.hr915.xyz/id_13/</a></p>
+<p>day10: 位运算<br>移步: <a href="https://www.hr915.xyz/id_23/">https://www.hr915.xyz/id_23/</a></p>
+<p>day11: 工单分类</p>
+<p>day12: Mongodb<br>移步: <a href="https://www.hr915.xyz/id_24/">https://www.hr915.xyz/id_24/</a></p>
+<p>day13: 审批流程</p>
+<p>day14: 栈的使用<br>移步: <a href="https://www.hr915.xyz/id_25/">https://www.hr915.xyz/id_25/</a></p>
+<p>day15: 设计模式<br>移步: <a href="https://www.hr915.xyz/id_26/">https://www.hr915.xyz/id_26/</a></p>
+<p>day16: 消息盒子</p>
+<p>day17: websocket<br>移步: <a href="https://www.hr915.xyz/id_10/">https://www.hr915.xyz/id_10/</a></p>
+<p>day18: 客服系统</p>
+<p>day19: 部署</p>
+]]></content>
+      <categories>
+        <category>总结</category>
+      </categories>
+      <tags>
+        <tag>python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>axios封装</title>
     <url>/id_31/</url>
     <content><![CDATA[<p>在vue项目中，和后台交互获取数据这块，我们通常使用的是axios库，它是基于promise的http库，可运行在浏览器端和node.js中。<br>他有很多优秀的特性，例如拦截请求和响应、取消请求、转换json、客户端防御CSRF等。<br>axios文档：<a href="https://www.npmjs.com/package/axios">https://www.npmjs.com/package/axios</a></p>
@@ -967,64 +1000,6 @@
       </categories>
       <tags>
         <tag>axios</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>周期总结</title>
-    <url>/id_30/</url>
-    <content><![CDATA[<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>转眼一个周期过去了，学了很多零碎的知识点。有遇到困难，有得到解惑。</p>
-<a id="more"></a>
-
-<p>day01: 在vue中使用ant_design<br>ant_design+vue官方文档：<a href="https://antdv.com/docs/vue/introduce-cn/">https://antdv.com/docs/vue/introduce-cn/</a></p>
-<p>day02: IT新闻资讯<br>网址: <a href="https://www.cnbeta.com/">https://www.cnbeta.com/</a></p>
-<p>day03: redis实现输入密码错误五次封禁账号<br>移步: <a href="https://www.hr915.xyz/id_20/">https://www.hr915.xyz/id_20/</a></p>
-<p>day04: httpx编写测试脚本<br>移步: <a href="https://www.hr915.xyz/id_6/">https://www.hr915.xyz/id_6/</a></p>
-<p>day05: 异步任务队列<br>移步: <a href="https://www.hr915.xyz/id_19/">https://www.hr915.xyz/id_19/</a></p>
-<p>day06: 加权队列<br>移步: <a href="https://www.hr915.xyz/id_21/">https://www.hr915.xyz/id_21/</a></p>
-<p>day07: 异步消费<br>移步: <a href="https://www.hr915.xyz/id_22/">https://www.hr915.xyz/id_22/</a></p>
-<p>day08: 权限模型</p>
-<p>day09: 三方登录<br>移步: <a href="https://www.hr915.xyz/id_13/">https://www.hr915.xyz/id_13/</a></p>
-<p>day10: 位运算<br>移步: <a href="https://www.hr915.xyz/id_23/">https://www.hr915.xyz/id_23/</a></p>
-<p>day11: 工单分类</p>
-<p>day12: Mongodb<br>移步: <a href="https://www.hr915.xyz/id_24/">https://www.hr915.xyz/id_24/</a></p>
-<p>day13: 审批流程</p>
-<p>day14: 栈的使用<br>移步: <a href="https://www.hr915.xyz/id_25/">https://www.hr915.xyz/id_25/</a></p>
-<p>day15: 设计模式<br>移步: <a href="https://www.hr915.xyz/id_26/">https://www.hr915.xyz/id_26/</a></p>
-<p>day16: 消息盒子</p>
-<p>day17: websocket<br>移步: <a href="https://www.hr915.xyz/id_10/">https://www.hr915.xyz/id_10/</a></p>
-<p>day18: 客服系统</p>
-<p>day19: 部署</p>
-]]></content>
-      <categories>
-        <category>总结</category>
-      </categories>
-      <tags>
-        <tag>python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>数据结构之二叉树</title>
-    <url>/id_34/</url>
-    <content><![CDATA[<h3 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h3><p>简单的三种数据结构：</p>
-<p><img src="/id_34/1.png" alt="数据结构"></p>
-<a id="more"></a>
-<p>树：由一个根节点分出许多子节点，最终的节点叫做叶子节点</p>
-<p>二叉树：每一个节点都会生出两个子节点(左节点or右节点)，最终的节点叫做叶子节点</p>
-<p>栈和队列想查询某个元素只有遍历查询，而树每个节点之间都有关联，便于高效查询</p>
-<p>查询效率第一位的时候需要用到树结构</p>
-<h4 id="遍历方式："><a href="#遍历方式：" class="headerlink" title="遍历方式："></a>遍历方式：</h4><p>树遍历的三种方式：前序遍历，中序遍历，后序遍历</p>
-<ul>
-<li>前序遍历 从根节点开始输出—&gt;左节点输出，继续向下左节点输出，直到叶子节点—&gt;右节点输出—&gt;   简单来说: 根—&gt;左—&gt;右</li>
-<li>中序遍历 先找左子树，找到叶子结点输出—&gt;上一级输出—-&gt;右节点的左叶子结点输出—&gt;上一级输出—右节点的左叶子节点输出—&gt;  简单来说: 左—&gt;根—&gt;右</li>
-<li>后序遍历 从子节点的左/右叶子节点，开始输出—&gt;右节点输出—&gt;上级节点—&gt;   简单来说: 左—&gt;右—&gt;根</li>
-</ul>
-<p>举个例子:<br><img src="/id_34/%E4%B8%89%E7%A7%8D%E9%81%8D%E5%8E%86.png" alt="数据结构"></p>
-<h4 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h4><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Tree</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        self.left = <span class="literal">None</span></span><br><span class="line">        self.right = <span class="literal">None</span></span><br><span class="line">        self.data = <span class="literal">None</span></span><br><span class="line">        self.lis = []</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">preface</span>(<span class="params">self, node</span>):</span></span><br><span class="line">        <span class="string">'''先序'''</span></span><br><span class="line">        self.lis.append(node.data)</span><br><span class="line">        <span class="keyword">if</span> node.left != <span class="literal">None</span>:</span><br><span class="line">            self.preface(node.left)</span><br><span class="line">        <span class="keyword">if</span> node.right != <span class="literal">None</span>:</span><br><span class="line">            self.preface(node.right)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">middleorder</span>(<span class="params">self, node</span>):</span></span><br><span class="line">        <span class="string">'''中序'''</span></span><br><span class="line">        <span class="keyword">if</span> node.left != <span class="literal">None</span>:</span><br><span class="line">            self.middleorder(node.left)</span><br><span class="line"></span><br><span class="line">        self.lis.append(node.data)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> node.right != <span class="literal">None</span>:</span><br><span class="line">            self.middleorder(node.right)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">postscript</span>(<span class="params">self, node</span>):</span></span><br><span class="line">        <span class="string">'''后序'''</span></span><br><span class="line">        <span class="keyword">if</span> node.left != <span class="literal">None</span>:</span><br><span class="line">            self.postscript(node.left)</span><br><span class="line">        <span class="keyword">if</span> node.right != <span class="literal">None</span>:</span><br><span class="line">            self.postscript(node.right)</span><br><span class="line"></span><br><span class="line">        self.lis.append(node.data)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">search</span>(<span class="params">self, node, lis, data</span>):</span></span><br><span class="line">        <span class="string">'''查找'''</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> node.left == <span class="literal">None</span>:</span><br><span class="line">            lis = self.search(node.left, lis, data)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> node.right == <span class="literal">None</span>:</span><br><span class="line">            lis = self.search(node.right, lis, data)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> lis != []:</span><br><span class="line">            <span class="comment"># 判断当前节点是否在查询节点的线上</span></span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> node.left != <span class="literal">None</span>:</span><br><span class="line">                <span class="keyword">if</span> lis[-<span class="number">1</span>] == node.left.data:</span><br><span class="line">                    lis.append(node.data)</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> node.right != <span class="literal">None</span>:</span><br><span class="line">                <span class="keyword">if</span> lis[-<span class="number">1</span>] == node.right.data:</span><br><span class="line">                    lis.append(node.data)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> node.data == data:</span><br><span class="line">            lis.append(data)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> lis</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    root = Tree()</span><br><span class="line"></span><br><span class="line">    root.data = <span class="string">'1'</span></span><br><span class="line"></span><br><span class="line">    root.left = Tree()</span><br><span class="line">    root.left.data = <span class="string">'2'</span></span><br><span class="line"></span><br><span class="line">    root.right = Tree()</span><br><span class="line">    root.right.data = <span class="string">'3'</span></span><br><span class="line"></span><br><span class="line">    root.left.left = Tree()</span><br><span class="line">    root.left.left.data = <span class="string">'4'</span></span><br><span class="line"></span><br><span class="line">    root.left.right = Tree()</span><br><span class="line">    root.left.right.data = <span class="string">'5'</span></span><br><span class="line"></span><br><span class="line">    root.right.left = Tree()</span><br><span class="line">    root.right.left.data = <span class="string">'6'</span></span><br><span class="line"></span><br><span class="line">    root.right.right = Tree()</span><br><span class="line">    root.right.right.data = <span class="string">'7'</span></span><br><span class="line"></span><br><span class="line">    root.left.left.left = Tree()</span><br><span class="line">    root.left.left.left.data = <span class="string">'8'</span></span><br><span class="line"></span><br><span class="line">    root.left.right.left = Tree()</span><br><span class="line">    root.left.right.left.data = <span class="string">'9'</span></span><br><span class="line"></span><br><span class="line">    root.right.left.right = Tree()</span><br><span class="line">    root.right.left.right.data = <span class="string">'10'</span></span><br><span class="line"></span><br><span class="line">    root.right.right.right = Tree()</span><br><span class="line">    root.right.right.right.data = <span class="string">'11'</span></span><br><span class="line"></span><br><span class="line">    print(<span class="string">'先序:'</span>)</span><br><span class="line">    root.lis = []</span><br><span class="line">    root.preface(root)</span><br><span class="line">    print(root.lis)</span><br><span class="line">    print(<span class="string">'中序:'</span>)</span><br><span class="line">    root.lis = []</span><br><span class="line">    root.middleorder(root)</span><br><span class="line">    print(root.lis)</span><br><span class="line">    print(<span class="string">'后序:'</span>)</span><br><span class="line">    root.lis = []</span><br><span class="line">    root.postscript(root)</span><br><span class="line">    print(root.lis)</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>]]></content>
-      <categories>
-        <category>数据结构</category>
-      </categories>
-      <tags>
-        <tag>二叉树</tag>
       </tags>
   </entry>
   <entry>
@@ -1086,70 +1061,28 @@
       </tags>
   </entry>
   <entry>
-    <title>Restful</title>
-    <url>/id_36/</url>
-    <content><![CDATA[<h3 id="Restful："><a href="#Restful：" class="headerlink" title="Restful："></a>Restful：</h3><p>一种软件架构风格、设计风格，而不是标准，只是提供了一组设计原则和约束条件。它主要用于客户端和服务器交互类的软件。基于这个风格设计的软件可以更简洁，更有层次，更易于实现缓存等机制。</p>
+    <title>数据结构之二叉树</title>
+    <url>/id_34/</url>
+    <content><![CDATA[<h3 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h3><p>简单的三种数据结构：</p>
+<p><img src="/id_34/1.png" alt="数据结构"></p>
 <a id="more"></a>
-<p>这么理解试试看，也就是你听过建筑的复古风格，欧美风格之类的么，大体就是一个意思。如果你盖个别墅不按设计风格走，直接以小茅屋的形式，没有属于任何风格它也能盖成不是，这就是我们平时开发API不按RESTFUL风格也可以是一个道理。REST 指的是一组架构约束条件和原则，满足这些约束条件和原则的应用程序或设计就是RESTful。</p>
-<h4 id="Restful发展历程："><a href="#Restful发展历程：" class="headerlink" title="Restful发展历程："></a>Restful发展历程：</h4><p>详细发展历程：<a href="https://blog.csdn.net/a78270528/article/details/78469758">https://blog.csdn.net/a78270528/article/details/78469758</a><br>Restful风格==面向过程—&gt;面向资源—&gt;面向标签—&gt;面向文档</p>
-<p>面向过程==想起一出是一出，只要有功能就写新接口</p>
-<p>面向资源==封装单个接口，添加一个接口，删除一个接口，修改一个接口，多重逻辑需要多个if-else</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> request.method ==POST:</span><br><span class="line">	.....</span><br><span class="line"><span class="keyword">elif</span> request.method==GET:</span><br><span class="line">    </span><br></pre></td></tr></tbody></table></figure>
-<p>面向标签==封装单个接口，通过method进行语义化操作 post/put/delete/get</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Test</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span>:</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">post</span>:</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">put</span>:</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">delete</span>:</span></span><br><span class="line">        <span class="keyword">pass</span></span><br></pre></td></tr></tbody></table></figure>
-<p>面向文档==具备面向标签的功能语义化，在返回响应的时候告诉客户还可以做什么操作</p>
+<p>树：由一个根节点分出许多子节点，最终的节点叫做叶子节点</p>
+<p>二叉树：每一个节点都会生出两个子节点(左节点or右节点)，最终的节点叫做叶子节点</p>
+<p>栈和队列想查询某个元素只有遍历查询，而树每个节点之间都有关联，便于高效查询</p>
+<p>查询效率第一位的时候需要用到树结构</p>
+<h4 id="遍历方式："><a href="#遍历方式：" class="headerlink" title="遍历方式："></a>遍历方式：</h4><p>树遍历的三种方式：前序遍历，中序遍历，后序遍历</p>
 <ul>
-<li>说这么多，到底restful是什么？<h4 id="接口规范"><a href="#接口规范" class="headerlink" title="接口规范"></a>接口规范</h4></li>
+<li>前序遍历 从根节点开始输出—&gt;左节点输出，继续向下左节点输出，直到叶子节点—&gt;右节点输出—&gt;   简单来说: 根—&gt;左—&gt;右</li>
+<li>中序遍历 先找左子树，找到叶子结点输出—&gt;上一级输出—-&gt;右节点的左叶子结点输出—&gt;上一级输出—右节点的左叶子节点输出—&gt;  简单来说: 左—&gt;根—&gt;右</li>
+<li>后序遍历 从子节点的左/右叶子节点，开始输出—&gt;右节点输出—&gt;上级节点—&gt;   简单来说: 左—&gt;右—&gt;根</li>
 </ul>
-<ol>
-<li><p>统一资源接口<br> RESTful架构应该遵循统一接口原则，统一接口包含了一组受限的预定义的操作，不论什么样的资源，都是通过使用相同的接口进行资源的访问。接口应该使用标准的HTTP方法如GET，PUT和POST，并遵循这些方法的语义。</p>
-</li>
-<li><p>URL中只使用名词来指定资源，原则上不使用动词</p>
-</li>
-<li><p>用HTTP协议里的动词来实现资源的添加，修改，删除等操作。即通过HTTP动词来实现资源的状态扭转<br> GET 用来获取资源，<br> POST 用来新建资源（也可以用于更新资源），<br> PUT 用来更新资源，<br> DELETE 用来删除资源。  </p>
-</li>
-<li><p>Server和Client之间传递某资源的一个表现形式，比如用JSON，XML传输文本，或者用JPG，WebP传输图片等。当然还可以压缩HTTP传输时的数据（on-wire data compression）。</p>
-</li>
-<li><p>用 HTTP Status Code传递Server的状态信息。比如最常用的 200 表示成功，500 表示Server内部错误等。</p>
-</li>
-</ol>
-<h4 id="一些其他规范："><a href="#一些其他规范：" class="headerlink" title="一些其他规范："></a>一些其他规范：</h4><p>规则1：URI结尾不应包含（/）<br>规则2：正斜杠分隔符（/）必须用来指示层级关系<br>规则3：应使用连字符（ - ）来提高URI的可读性<br>规则4：不得在URI中使用下划线（_）<br>规则5：URI路径中全都使用小写字母</p>
-]]></content>
-      <tags>
-        <tag>Restful</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Sort和Sorted区别</title>
-    <url>/id_38/</url>
-    <content><![CDATA[<h4 id="引入"><a href="#引入" class="headerlink" title="引入"></a>引入</h4><p>我们需要对List进行排序，Python提供了两个方法<br>对给定的List L进行排序，<br>方法1.用List的成员函数sort进行排序<br>方法2.用内建函数sorted进行排序（从python 2.4开始）</p>
-<a id="more"></a>
-<h4 id="语法："><a href="#语法：" class="headerlink" title="语法："></a>语法：</h4><p>sort函数定义：sort(cmp=None, key=None, reverse=False)<br>sorted函数定义：sorted(iterable, cmp=None, key=None, reverse=False)</p>
-<p>参数解析：<br>iterable：是可迭代类型;<br>cmp：用于比较的函数（大于时返回1，小于时返回-1，等于时返回0），比较什么由key决定,有默认值，迭代集合中的一项;<br>key：用列表元素的某个属性和函数进行作为关键字，有默认值，迭代集合中的一项;<br>reverse：排序规则. reverse = True 或者 reverse = False，有默认值。</p>
-<h4 id="区别"><a href="#区别" class="headerlink" title="区别:"></a>区别:</h4><ol>
-<li>sort( )函数时对已存在的列表进行操作，调用其没有返回值；<br>而sorted( )函数是返回一个新的list,不在原来的list上进行操作，调用其返回一个排好序的list。</li>
-<li>sorted()不会改变原来的list，而是会返回一个新的已经排序好的list<br>list.sort()方法仅仅被list所定义，sorted()可用于任何一个可迭代对象</li>
-</ol>
-<h4 id="举例说明："><a href="#举例说明：" class="headerlink" title="举例说明："></a>举例说明：</h4><p>示例1:</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">a = [<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">3</span>,<span class="number">5</span>,<span class="number">2</span>]</span><br><span class="line">a.sort()</span><br><span class="line">print(a)</span><br><span class="line"> </span><br><span class="line">c = [<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">3</span>,<span class="number">5</span>,<span class="number">2</span>]</span><br><span class="line">d = <span class="built_in">sorted</span>(c)</span><br><span class="line"></span><br><span class="line">print(d)</span><br><span class="line">print(c)</span><br></pre></td></tr></tbody></table></figure>
-<p>得：</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">[<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>]</span><br><span class="line">[<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>]</span><br><span class="line">[<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">2</span>]</span><br></pre></td></tr></tbody></table></figure>
-<p>示例1是采用函数默认的设置</p>
-<ul>
-<li>对于排序参数设置，主要有以下两种：基于key；基于reverse。<br>示例2: 基于key和reverse</li>
-</ul>
-<p>1.reverse实现降序排序，需要提供一个布尔值，默认为False（升序排列）。<br>2.key在使用时必须提供一个排序过程总调用的函数：</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">alist  =  [( <span class="string">'2'</span> ,  <span class="string">'3'</span> ,  <span class="string">'10'</span> ), ( <span class="string">'1'</span> ,  <span class="string">'2'</span> ,  <span class="string">'3'</span> ), ( <span class="string">'5'</span> ,  <span class="string">'6'</span> ,  <span class="string">'7'</span> ), ( <span class="string">'2'</span> ,  <span class="string">'5'</span> ,  <span class="string">'10'</span> ), ( <span class="string">'2'</span> ,  <span class="string">'4'</span> ,  <span class="string">'10'</span> )]</span><br><span class="line"><span class="comment"># 多级排序，先按照第3个元素排序，然后按照第2个元素排序：</span></span><br><span class="line"><span class="comment"># reverse = False 降序</span></span><br><span class="line">print(<span class="built_in">sorted</span>(alist, key=<span class="keyword">lambda</span>  x:( <span class="built_in">int</span> (x[ <span class="number">2</span> ]),<span class="built_in">int</span> (x[ <span class="number">1</span> ])),reverse  =  <span class="literal">False</span> )) </span><br><span class="line"><span class="comment"># reverse = False 升序</span></span><br><span class="line">alist.sort(key=<span class="keyword">lambda</span>  x:( <span class="built_in">int</span> (x[ <span class="number">2</span> ]),<span class="built_in">int</span> (x[ <span class="number">1</span> ])),reverse  =  <span class="literal">True</span> )</span><br><span class="line">print(alist)</span><br></pre></td></tr></tbody></table></figure>
-<p>得：</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">[(<span class="string">'1'</span>, <span class="string">'2'</span>, <span class="string">'3'</span>), (<span class="string">'5'</span>, <span class="string">'6'</span>, <span class="string">'7'</span>), (<span class="string">'2'</span>, <span class="string">'3'</span>, <span class="string">'10'</span>), (<span class="string">'2'</span>, <span class="string">'4'</span>, <span class="string">'10'</span>), (<span class="string">'2'</span>, <span class="string">'5'</span>, <span class="string">'10'</span>)]</span><br><span class="line">[(<span class="string">'2'</span>, <span class="string">'5'</span>, <span class="string">'10'</span>), (<span class="string">'2'</span>, <span class="string">'4'</span>, <span class="string">'10'</span>), (<span class="string">'2'</span>, <span class="string">'3'</span>, <span class="string">'10'</span>), (<span class="string">'5'</span>, <span class="string">'6'</span>, <span class="string">'7'</span>), (<span class="string">'1'</span>, <span class="string">'2'</span>, <span class="string">'3'</span>)]```</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
-<h5 id="结论："><a href="#结论：" class="headerlink" title="结论："></a>结论：</h5><p>1、函数sorted()不改变原来的list，而是返回一个新的排好序的list。<br>2、key可以采用lambda表达式<br>3、排序的key是函数自己选择；采用key是确定排序的key，排序方式是函数自己选择。</p>
-]]></content>
+<p>举个例子:<br><img src="/id_34/%E4%B8%89%E7%A7%8D%E9%81%8D%E5%8E%86.png" alt="数据结构"></p>
+<h4 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h4><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Tree</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        self.left = <span class="literal">None</span></span><br><span class="line">        self.right = <span class="literal">None</span></span><br><span class="line">        self.data = <span class="literal">None</span></span><br><span class="line">        self.lis = []</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">preface</span>(<span class="params">self, node</span>):</span></span><br><span class="line">        <span class="string">'''先序'''</span></span><br><span class="line">        self.lis.append(node.data)</span><br><span class="line">        <span class="keyword">if</span> node.left != <span class="literal">None</span>:</span><br><span class="line">            self.preface(node.left)</span><br><span class="line">        <span class="keyword">if</span> node.right != <span class="literal">None</span>:</span><br><span class="line">            self.preface(node.right)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">middleorder</span>(<span class="params">self, node</span>):</span></span><br><span class="line">        <span class="string">'''中序'''</span></span><br><span class="line">        <span class="keyword">if</span> node.left != <span class="literal">None</span>:</span><br><span class="line">            self.middleorder(node.left)</span><br><span class="line"></span><br><span class="line">        self.lis.append(node.data)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> node.right != <span class="literal">None</span>:</span><br><span class="line">            self.middleorder(node.right)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">postscript</span>(<span class="params">self, node</span>):</span></span><br><span class="line">        <span class="string">'''后序'''</span></span><br><span class="line">        <span class="keyword">if</span> node.left != <span class="literal">None</span>:</span><br><span class="line">            self.postscript(node.left)</span><br><span class="line">        <span class="keyword">if</span> node.right != <span class="literal">None</span>:</span><br><span class="line">            self.postscript(node.right)</span><br><span class="line"></span><br><span class="line">        self.lis.append(node.data)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">search</span>(<span class="params">self, node, lis, data</span>):</span></span><br><span class="line">        <span class="string">'''查找'''</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> node.left == <span class="literal">None</span>:</span><br><span class="line">            lis = self.search(node.left, lis, data)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> node.right == <span class="literal">None</span>:</span><br><span class="line">            lis = self.search(node.right, lis, data)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> lis != []:</span><br><span class="line">            <span class="comment"># 判断当前节点是否在查询节点的线上</span></span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> node.left != <span class="literal">None</span>:</span><br><span class="line">                <span class="keyword">if</span> lis[-<span class="number">1</span>] == node.left.data:</span><br><span class="line">                    lis.append(node.data)</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> node.right != <span class="literal">None</span>:</span><br><span class="line">                <span class="keyword">if</span> lis[-<span class="number">1</span>] == node.right.data:</span><br><span class="line">                    lis.append(node.data)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> node.data == data:</span><br><span class="line">            lis.append(data)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> lis</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    root = Tree()</span><br><span class="line"></span><br><span class="line">    root.data = <span class="string">'1'</span></span><br><span class="line"></span><br><span class="line">    root.left = Tree()</span><br><span class="line">    root.left.data = <span class="string">'2'</span></span><br><span class="line"></span><br><span class="line">    root.right = Tree()</span><br><span class="line">    root.right.data = <span class="string">'3'</span></span><br><span class="line"></span><br><span class="line">    root.left.left = Tree()</span><br><span class="line">    root.left.left.data = <span class="string">'4'</span></span><br><span class="line"></span><br><span class="line">    root.left.right = Tree()</span><br><span class="line">    root.left.right.data = <span class="string">'5'</span></span><br><span class="line"></span><br><span class="line">    root.right.left = Tree()</span><br><span class="line">    root.right.left.data = <span class="string">'6'</span></span><br><span class="line"></span><br><span class="line">    root.right.right = Tree()</span><br><span class="line">    root.right.right.data = <span class="string">'7'</span></span><br><span class="line"></span><br><span class="line">    root.left.left.left = Tree()</span><br><span class="line">    root.left.left.left.data = <span class="string">'8'</span></span><br><span class="line"></span><br><span class="line">    root.left.right.left = Tree()</span><br><span class="line">    root.left.right.left.data = <span class="string">'9'</span></span><br><span class="line"></span><br><span class="line">    root.right.left.right = Tree()</span><br><span class="line">    root.right.left.right.data = <span class="string">'10'</span></span><br><span class="line"></span><br><span class="line">    root.right.right.right = Tree()</span><br><span class="line">    root.right.right.right.data = <span class="string">'11'</span></span><br><span class="line"></span><br><span class="line">    print(<span class="string">'先序:'</span>)</span><br><span class="line">    root.lis = []</span><br><span class="line">    root.preface(root)</span><br><span class="line">    print(root.lis)</span><br><span class="line">    print(<span class="string">'中序:'</span>)</span><br><span class="line">    root.lis = []</span><br><span class="line">    root.middleorder(root)</span><br><span class="line">    print(root.lis)</span><br><span class="line">    print(<span class="string">'后序:'</span>)</span><br><span class="line">    root.lis = []</span><br><span class="line">    root.postscript(root)</span><br><span class="line">    print(root.lis)</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>]]></content>
       <categories>
-        <category>python</category>
+        <category>数据结构</category>
       </categories>
       <tags>
-        <tag>python</tag>
-        <tag>内置方法</tag>
+        <tag>二叉树</tag>
       </tags>
   </entry>
   <entry>
@@ -1212,6 +1145,73 @@
       </categories>
       <tags>
         <tag>OpenLdap</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Sort和Sorted区别</title>
+    <url>/id_38/</url>
+    <content><![CDATA[<h4 id="引入"><a href="#引入" class="headerlink" title="引入"></a>引入</h4><p>我们需要对List进行排序，Python提供了两个方法<br>对给定的List L进行排序，<br>方法1.用List的成员函数sort进行排序<br>方法2.用内建函数sorted进行排序（从python 2.4开始）</p>
+<a id="more"></a>
+<h4 id="语法："><a href="#语法：" class="headerlink" title="语法："></a>语法：</h4><p>sort函数定义：sort(cmp=None, key=None, reverse=False)<br>sorted函数定义：sorted(iterable, cmp=None, key=None, reverse=False)</p>
+<p>参数解析：<br>iterable：是可迭代类型;<br>cmp：用于比较的函数（大于时返回1，小于时返回-1，等于时返回0），比较什么由key决定,有默认值，迭代集合中的一项;<br>key：用列表元素的某个属性和函数进行作为关键字，有默认值，迭代集合中的一项;<br>reverse：排序规则. reverse = True 或者 reverse = False，有默认值。</p>
+<h4 id="区别"><a href="#区别" class="headerlink" title="区别:"></a>区别:</h4><ol>
+<li>sort( )函数时对已存在的列表进行操作，调用其没有返回值；<br>而sorted( )函数是返回一个新的list,不在原来的list上进行操作，调用其返回一个排好序的list。</li>
+<li>sorted()不会改变原来的list，而是会返回一个新的已经排序好的list<br>list.sort()方法仅仅被list所定义，sorted()可用于任何一个可迭代对象</li>
+</ol>
+<h4 id="举例说明："><a href="#举例说明：" class="headerlink" title="举例说明："></a>举例说明：</h4><p>示例1:</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">a = [<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">3</span>,<span class="number">5</span>,<span class="number">2</span>]</span><br><span class="line">a.sort()</span><br><span class="line">print(a)</span><br><span class="line"> </span><br><span class="line">c = [<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">3</span>,<span class="number">5</span>,<span class="number">2</span>]</span><br><span class="line">d = <span class="built_in">sorted</span>(c)</span><br><span class="line"></span><br><span class="line">print(d)</span><br><span class="line">print(c)</span><br></pre></td></tr></tbody></table></figure>
+<p>得：</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">[<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>]</span><br><span class="line">[<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>]</span><br><span class="line">[<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">2</span>]</span><br></pre></td></tr></tbody></table></figure>
+<p>示例1是采用函数默认的设置</p>
+<ul>
+<li>对于排序参数设置，主要有以下两种：基于key；基于reverse。<br>示例2: 基于key和reverse</li>
+</ul>
+<p>1.reverse实现降序排序，需要提供一个布尔值，默认为False（升序排列）。<br>2.key在使用时必须提供一个排序过程总调用的函数：</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">alist  =  [( <span class="string">'2'</span> ,  <span class="string">'3'</span> ,  <span class="string">'10'</span> ), ( <span class="string">'1'</span> ,  <span class="string">'2'</span> ,  <span class="string">'3'</span> ), ( <span class="string">'5'</span> ,  <span class="string">'6'</span> ,  <span class="string">'7'</span> ), ( <span class="string">'2'</span> ,  <span class="string">'5'</span> ,  <span class="string">'10'</span> ), ( <span class="string">'2'</span> ,  <span class="string">'4'</span> ,  <span class="string">'10'</span> )]</span><br><span class="line"><span class="comment"># 多级排序，先按照第3个元素排序，然后按照第2个元素排序：</span></span><br><span class="line"><span class="comment"># reverse = False 降序</span></span><br><span class="line">print(<span class="built_in">sorted</span>(alist, key=<span class="keyword">lambda</span>  x:( <span class="built_in">int</span> (x[ <span class="number">2</span> ]),<span class="built_in">int</span> (x[ <span class="number">1</span> ])),reverse  =  <span class="literal">False</span> )) </span><br><span class="line"><span class="comment"># reverse = False 升序</span></span><br><span class="line">alist.sort(key=<span class="keyword">lambda</span>  x:( <span class="built_in">int</span> (x[ <span class="number">2</span> ]),<span class="built_in">int</span> (x[ <span class="number">1</span> ])),reverse  =  <span class="literal">True</span> )</span><br><span class="line">print(alist)</span><br></pre></td></tr></tbody></table></figure>
+<p>得：</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">[(<span class="string">'1'</span>, <span class="string">'2'</span>, <span class="string">'3'</span>), (<span class="string">'5'</span>, <span class="string">'6'</span>, <span class="string">'7'</span>), (<span class="string">'2'</span>, <span class="string">'3'</span>, <span class="string">'10'</span>), (<span class="string">'2'</span>, <span class="string">'4'</span>, <span class="string">'10'</span>), (<span class="string">'2'</span>, <span class="string">'5'</span>, <span class="string">'10'</span>)]</span><br><span class="line">[(<span class="string">'2'</span>, <span class="string">'5'</span>, <span class="string">'10'</span>), (<span class="string">'2'</span>, <span class="string">'4'</span>, <span class="string">'10'</span>), (<span class="string">'2'</span>, <span class="string">'3'</span>, <span class="string">'10'</span>), (<span class="string">'5'</span>, <span class="string">'6'</span>, <span class="string">'7'</span>), (<span class="string">'1'</span>, <span class="string">'2'</span>, <span class="string">'3'</span>)]```</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+<h5 id="结论："><a href="#结论：" class="headerlink" title="结论："></a>结论：</h5><p>1、函数sorted()不改变原来的list，而是返回一个新的排好序的list。<br>2、key可以采用lambda表达式<br>3、排序的key是函数自己选择；采用key是确定排序的key，排序方式是函数自己选择。</p>
+]]></content>
+      <categories>
+        <category>python</category>
+      </categories>
+      <tags>
+        <tag>python</tag>
+        <tag>内置方法</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Restful</title>
+    <url>/id_36/</url>
+    <content><![CDATA[<h3 id="Restful："><a href="#Restful：" class="headerlink" title="Restful："></a>Restful：</h3><p>一种软件架构风格、设计风格，而不是标准，只是提供了一组设计原则和约束条件。它主要用于客户端和服务器交互类的软件。基于这个风格设计的软件可以更简洁，更有层次，更易于实现缓存等机制。</p>
+<a id="more"></a>
+<p>这么理解试试看，也就是你听过建筑的复古风格，欧美风格之类的么，大体就是一个意思。如果你盖个别墅不按设计风格走，直接以小茅屋的形式，没有属于任何风格它也能盖成不是，这就是我们平时开发API不按RESTFUL风格也可以是一个道理。REST 指的是一组架构约束条件和原则，满足这些约束条件和原则的应用程序或设计就是RESTful。</p>
+<h4 id="Restful发展历程："><a href="#Restful发展历程：" class="headerlink" title="Restful发展历程："></a>Restful发展历程：</h4><p>详细发展历程：<a href="https://blog.csdn.net/a78270528/article/details/78469758">https://blog.csdn.net/a78270528/article/details/78469758</a><br>Restful风格==面向过程—&gt;面向资源—&gt;面向标签—&gt;面向文档</p>
+<p>面向过程==想起一出是一出，只要有功能就写新接口</p>
+<p>面向资源==封装单个接口，添加一个接口，删除一个接口，修改一个接口，多重逻辑需要多个if-else</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> request.method ==POST:</span><br><span class="line">	.....</span><br><span class="line"><span class="keyword">elif</span> request.method==GET:</span><br><span class="line">    </span><br></pre></td></tr></tbody></table></figure>
+<p>面向标签==封装单个接口，通过method进行语义化操作 post/put/delete/get</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Test</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span>:</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">post</span>:</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">put</span>:</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">delete</span>:</span></span><br><span class="line">        <span class="keyword">pass</span></span><br></pre></td></tr></tbody></table></figure>
+<p>面向文档==具备面向标签的功能语义化，在返回响应的时候告诉客户还可以做什么操作</p>
+<ul>
+<li>说这么多，到底restful是什么？<h4 id="接口规范"><a href="#接口规范" class="headerlink" title="接口规范"></a>接口规范</h4></li>
+</ul>
+<ol>
+<li><p>统一资源接口<br> RESTful架构应该遵循统一接口原则，统一接口包含了一组受限的预定义的操作，不论什么样的资源，都是通过使用相同的接口进行资源的访问。接口应该使用标准的HTTP方法如GET，PUT和POST，并遵循这些方法的语义。</p>
+</li>
+<li><p>URL中只使用名词来指定资源，原则上不使用动词</p>
+</li>
+<li><p>用HTTP协议里的动词来实现资源的添加，修改，删除等操作。即通过HTTP动词来实现资源的状态扭转<br> GET 用来获取资源，<br> POST 用来新建资源（也可以用于更新资源），<br> PUT 用来更新资源，<br> DELETE 用来删除资源。  </p>
+</li>
+<li><p>Server和Client之间传递某资源的一个表现形式，比如用JSON，XML传输文本，或者用JPG，WebP传输图片等。当然还可以压缩HTTP传输时的数据（on-wire data compression）。</p>
+</li>
+<li><p>用 HTTP Status Code传递Server的状态信息。比如最常用的 200 表示成功，500 表示Server内部错误等。</p>
+</li>
+</ol>
+<h4 id="一些其他规范："><a href="#一些其他规范：" class="headerlink" title="一些其他规范："></a>一些其他规范：</h4><p>规则1：URI结尾不应包含（/）<br>规则2：正斜杠分隔符（/）必须用来指示层级关系<br>规则3：应使用连字符（ - ）来提高URI的可读性<br>规则4：不得在URI中使用下划线（_）<br>规则5：URI路径中全都使用小写字母</p>
+]]></content>
+      <tags>
+        <tag>Restful</tag>
       </tags>
   </entry>
   <entry>
@@ -1718,97 +1718,6 @@ flags:标志位，用于控制正则表达式的匹配方式</code></pre>
       </tags>
   </entry>
   <entry>
-    <title>docker打包镜像</title>
-    <url>/id_5/</url>
-    <content><![CDATA[<p>在docker hub上有时我们找不到想要的image,或自己想要打包纯净的image ( 怕投毒?? ).</p>
-<p>所以自己制作docker image是一种不错的选择</p>
-<a id="more"></a>
-<h5 id="拉取镜像"><a href="#拉取镜像" class="headerlink" title="拉取镜像"></a>拉取镜像</h5><blockquote>
-<p>docker pull centos</p>
-</blockquote>
-<h5 id="查看镜像"><a href="#查看镜像" class="headerlink" title="查看镜像"></a>查看镜像</h5><blockquote>
-<p>docker images</p>
-</blockquote>
-<h5 id="创建容器"><a href="#创建容器" class="headerlink" title="创建容器"></a>创建容器</h5><blockquote>
-<p>docker run -it –name=容器名  镜像名  /bin/bash</p>
-</blockquote>
-<h5 id="启动容器"><a href="#启动容器" class="headerlink" title="启动容器"></a>启动容器</h5><blockquote>
-<p>docker start 容器ID</p>
-</blockquote>
-<h5 id="进入容器"><a href="#进入容器" class="headerlink" title="进入容器"></a>进入容器</h5><blockquote>
-<p>docker exec -itd 容器名(容器ID) /bin/bash<br>docker attach 容器ID</p>
-</blockquote>
-<h5 id="安装ssh"><a href="#安装ssh" class="headerlink" title="安装ssh"></a>安装ssh</h5><blockquote>
-<p>yum install openssh-server</p>
-</blockquote>
-<p>没有正常启动的话通常需要生成当前主机的ssh-key</p>
-<blockquote>
-<p>ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key<br>ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key<br>ssh-keygen -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key<br>ssh-keygen -t dsa -f /etc/ssh/ssh_host_ed25519_key</p>
-</blockquote>
-<h5 id="在容器中启动ssh服务，让外界可以连接"><a href="#在容器中启动ssh服务，让外界可以连接" class="headerlink" title="在容器中启动ssh服务，让外界可以连接"></a>在容器中启动ssh服务，让外界可以连接</h5><blockquote>
-<p>/usr/sbin/sshd</p>
-</blockquote>
-<h5 id="修改容器内部密码"><a href="#修改容器内部密码" class="headerlink" title="修改容器内部密码"></a>修改容器内部密码</h5><blockquote>
-<p>修改密码需要安装passwd<br>yum install passwd.x86_64<br>修改密码<br>passwd root</p>
-</blockquote>
-<h5 id="退出容器"><a href="#退出容器" class="headerlink" title="退出容器"></a>退出容器</h5><blockquote>
-<p>exit</p>
-</blockquote>
-<h5 id="修改云主机密码"><a href="#修改云主机密码" class="headerlink" title="修改云主机密码"></a>修改云主机密码</h5><blockquote>
-<p>修改云主机密码需要退出容器在执行passwd</p>
-</blockquote>
-<h5 id="查看所有容器"><a href="#查看所有容器" class="headerlink" title="查看所有容器"></a>查看所有容器</h5><blockquote>
-<p>docker ps -a</p>
-</blockquote>
-<h5 id="制作镜像"><a href="#制作镜像" class="headerlink" title="制作镜像"></a>制作镜像</h5><blockquote>
-<p>docker commit -a “作者” -m “简介”  被打包的容器ID  镜像名: 版本号</p>
-</blockquote>
-<h5 id="镜像导出"><a href="#镜像导出" class="headerlink" title="镜像导出"></a>镜像导出</h5><blockquote>
-<p>docker save 镜像名 &gt; ./文件名<br>例如： docker save ssh_image &gt; ./文件名</p>
-</blockquote>
-<h5 id="加载镜像-解压"><a href="#加载镜像-解压" class="headerlink" title="加载镜像(解压)"></a>加载镜像(解压)</h5><blockquote>
-<p>docker load &lt; ./文件名<br>例如： docker load &lt; ./文件名</p>
-</blockquote>
-<h5 id="查看镜像是否存在"><a href="#查看镜像是否存在" class="headerlink" title="查看镜像是否存在"></a>查看镜像是否存在</h5><blockquote>
-<p>docker images</p>
-</blockquote>
-<h5 id="创建容器并映射端口把镜像跑起来"><a href="#创建容器并映射端口把镜像跑起来" class="headerlink" title="创建容器并映射端口把镜像跑起来"></a>创建容器并映射端口把镜像跑起来</h5><blockquote>
-<p>docker run -itd -p 11111:22(映射的端口号)  镜像ID  /bin/bash</p>
-</blockquote>
-]]></content>
-      <categories>
-        <category>部署</category>
-      </categories>
-      <tags>
-        <tag>docker</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>VUE父子组件</title>
-    <url>/id_7/</url>
-    <content><![CDATA[<h4 id="VUE父子组件使用"><a href="#VUE父子组件使用" class="headerlink" title="VUE父子组件使用"></a>VUE父子组件使用</h4><p>在vue组件通信中其中最常见通信方式就是父子组件之中的通信，而父子组件的设定方式在不同情况下又各有不同。<br>最常见的就是父组件为控制组件，子组件为视图组件。<br>父组件传递数据给子组件使用，遇到业务逻辑操作时子组件触发父组件的自定义事件。<br>但是，无论哪种组织方式父子组件的通信方式都是大同小异</p>
-<a id="more"></a>
-
-<h4 id="父组件向子组件传参"><a href="#父组件向子组件传参" class="headerlink" title="父组件向子组件传参"></a>父组件向子组件传参</h4><p><strong>通过 [props]传递数据 (推荐)</strong></p>
-<p>父子通讯中最常见的数据传递方式就是通过props传递数据，就好像方法的传参一样，父组件调用子组件并传入数据，子组件接受到父组件传递的数据进行验证<br>使用props 可以是数组或对象，用于接收来自父组件的数据。<br>props 可以是简单的数组，或者使用对象作为替代，对象允许配置高级选项，如类型检测、自定义校验和设置默认值prop 的定义应该尽量详细，至少需要指定其类型</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;!-- 父组件  Father --&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;Son :parentMessage="parentMessage"&gt;&lt;/Son&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">import Son from "./Son";</span><br><span class="line"></span><br><span class="line">export default {</span><br><span class="line">  components: {</span><br><span class="line">    Son</span><br><span class="line">  },</span><br><span class="line">  data() {</span><br><span class="line">    return {</span><br><span class="line">      parentMessage: "我是来自父组件的消息，借用一下子组件的地方渲染一下"</span><br><span class="line">    }</span><br><span class="line">  }</span><br><span class="line">}</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;style&gt;&lt;/style&gt;</span><br></pre></td></tr></tbody></table></figure>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;!-- 子组件 Son  --&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;h1&gt;你好哇&lt;/h1&gt;</span><br><span class="line">    &lt;span&gt;{{ parentMessage }}&lt;/span&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">export default {</span><br><span class="line">  mounted() {</span><br><span class="line">    console.log(this.parentMessage)</span><br><span class="line">  },</span><br><span class="line">  //第一种方法  </span><br><span class="line">  // props: ['parentMessage']</span><br><span class="line">  //第二种方法</span><br><span class="line">    props: {</span><br><span class="line">      parentMessage: {</span><br><span class="line">        type: String,</span><br><span class="line">        default: '子组件默认显示的信息',</span><br><span class="line">        require: true</span><br><span class="line">      }</span><br><span class="line">    }  </span><br><span class="line"></span><br><span class="line">}</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;style&gt;&lt;/style&gt;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
-<p>效果：<br><img src="/id_7/01.png" alt="父子组件传参"></p>
-<h4 id="子组件向父组件传参"><a href="#子组件向父组件传参" class="headerlink" title="子组件向父组件传参"></a>子组件向父组件传参</h4><p><strong>通过 [$emit]传递数据 (推荐)</strong><br>通过 $emit 传递父组件数据与父组件到子组件通讯中的$on配套使用，可以向父组件中触发的方法传递参数供父组件使用。</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;!-- 父组件  Father --&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    </span><br><span class="line">    &lt;h1&gt;{{data}}&lt;/h1&gt;</span><br><span class="line"></span><br><span class="line">    &lt;Son @event="change"&gt;&lt;/Son&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">import Son from "./Son";</span><br><span class="line"></span><br><span class="line">export default {</span><br><span class="line">  components: {</span><br><span class="line">    Son</span><br><span class="line">  },</span><br><span class="line">  data() {</span><br><span class="line">    return {</span><br><span class="line">      data:"我是父组件"</span><br><span class="line">    }</span><br><span class="line">  },</span><br><span class="line">    methods: {</span><br><span class="line">      change(event) {</span><br><span class="line">        this.data = event</span><br><span class="line">          console.log(event)</span><br><span class="line">      }</span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;style&gt;&lt;/style&gt;</span><br></pre></td></tr></tbody></table></figure>
-
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;!-- 子组件 Son  --&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">    &lt;div&gt;</span><br><span class="line">      &lt;button @click="toFather"&gt;向父组件传值&lt;/button&gt;</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">export default {</span><br><span class="line">  data(){</span><br><span class="line">    return{</span><br><span class="line">      data:"我是子组件"</span><br><span class="line">    }</span><br><span class="line">  },</span><br><span class="line">  methods:{</span><br><span class="line">      toFather(){</span><br><span class="line">        this.$emit('event', this.data)</span><br><span class="line">      }</span><br><span class="line">  },</span><br><span class="line">}</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;style&gt;&lt;/style&gt;</span><br></pre></td></tr></tbody></table></figure>
-<p>效果：<br><img src="/id_7/02.png" alt="子父组件传参"></p>
-]]></content>
-      <categories>
-        <category>前端</category>
-      </categories>
-      <tags>
-        <tag>vue</tag>
-        <tag>组件</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>PostGreSQL</title>
     <url>/id_41/</url>
     <content><![CDATA[<p>最近“全栈数据库”的概念甚嚣尘上，主角就是PostgreSQL，它最近这几年的技术发展不可谓不猛，覆盖OLTP、OLAP、NoSQL、搜索、图像等应用场景，实实在在的全栈性发展。帮助公司解决了数据孤岛、数据平台多、同步一致性、延迟，软硬件成本增加等业务痛点，在互联网、金融、物联网、传统企业等领域得到了广泛的应用。PostgreSQL的应用场景丰富，不亚于商用数据库Oracle，常被业界称为“开源界的Oracle”。</p>
@@ -1891,6 +1800,72 @@ flags:标志位，用于控制正则表达式的匹配方式</code></pre>
       </tags>
   </entry>
   <entry>
+    <title>docker打包镜像</title>
+    <url>/id_5/</url>
+    <content><![CDATA[<p>在docker hub上有时我们找不到想要的image,或自己想要打包纯净的image ( 怕投毒?? ).</p>
+<p>所以自己制作docker image是一种不错的选择</p>
+<a id="more"></a>
+<h5 id="拉取镜像"><a href="#拉取镜像" class="headerlink" title="拉取镜像"></a>拉取镜像</h5><blockquote>
+<p>docker pull centos</p>
+</blockquote>
+<h5 id="查看镜像"><a href="#查看镜像" class="headerlink" title="查看镜像"></a>查看镜像</h5><blockquote>
+<p>docker images</p>
+</blockquote>
+<h5 id="创建容器"><a href="#创建容器" class="headerlink" title="创建容器"></a>创建容器</h5><blockquote>
+<p>docker run -it –name=容器名  镜像名  /bin/bash</p>
+</blockquote>
+<h5 id="启动容器"><a href="#启动容器" class="headerlink" title="启动容器"></a>启动容器</h5><blockquote>
+<p>docker start 容器ID</p>
+</blockquote>
+<h5 id="进入容器"><a href="#进入容器" class="headerlink" title="进入容器"></a>进入容器</h5><blockquote>
+<p>docker exec -itd 容器名(容器ID) /bin/bash<br>docker attach 容器ID</p>
+</blockquote>
+<h5 id="安装ssh"><a href="#安装ssh" class="headerlink" title="安装ssh"></a>安装ssh</h5><blockquote>
+<p>yum install openssh-server</p>
+</blockquote>
+<p>没有正常启动的话通常需要生成当前主机的ssh-key</p>
+<blockquote>
+<p>ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key<br>ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key<br>ssh-keygen -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key<br>ssh-keygen -t dsa -f /etc/ssh/ssh_host_ed25519_key</p>
+</blockquote>
+<h5 id="在容器中启动ssh服务，让外界可以连接"><a href="#在容器中启动ssh服务，让外界可以连接" class="headerlink" title="在容器中启动ssh服务，让外界可以连接"></a>在容器中启动ssh服务，让外界可以连接</h5><blockquote>
+<p>/usr/sbin/sshd</p>
+</blockquote>
+<h5 id="修改容器内部密码"><a href="#修改容器内部密码" class="headerlink" title="修改容器内部密码"></a>修改容器内部密码</h5><blockquote>
+<p>修改密码需要安装passwd<br>yum install passwd.x86_64<br>修改密码<br>passwd root</p>
+</blockquote>
+<h5 id="退出容器"><a href="#退出容器" class="headerlink" title="退出容器"></a>退出容器</h5><blockquote>
+<p>exit</p>
+</blockquote>
+<h5 id="修改云主机密码"><a href="#修改云主机密码" class="headerlink" title="修改云主机密码"></a>修改云主机密码</h5><blockquote>
+<p>修改云主机密码需要退出容器在执行passwd</p>
+</blockquote>
+<h5 id="查看所有容器"><a href="#查看所有容器" class="headerlink" title="查看所有容器"></a>查看所有容器</h5><blockquote>
+<p>docker ps -a</p>
+</blockquote>
+<h5 id="制作镜像"><a href="#制作镜像" class="headerlink" title="制作镜像"></a>制作镜像</h5><blockquote>
+<p>docker commit -a “作者” -m “简介”  被打包的容器ID  镜像名: 版本号</p>
+</blockquote>
+<h5 id="镜像导出"><a href="#镜像导出" class="headerlink" title="镜像导出"></a>镜像导出</h5><blockquote>
+<p>docker save 镜像名 &gt; ./文件名<br>例如： docker save ssh_image &gt; ./文件名</p>
+</blockquote>
+<h5 id="加载镜像-解压"><a href="#加载镜像-解压" class="headerlink" title="加载镜像(解压)"></a>加载镜像(解压)</h5><blockquote>
+<p>docker load &lt; ./文件名<br>例如： docker load &lt; ./文件名</p>
+</blockquote>
+<h5 id="查看镜像是否存在"><a href="#查看镜像是否存在" class="headerlink" title="查看镜像是否存在"></a>查看镜像是否存在</h5><blockquote>
+<p>docker images</p>
+</blockquote>
+<h5 id="创建容器并映射端口把镜像跑起来"><a href="#创建容器并映射端口把镜像跑起来" class="headerlink" title="创建容器并映射端口把镜像跑起来"></a>创建容器并映射端口把镜像跑起来</h5><blockquote>
+<p>docker run -itd -p 11111:22(映射的端口号)  镜像ID  /bin/bash</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>部署</category>
+      </categories>
+      <tags>
+        <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Httpx测试脚本</title>
     <url>/id_6/</url>
     <content><![CDATA[<p>在 Python 众多的 HTTP 客户端中，最有名的莫过于<strong>requests</strong>、<strong>aiohttp</strong>和<strong>httpx</strong>。<br>在不借助其他第三方库的情况下，<strong>requests</strong>只能发送同步请求；<strong>aiohttp</strong>只能发送异步请求；<br><strong>httpx</strong>既能发送同步请求，又能发送异步请求</p>
@@ -1913,6 +1888,31 @@ flags:标志位，用于控制正则表达式的匹配方式</code></pre>
       <tags>
         <tag>python</tag>
         <tag>httpx</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>VUE父子组件</title>
+    <url>/id_7/</url>
+    <content><![CDATA[<h4 id="VUE父子组件使用"><a href="#VUE父子组件使用" class="headerlink" title="VUE父子组件使用"></a>VUE父子组件使用</h4><p>在vue组件通信中其中最常见通信方式就是父子组件之中的通信，而父子组件的设定方式在不同情况下又各有不同。<br>最常见的就是父组件为控制组件，子组件为视图组件。<br>父组件传递数据给子组件使用，遇到业务逻辑操作时子组件触发父组件的自定义事件。<br>但是，无论哪种组织方式父子组件的通信方式都是大同小异</p>
+<a id="more"></a>
+
+<h4 id="父组件向子组件传参"><a href="#父组件向子组件传参" class="headerlink" title="父组件向子组件传参"></a>父组件向子组件传参</h4><p><strong>通过 [props]传递数据 (推荐)</strong></p>
+<p>父子通讯中最常见的数据传递方式就是通过props传递数据，就好像方法的传参一样，父组件调用子组件并传入数据，子组件接受到父组件传递的数据进行验证<br>使用props 可以是数组或对象，用于接收来自父组件的数据。<br>props 可以是简单的数组，或者使用对象作为替代，对象允许配置高级选项，如类型检测、自定义校验和设置默认值prop 的定义应该尽量详细，至少需要指定其类型</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;!-- 父组件  Father --&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;Son :parentMessage="parentMessage"&gt;&lt;/Son&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">import Son from "./Son";</span><br><span class="line"></span><br><span class="line">export default {</span><br><span class="line">  components: {</span><br><span class="line">    Son</span><br><span class="line">  },</span><br><span class="line">  data() {</span><br><span class="line">    return {</span><br><span class="line">      parentMessage: "我是来自父组件的消息，借用一下子组件的地方渲染一下"</span><br><span class="line">    }</span><br><span class="line">  }</span><br><span class="line">}</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;style&gt;&lt;/style&gt;</span><br></pre></td></tr></tbody></table></figure>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;!-- 子组件 Son  --&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;h1&gt;你好哇&lt;/h1&gt;</span><br><span class="line">    &lt;span&gt;{{ parentMessage }}&lt;/span&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">export default {</span><br><span class="line">  mounted() {</span><br><span class="line">    console.log(this.parentMessage)</span><br><span class="line">  },</span><br><span class="line">  //第一种方法  </span><br><span class="line">  // props: ['parentMessage']</span><br><span class="line">  //第二种方法</span><br><span class="line">    props: {</span><br><span class="line">      parentMessage: {</span><br><span class="line">        type: String,</span><br><span class="line">        default: '子组件默认显示的信息',</span><br><span class="line">        require: true</span><br><span class="line">      }</span><br><span class="line">    }  </span><br><span class="line"></span><br><span class="line">}</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;style&gt;&lt;/style&gt;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+<p>效果：<br><img src="/id_7/01.png" alt="父子组件传参"></p>
+<h4 id="子组件向父组件传参"><a href="#子组件向父组件传参" class="headerlink" title="子组件向父组件传参"></a>子组件向父组件传参</h4><p><strong>通过 [$emit]传递数据 (推荐)</strong><br>通过 $emit 传递父组件数据与父组件到子组件通讯中的$on配套使用，可以向父组件中触发的方法传递参数供父组件使用。</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;!-- 父组件  Father --&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    </span><br><span class="line">    &lt;h1&gt;{{data}}&lt;/h1&gt;</span><br><span class="line"></span><br><span class="line">    &lt;Son @event="change"&gt;&lt;/Son&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">import Son from "./Son";</span><br><span class="line"></span><br><span class="line">export default {</span><br><span class="line">  components: {</span><br><span class="line">    Son</span><br><span class="line">  },</span><br><span class="line">  data() {</span><br><span class="line">    return {</span><br><span class="line">      data:"我是父组件"</span><br><span class="line">    }</span><br><span class="line">  },</span><br><span class="line">    methods: {</span><br><span class="line">      change(event) {</span><br><span class="line">        this.data = event</span><br><span class="line">          console.log(event)</span><br><span class="line">      }</span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;style&gt;&lt;/style&gt;</span><br></pre></td></tr></tbody></table></figure>
+
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;!-- 子组件 Son  --&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">    &lt;div&gt;</span><br><span class="line">      &lt;button @click="toFather"&gt;向父组件传值&lt;/button&gt;</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">export default {</span><br><span class="line">  data(){</span><br><span class="line">    return{</span><br><span class="line">      data:"我是子组件"</span><br><span class="line">    }</span><br><span class="line">  },</span><br><span class="line">  methods:{</span><br><span class="line">      toFather(){</span><br><span class="line">        this.$emit('event', this.data)</span><br><span class="line">      }</span><br><span class="line">  },</span><br><span class="line">}</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;style&gt;&lt;/style&gt;</span><br></pre></td></tr></tbody></table></figure>
+<p>效果：<br><img src="/id_7/02.png" alt="子父组件传参"></p>
+]]></content>
+      <categories>
+        <category>前端</category>
+      </categories>
+      <tags>
+        <tag>vue</tag>
+        <tag>组件</tag>
       </tags>
   </entry>
   <entry>
