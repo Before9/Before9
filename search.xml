@@ -881,7 +881,7 @@
 <p>git clone 链接地址</p>
 </blockquote>
 <h5 id="首先-作为-git-的基础配置，作用是告诉-git-你是谁，你输入的信息将出现在你创建的提交中。然后初始化项目"><a href="#首先-作为-git-的基础配置，作用是告诉-git-你是谁，你输入的信息将出现在你创建的提交中。然后初始化项目" class="headerlink" title="首先,作为 git 的基础配置，作用是告诉 git 你是谁，你输入的信息将出现在你创建的提交中。然后初始化项目"></a>首先,作为 git 的基础配置，作用是告诉 git 你是谁，你输入的信息将出现在你创建的提交中。然后初始化项目</h5><blockquote>
-<p> git config –global user.name “你的名字或昵称”<br> git config –global user.email “你的邮箱”<br>git init</p>
+<p> git config - -global user.name “你的名字或昵称”<br> git config - -global user.email “你的邮箱”<br>git init</p>
 </blockquote>
 <h5 id="将所有内容添加到暂存区-代表所有"><a href="#将所有内容添加到暂存区-代表所有" class="headerlink" title="将所有内容添加到暂存区     .代表所有"></a>将所有内容添加到暂存区     .代表所有</h5><blockquote>
 <p>git add .</p>
