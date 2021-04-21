@@ -391,6 +391,55 @@
       </tags>
   </entry>
   <entry>
+    <title>Redis封禁账号30分钟</title>
+    <url>/id_20/</url>
+    <content><![CDATA[<p><strong>问题</strong>： 账号锁定问题  五分钟以内输错五次密码，锁定账号30分钟</p>
+<ul>
+<li>相关问题：</li>
+</ul>
+<p><strong>问</strong>：用户登录都有哪些校验方式？<br><strong>答</strong>：</p>
+<ul>
+<li>用户名和密码 what you know (容易被破解，ant-desgin被黑删库)</li>
+<li>用户名和密钥(token)  what you have (gitee可以通过密钥来提交代码)</li>
+<li>用户名和实体  who you are  (人脸识别但成本过高)<a id="more"></a></li>
+</ul>
+<p><strong>问</strong>：为什么要使用redis解决这个问题而不用mysql呢<br><strong>答</strong>：因为使用redis更简单，redis会自动计算时间，mysql需要自己手动将时间入库，比较复杂<br><strong>问题解答</strong>：</p>
+<ul>
+<li><p>第一步 先判断 用户名+balck 这个key 是否存在</p>
+<ul>
+<li>存在 意味着已经被锁定 所以直接返回</li>
+<li> 不存在 继续执行</li>
+</ul>
+</li>
+<li><p>第二步 向数据库进行请求  登录</p>
+<ul>
+<li>登录成功 直接返回    </li>
+<li>登录不成功 进行redis操作</li>
+</ul>
+</li>
+<li><p>第三步 判断是否是第一次输入错误</p>
+<ul>
+<li>是 使用incrby进行redis自动累加存储，并expire设置过期时间5分钟，返回输入错误</li>
+<li>否 使用get取出用户名这个key的值，判断是否等于5 次<ul>
+<li>是 使用set将 用户名+’black’ 这个key存入redis 并expire设置过期时间30分钟，返回账户已锁定</li>
+<li>否 使用set用户名更新这个key，并返回输入错误 </li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>OK，上代码</p>
+<h3 id="首先-对redis命令进行封装"><a href="#首先-对redis命令进行封装" class="headerlink" title="首先 对redis命令进行封装"></a>首先 对redis命令进行封装</h3><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 封装redis</span></span><br><span class="line"><span class="keyword">import</span> redis</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyRedis</span>:</span></span><br><span class="line">    <span class="comment"># 用来定义属性和变量</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, key, **redis_kwargs</span>):</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># self.__变量名：使用双下划线开头的变量是私有变量，在类外不可以被调用</span></span><br><span class="line">        <span class="comment"># **kwarys不定长参数  用于可传可不传的参数</span></span><br><span class="line">        <span class="comment"># kwargs是用来传键值对，args 用来传列表和元祖</span></span><br><span class="line"></span><br><span class="line">        self.__db = redis.Redis(**redis_kwargs)</span><br><span class="line"></span><br><span class="line">        self.key = key</span><br><span class="line">    <span class="comment"># 向redis存储数据</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">set</span>(<span class="params">self, value</span>):</span></span><br><span class="line">        self.__db.<span class="built_in">set</span>(self.key, value)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 从redis取出数据</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">return</span> self.__db.get(self.key)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># redis 自动累加</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">incrby</span>(<span class="params">self, value</span>):</span></span><br><span class="line">        self.__db.incrby(self.key, value)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># redis设置键过期时间</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">expire</span>(<span class="params">self, value</span>):</span></span><br><span class="line">        self.__db.expire(self.key, value)</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+<h3 id="然后写登录视图"><a href="#然后写登录视图" class="headerlink" title="然后写登录视图"></a>然后写登录视图</h3><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Login</span>(<span class="params">APIView</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">post</span>(<span class="params">self, request</span>):</span></span><br><span class="line">        username = request.data.get(<span class="string">"username"</span>)</span><br><span class="line">        password = request.data.get(<span class="string">"password"</span>)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 第一步 先判断 用户名+balck 这个key 是否存在</span></span><br><span class="line">        <span class="comment"># 存在 意味着已经被锁定 所以直接返回</span></span><br><span class="line">        r = redis.Redis()</span><br><span class="line">        <span class="keyword">if</span> r.get(username + <span class="string">'black'</span>):</span><br><span class="line">            print(r.get(username + <span class="string">'black'</span>))</span><br><span class="line">            <span class="keyword">return</span> Response({<span class="string">"msg"</span>: <span class="string">"账户已锁定，请等待30分钟后重试"</span>})</span><br><span class="line">        <span class="comment"># 不存在 登录</span></span><br><span class="line">        user = UserModel.objects.<span class="built_in">filter</span>(username=username, password=password).first()</span><br><span class="line">        <span class="keyword">if</span> user:</span><br><span class="line">            <span class="keyword">return</span> Response({<span class="string">"msg"</span>: <span class="string">"登录成功"</span>, <span class="string">"code"</span>: <span class="number">200</span>})</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="comment"># 判断是否输入错误过</span></span><br><span class="line">            <span class="comment"># 没有</span></span><br><span class="line">            <span class="keyword">if</span> r.get(username) == <span class="literal">None</span>:</span><br><span class="line">                r.incrby(username, <span class="number">1</span>)</span><br><span class="line">                print(<span class="string">"第一次输入错误"</span>)</span><br><span class="line">                r.expire(username, <span class="number">300</span>)</span><br><span class="line">                <span class="keyword">return</span> Response({<span class="string">"msg"</span>: <span class="string">"第一次输入错误"</span>, <span class="string">"code"</span>: <span class="number">400</span>})</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                value = <span class="built_in">int</span>(r.get(username))</span><br><span class="line">                <span class="comment"># 输入错误五次，加入黑名单</span></span><br><span class="line">                <span class="keyword">if</span> value == <span class="number">5</span>:</span><br><span class="line">                    r.<span class="built_in">set</span>(username + <span class="string">'black'</span>, <span class="number">30</span>)</span><br><span class="line">                    r.expire(username + <span class="string">'black'</span>, <span class="number">1800</span>)</span><br><span class="line">                    <span class="keyword">return</span> Response({<span class="string">"msg"</span>: <span class="string">"输入次数以上限，请30分钟后重试"</span>, <span class="string">'code'</span>: <span class="number">200</span>})</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    r.<span class="built_in">set</span>(username, value + <span class="number">1</span>)</span><br><span class="line">                    print(r.get(username))</span><br><span class="line">                    <span class="keyword">return</span> Response({<span class="string">"msg"</span>: <span class="string">"用户名或密码错误，请重新输入"</span>, <span class="string">'code'</span>: <span class="number">400</span>})</span><br></pre></td></tr></tbody></table></figure>
+<h3 id="OK-问题解决了。"><a href="#OK-问题解决了。" class="headerlink" title="OK,问题解决了。"></a>OK,问题解决了。</h3>]]></content>
+      <categories>
+        <category>数据库</category>
+      </categories>
+      <tags>
+        <tag>redis</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>四大推导式(列表/字典/集合/生成器)</title>
     <url>/id_2/</url>
     <content><![CDATA[<p>推导式（又称解析式），是 python 的一种独有特性。推导式是可以从一个数据序列构建另一个新的数据序列。</p>
@@ -453,55 +502,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Redis封禁账号30分钟</title>
-    <url>/id_20/</url>
-    <content><![CDATA[<p><strong>问题</strong>： 账号锁定问题  五分钟以内输错五次密码，锁定账号30分钟</p>
-<ul>
-<li>相关问题：</li>
-</ul>
-<p><strong>问</strong>：用户登录都有哪些校验方式？<br><strong>答</strong>：</p>
-<ul>
-<li>用户名和密码 what you know (容易被破解，ant-desgin被黑删库)</li>
-<li>用户名和密钥(token)  what you have (gitee可以通过密钥来提交代码)</li>
-<li>用户名和实体  who you are  (人脸识别但成本过高)<a id="more"></a></li>
-</ul>
-<p><strong>问</strong>：为什么要使用redis解决这个问题而不用mysql呢<br><strong>答</strong>：因为使用redis更简单，redis会自动计算时间，mysql需要自己手动将时间入库，比较复杂<br><strong>问题解答</strong>：</p>
-<ul>
-<li><p>第一步 先判断 用户名+balck 这个key 是否存在</p>
-<ul>
-<li>存在 意味着已经被锁定 所以直接返回</li>
-<li> 不存在 继续执行</li>
-</ul>
-</li>
-<li><p>第二步 向数据库进行请求  登录</p>
-<ul>
-<li>登录成功 直接返回    </li>
-<li>登录不成功 进行redis操作</li>
-</ul>
-</li>
-<li><p>第三步 判断是否是第一次输入错误</p>
-<ul>
-<li>是 使用incrby进行redis自动累加存储，并expire设置过期时间5分钟，返回输入错误</li>
-<li>否 使用get取出用户名这个key的值，判断是否等于5 次<ul>
-<li>是 使用set将 用户名+’black’ 这个key存入redis 并expire设置过期时间30分钟，返回账户已锁定</li>
-<li>否 使用set用户名更新这个key，并返回输入错误 </li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<p>OK，上代码</p>
-<h3 id="首先-对redis命令进行封装"><a href="#首先-对redis命令进行封装" class="headerlink" title="首先 对redis命令进行封装"></a>首先 对redis命令进行封装</h3><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 封装redis</span></span><br><span class="line"><span class="keyword">import</span> redis</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyRedis</span>:</span></span><br><span class="line">    <span class="comment"># 用来定义属性和变量</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, key, **redis_kwargs</span>):</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># self.__变量名：使用双下划线开头的变量是私有变量，在类外不可以被调用</span></span><br><span class="line">        <span class="comment"># **kwarys不定长参数  用于可传可不传的参数</span></span><br><span class="line">        <span class="comment"># kwargs是用来传键值对，args 用来传列表和元祖</span></span><br><span class="line"></span><br><span class="line">        self.__db = redis.Redis(**redis_kwargs)</span><br><span class="line"></span><br><span class="line">        self.key = key</span><br><span class="line">    <span class="comment"># 向redis存储数据</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">set</span>(<span class="params">self, value</span>):</span></span><br><span class="line">        self.__db.<span class="built_in">set</span>(self.key, value)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 从redis取出数据</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">return</span> self.__db.get(self.key)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># redis 自动累加</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">incrby</span>(<span class="params">self, value</span>):</span></span><br><span class="line">        self.__db.incrby(self.key, value)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># redis设置键过期时间</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">expire</span>(<span class="params">self, value</span>):</span></span><br><span class="line">        self.__db.expire(self.key, value)</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
-<h3 id="然后写登录视图"><a href="#然后写登录视图" class="headerlink" title="然后写登录视图"></a>然后写登录视图</h3><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Login</span>(<span class="params">APIView</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">post</span>(<span class="params">self, request</span>):</span></span><br><span class="line">        username = request.data.get(<span class="string">"username"</span>)</span><br><span class="line">        password = request.data.get(<span class="string">"password"</span>)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 第一步 先判断 用户名+balck 这个key 是否存在</span></span><br><span class="line">        <span class="comment"># 存在 意味着已经被锁定 所以直接返回</span></span><br><span class="line">        r = redis.Redis()</span><br><span class="line">        <span class="keyword">if</span> r.get(username + <span class="string">'black'</span>):</span><br><span class="line">            print(r.get(username + <span class="string">'black'</span>))</span><br><span class="line">            <span class="keyword">return</span> Response({<span class="string">"msg"</span>: <span class="string">"账户已锁定，请等待30分钟后重试"</span>})</span><br><span class="line">        <span class="comment"># 不存在 登录</span></span><br><span class="line">        user = UserModel.objects.<span class="built_in">filter</span>(username=username, password=password).first()</span><br><span class="line">        <span class="keyword">if</span> user:</span><br><span class="line">            <span class="keyword">return</span> Response({<span class="string">"msg"</span>: <span class="string">"登录成功"</span>, <span class="string">"code"</span>: <span class="number">200</span>})</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="comment"># 判断是否输入错误过</span></span><br><span class="line">            <span class="comment"># 没有</span></span><br><span class="line">            <span class="keyword">if</span> r.get(username) == <span class="literal">None</span>:</span><br><span class="line">                r.incrby(username, <span class="number">1</span>)</span><br><span class="line">                print(<span class="string">"第一次输入错误"</span>)</span><br><span class="line">                r.expire(username, <span class="number">300</span>)</span><br><span class="line">                <span class="keyword">return</span> Response({<span class="string">"msg"</span>: <span class="string">"第一次输入错误"</span>, <span class="string">"code"</span>: <span class="number">400</span>})</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                value = <span class="built_in">int</span>(r.get(username))</span><br><span class="line">                <span class="comment"># 输入错误五次，加入黑名单</span></span><br><span class="line">                <span class="keyword">if</span> value == <span class="number">5</span>:</span><br><span class="line">                    r.<span class="built_in">set</span>(username + <span class="string">'black'</span>, <span class="number">30</span>)</span><br><span class="line">                    r.expire(username + <span class="string">'black'</span>, <span class="number">1800</span>)</span><br><span class="line">                    <span class="keyword">return</span> Response({<span class="string">"msg"</span>: <span class="string">"输入次数以上限，请30分钟后重试"</span>, <span class="string">'code'</span>: <span class="number">200</span>})</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    r.<span class="built_in">set</span>(username, value + <span class="number">1</span>)</span><br><span class="line">                    print(r.get(username))</span><br><span class="line">                    <span class="keyword">return</span> Response({<span class="string">"msg"</span>: <span class="string">"用户名或密码错误，请重新输入"</span>, <span class="string">'code'</span>: <span class="number">400</span>})</span><br></pre></td></tr></tbody></table></figure>
-<h3 id="OK-问题解决了。"><a href="#OK-问题解决了。" class="headerlink" title="OK,问题解决了。"></a>OK,问题解决了。</h3>]]></content>
-      <categories>
-        <category>数据库</category>
-      </categories>
-      <tags>
-        <tag>redis</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>异步消费</title>
     <url>/id_22/</url>
     <content><![CDATA[<p>异步消费可以使用很多方式来实现，我们今天就来说说异步消费的其中三种实现方式:</p>
@@ -531,28 +531,6 @@
       </categories>
       <tags>
         <tag>异步</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>位运算</title>
-    <url>/id_23/</url>
-    <content><![CDATA[<p>位运算是一切算法的基础<br>位运算是对二进制进行操作<br>使用位运算来判断奇偶数的时候效率要快一些，性能会高一些，因为二进制是计算机识别的语言，计算机不需要去强转然后判断，直接判断即可<br>例如；判断4是不是奇数或偶数</p>
-<a id="more"></a>
-<p>可以二进制直接和1进行比较<br>0b100 &amp; 1<br>0<br>也可以使用十进制直接和1比较<br>4 &amp; 1<br>0</p>
-<blockquote>
-<p> 返回为0 证明是偶数</p>
-</blockquote>
-<p>0b11 &amp; 1<br>1<br>3 &amp; 1<br>1</p>
-<blockquote>
-<p>返回为1 证明是奇数 </p>
-</blockquote>
-<h4 id="运算符"><a href="#运算符" class="headerlink" title="运算符"></a>运算符</h4><p>符号    描述    运算规则<br>&amp;    与    两个位都为1时，结果才为1<br>|    或    两个位都为0时，结果才为0<br>^    异或    两个位相同为0，相异为1<br>~    取反    0变1，1变0</p>
-]]></content>
-      <categories>
-        <category>后端</category>
-      </categories>
-      <tags>
-        <tag>进制</tag>
       </tags>
   </entry>
   <entry>
@@ -660,6 +638,28 @@
       <tags>
         <tag>进制</tag>
         <tag>栈</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>位运算</title>
+    <url>/id_23/</url>
+    <content><![CDATA[<p>位运算是一切算法的基础<br>位运算是对二进制进行操作<br>使用位运算来判断奇偶数的时候效率要快一些，性能会高一些，因为二进制是计算机识别的语言，计算机不需要去强转然后判断，直接判断即可<br>例如；判断4是不是奇数或偶数</p>
+<a id="more"></a>
+<p>可以二进制直接和1进行比较<br>0b100 &amp; 1<br>0<br>也可以使用十进制直接和1比较<br>4 &amp; 1<br>0</p>
+<blockquote>
+<p> 返回为0 证明是偶数</p>
+</blockquote>
+<p>0b11 &amp; 1<br>1<br>3 &amp; 1<br>1</p>
+<blockquote>
+<p>返回为1 证明是奇数 </p>
+</blockquote>
+<h4 id="运算符"><a href="#运算符" class="headerlink" title="运算符"></a>运算符</h4><p>符号    描述    运算规则<br>&amp;    与    两个位都为1时，结果才为1<br>|    或    两个位都为0时，结果才为0<br>^    异或    两个位相同为0，相异为1<br>~    取反    0变1，1变0</p>
+]]></content>
+      <categories>
+        <category>后端</category>
+      </categories>
+      <tags>
+        <tag>进制</tag>
       </tags>
   </entry>
   <entry>
@@ -805,6 +805,36 @@
       </tags>
   </entry>
   <entry>
+    <title>分代回收</title>
+    <url>/id_29/</url>
+    <content><![CDATA[<h3 id="分代回收"><a href="#分代回收" class="headerlink" title="分代回收"></a>分代回收</h3><p>标记-清除会在大规模遍历内存中会使程序暂停 ，程序暂停会导致我们程序出现很多我们意想不到的错误和问题出现，所以pyt hon引入了我们的分代回收来解决这个问题，分代回收也应该是我们在面试过程中主动向面试官阐述出来的。</p>
+<a id="more"></a>
+<h4 id="分代回收原理："><a href="#分代回收原理：" class="headerlink" title="分代回收原理："></a>分代回收原理：</h4><p>分代回收主要是将我们的内存根据对象的时候或被标记的次数进行分代他是一种典型是<strong>时间换空间</strong>的行为，那么他主要分为三代，<strong>青年代</strong>、<strong>中年代</strong>、<strong>老年代</strong>。那么我们可以认为一个对象在内存中存在的时间越长，越不容易被回收，越不是一个垃圾，这里我们认为<strong>老年代</strong>是存活在三代中最长的，那也是最不容易被回收掉的。</p>
+<h4 id="举例说明"><a href="#举例说明" class="headerlink" title="举例说明"></a>举例说明</h4><p>那么我们可以来看一下，假设下图是一块内存： </p>
+<p><img src="/id_29/01.png" alt="内存"></p>
+<p>那我们现在有一个变量a=1首先进入青年代，然后陆陆续续的我们会有变量存入青年代之后，青年代觉得他自己快要满了，那么此时会触发我们的标记清除动作。</p>
+<p><img src="/id_29/02.png" alt="青年代"></p>
+<p>那么触发我们的回收机制，标记-清除之后会在青年代中找到所有引用计数为0的元素，并将其释放。把剩余可以继续往下的元素沉淀到中年代，那么这就是分代回收的技术。</p>
+<p><img src="/id_29/03.png" alt="沉淀中年代"></p>
+<p>他是结合了我们引用计数和标记清除在内的，那每一次对比于之前，现在我们标记清除不需要遍历整段内存，只需要将其对应代遍历即可，那么这样就间接节约了我们遍历所花费的暂停时间，让我们的程序尽可能不要的过多整段内存去遍历，去过滤。</p>
+<p>那么当然呢，更加细节的来说：</p>
+<ul>
+<li>其实是在我们的第0代，也就是青年代满的时候呢将会触发清理我们所有的三代，</li>
+<li>而在中年代满时，将会触发清理我们的中年代和老年代，</li>
+<li>而在我们老年代满的时候呢，只会触发清理我们的老年代，</li>
+<li>也就是说呢，每一层在满了之后，他就会触发<strong>当前及当前之后的每代</strong>的回收动作，</li>
+</ul>
+<p><strong>目的</strong>：那么分代回收他的主要目的是为了解决我们标记-清除所带来的一些额外操作，我们上一节也说过，标记-清除如果需要遍历的内存节点较多的时候，那么每一次回收他都要花费大量的时间，那么利用我们的分代回收就可以减少这些情况</p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>我们python管理内存是以引用计数为主，标记清除和分代回收为辅的方法来管理内存的</p>
+]]></content>
+      <categories>
+        <category>后端</category>
+      </categories>
+      <tags>
+        <tag>python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>垃圾回收机制之标记-清除</title>
     <url>/id_28/</url>
     <content><![CDATA[<h3 id="垃圾回收机制"><a href="#垃圾回收机制" class="headerlink" title="垃圾回收机制"></a>垃圾回收机制</h3><p>垃圾自动回收机制的出现使编程更加的简单，使得我们不需要再去考虑内存分配和释放的问题，而是更加的专注在我们产品功能的实现上</p>
@@ -830,30 +860,33 @@
       </tags>
   </entry>
   <entry>
-    <title>分代回收</title>
-    <url>/id_29/</url>
-    <content><![CDATA[<h3 id="分代回收"><a href="#分代回收" class="headerlink" title="分代回收"></a>分代回收</h3><p>标记-清除会在大规模遍历内存中会使程序暂停 ，程序暂停会导致我们程序出现很多我们意想不到的错误和问题出现，所以pyt hon引入了我们的分代回收来解决这个问题，分代回收也应该是我们在面试过程中主动向面试官阐述出来的。</p>
+    <title>周期总结</title>
+    <url>/id_30/</url>
+    <content><![CDATA[<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>转眼一个周期过去了，学了很多零碎的知识点。有遇到困难，有得到解惑。</p>
 <a id="more"></a>
-<h4 id="分代回收原理："><a href="#分代回收原理：" class="headerlink" title="分代回收原理："></a>分代回收原理：</h4><p>分代回收主要是将我们的内存根据对象的时候或被标记的次数进行分代他是一种典型是<strong>时间换空间</strong>的行为，那么他主要分为三代，<strong>青年代</strong>、<strong>中年代</strong>、<strong>老年代</strong>。那么我们可以认为一个对象在内存中存在的时间越长，越不容易被回收，越不是一个垃圾，这里我们认为<strong>老年代</strong>是存活在三代中最长的，那也是最不容易被回收掉的。</p>
-<h4 id="举例说明"><a href="#举例说明" class="headerlink" title="举例说明"></a>举例说明</h4><p>那么我们可以来看一下，假设下图是一块内存： </p>
-<p><img src="/id_29/01.png" alt="内存"></p>
-<p>那我们现在有一个变量a=1首先进入青年代，然后陆陆续续的我们会有变量存入青年代之后，青年代觉得他自己快要满了，那么此时会触发我们的标记清除动作。</p>
-<p><img src="/id_29/02.png" alt="青年代"></p>
-<p>那么触发我们的回收机制，标记-清除之后会在青年代中找到所有引用计数为0的元素，并将其释放。把剩余可以继续往下的元素沉淀到中年代，那么这就是分代回收的技术。</p>
-<p><img src="/id_29/03.png" alt="沉淀中年代"></p>
-<p>他是结合了我们引用计数和标记清除在内的，那每一次对比于之前，现在我们标记清除不需要遍历整段内存，只需要将其对应代遍历即可，那么这样就间接节约了我们遍历所花费的暂停时间，让我们的程序尽可能不要的过多整段内存去遍历，去过滤。</p>
-<p>那么当然呢，更加细节的来说：</p>
-<ul>
-<li>其实是在我们的第0代，也就是青年代满的时候呢将会触发清理我们所有的三代，</li>
-<li>而在中年代满时，将会触发清理我们的中年代和老年代，</li>
-<li>而在我们老年代满的时候呢，只会触发清理我们的老年代，</li>
-<li>也就是说呢，每一层在满了之后，他就会触发<strong>当前及当前之后的每代</strong>的回收动作，</li>
-</ul>
-<p><strong>目的</strong>：那么分代回收他的主要目的是为了解决我们标记-清除所带来的一些额外操作，我们上一节也说过，标记-清除如果需要遍历的内存节点较多的时候，那么每一次回收他都要花费大量的时间，那么利用我们的分代回收就可以减少这些情况</p>
-<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>我们python管理内存是以引用计数为主，标记清除和分代回收为辅的方法来管理内存的</p>
+
+<p>day01: 在vue中使用ant_design<br>ant_design+vue官方文档：<a href="https://antdv.com/docs/vue/introduce-cn/">https://antdv.com/docs/vue/introduce-cn/</a></p>
+<p>day02: IT新闻资讯<br>网址: <a href="https://www.cnbeta.com/">https://www.cnbeta.com/</a></p>
+<p>day03: redis实现输入密码错误五次封禁账号<br>移步: <a href="https://www.hr915.xyz/id_20/">https://www.hr915.xyz/id_20/</a></p>
+<p>day04: httpx编写测试脚本<br>移步: <a href="https://www.hr915.xyz/id_6/">https://www.hr915.xyz/id_6/</a></p>
+<p>day05: 异步任务队列<br>移步: <a href="https://www.hr915.xyz/id_19/">https://www.hr915.xyz/id_19/</a></p>
+<p>day06: 加权队列<br>移步: <a href="https://www.hr915.xyz/id_21/">https://www.hr915.xyz/id_21/</a></p>
+<p>day07: 异步消费<br>移步: <a href="https://www.hr915.xyz/id_22/">https://www.hr915.xyz/id_22/</a></p>
+<p>day08: 权限模型</p>
+<p>day09: 三方登录<br>移步: <a href="https://www.hr915.xyz/id_13/">https://www.hr915.xyz/id_13/</a></p>
+<p>day10: 位运算<br>移步: <a href="https://www.hr915.xyz/id_23/">https://www.hr915.xyz/id_23/</a></p>
+<p>day11: 工单分类</p>
+<p>day12: Mongodb<br>移步: <a href="https://www.hr915.xyz/id_24/">https://www.hr915.xyz/id_24/</a></p>
+<p>day13: 审批流程</p>
+<p>day14: 栈的使用<br>移步: <a href="https://www.hr915.xyz/id_25/">https://www.hr915.xyz/id_25/</a></p>
+<p>day15: 设计模式<br>移步: <a href="https://www.hr915.xyz/id_26/">https://www.hr915.xyz/id_26/</a></p>
+<p>day16: 消息盒子</p>
+<p>day17: websocket<br>移步: <a href="https://www.hr915.xyz/id_10/">https://www.hr915.xyz/id_10/</a></p>
+<p>day18: 客服系统</p>
+<p>day19: 部署</p>
 ]]></content>
       <categories>
-        <category>后端</category>
+        <category>总结</category>
       </categories>
       <tags>
         <tag>python</tag>
@@ -922,39 +955,6 @@
       </categories>
       <tags>
         <tag>git</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>周期总结</title>
-    <url>/id_30/</url>
-    <content><![CDATA[<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>转眼一个周期过去了，学了很多零碎的知识点。有遇到困难，有得到解惑。</p>
-<a id="more"></a>
-
-<p>day01: 在vue中使用ant_design<br>ant_design+vue官方文档：<a href="https://antdv.com/docs/vue/introduce-cn/">https://antdv.com/docs/vue/introduce-cn/</a></p>
-<p>day02: IT新闻资讯<br>网址: <a href="https://www.cnbeta.com/">https://www.cnbeta.com/</a></p>
-<p>day03: redis实现输入密码错误五次封禁账号<br>移步: <a href="https://www.hr915.xyz/id_20/">https://www.hr915.xyz/id_20/</a></p>
-<p>day04: httpx编写测试脚本<br>移步: <a href="https://www.hr915.xyz/id_6/">https://www.hr915.xyz/id_6/</a></p>
-<p>day05: 异步任务队列<br>移步: <a href="https://www.hr915.xyz/id_19/">https://www.hr915.xyz/id_19/</a></p>
-<p>day06: 加权队列<br>移步: <a href="https://www.hr915.xyz/id_21/">https://www.hr915.xyz/id_21/</a></p>
-<p>day07: 异步消费<br>移步: <a href="https://www.hr915.xyz/id_22/">https://www.hr915.xyz/id_22/</a></p>
-<p>day08: 权限模型</p>
-<p>day09: 三方登录<br>移步: <a href="https://www.hr915.xyz/id_13/">https://www.hr915.xyz/id_13/</a></p>
-<p>day10: 位运算<br>移步: <a href="https://www.hr915.xyz/id_23/">https://www.hr915.xyz/id_23/</a></p>
-<p>day11: 工单分类</p>
-<p>day12: Mongodb<br>移步: <a href="https://www.hr915.xyz/id_24/">https://www.hr915.xyz/id_24/</a></p>
-<p>day13: 审批流程</p>
-<p>day14: 栈的使用<br>移步: <a href="https://www.hr915.xyz/id_25/">https://www.hr915.xyz/id_25/</a></p>
-<p>day15: 设计模式<br>移步: <a href="https://www.hr915.xyz/id_26/">https://www.hr915.xyz/id_26/</a></p>
-<p>day16: 消息盒子</p>
-<p>day17: websocket<br>移步: <a href="https://www.hr915.xyz/id_10/">https://www.hr915.xyz/id_10/</a></p>
-<p>day18: 客服系统</p>
-<p>day19: 部署</p>
-]]></content>
-      <categories>
-        <category>总结</category>
-      </categories>
-      <tags>
-        <tag>python</tag>
       </tags>
   </entry>
   <entry>
@@ -1148,39 +1148,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Sort和Sorted区别</title>
-    <url>/id_38/</url>
-    <content><![CDATA[<h4 id="引入"><a href="#引入" class="headerlink" title="引入"></a>引入</h4><p>我们需要对List进行排序，Python提供了两个方法<br>对给定的List L进行排序，<br>方法1.用List的成员函数sort进行排序<br>方法2.用内建函数sorted进行排序（从python 2.4开始）</p>
-<a id="more"></a>
-<h4 id="语法："><a href="#语法：" class="headerlink" title="语法："></a>语法：</h4><p>sort函数定义：sort(cmp=None, key=None, reverse=False)<br>sorted函数定义：sorted(iterable, cmp=None, key=None, reverse=False)</p>
-<p>参数解析：<br>iterable：是可迭代类型;<br>cmp：用于比较的函数（大于时返回1，小于时返回-1，等于时返回0），比较什么由key决定,有默认值，迭代集合中的一项;<br>key：用列表元素的某个属性和函数进行作为关键字，有默认值，迭代集合中的一项;<br>reverse：排序规则. reverse = True 或者 reverse = False，有默认值。</p>
-<h4 id="区别"><a href="#区别" class="headerlink" title="区别:"></a>区别:</h4><ol>
-<li>sort( )函数时对已存在的列表进行操作，调用其没有返回值；<br>而sorted( )函数是返回一个新的list,不在原来的list上进行操作，调用其返回一个排好序的list。</li>
-<li>sorted()不会改变原来的list，而是会返回一个新的已经排序好的list<br>list.sort()方法仅仅被list所定义，sorted()可用于任何一个可迭代对象</li>
-</ol>
-<h4 id="举例说明："><a href="#举例说明：" class="headerlink" title="举例说明："></a>举例说明：</h4><p>示例1:</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">a = [<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">3</span>,<span class="number">5</span>,<span class="number">2</span>]</span><br><span class="line">a.sort()</span><br><span class="line">print(a)</span><br><span class="line"> </span><br><span class="line">c = [<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">3</span>,<span class="number">5</span>,<span class="number">2</span>]</span><br><span class="line">d = <span class="built_in">sorted</span>(c)</span><br><span class="line"></span><br><span class="line">print(d)</span><br><span class="line">print(c)</span><br></pre></td></tr></tbody></table></figure>
-<p>得：</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">[<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>]</span><br><span class="line">[<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>]</span><br><span class="line">[<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">2</span>]</span><br></pre></td></tr></tbody></table></figure>
-<p>示例1是采用函数默认的设置</p>
-<ul>
-<li>对于排序参数设置，主要有以下两种：基于key；基于reverse。<br>示例2: 基于key和reverse</li>
-</ul>
-<p>1.reverse实现降序排序，需要提供一个布尔值，默认为False（升序排列）。<br>2.key在使用时必须提供一个排序过程总调用的函数：</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">alist  =  [( <span class="string">'2'</span> ,  <span class="string">'3'</span> ,  <span class="string">'10'</span> ), ( <span class="string">'1'</span> ,  <span class="string">'2'</span> ,  <span class="string">'3'</span> ), ( <span class="string">'5'</span> ,  <span class="string">'6'</span> ,  <span class="string">'7'</span> ), ( <span class="string">'2'</span> ,  <span class="string">'5'</span> ,  <span class="string">'10'</span> ), ( <span class="string">'2'</span> ,  <span class="string">'4'</span> ,  <span class="string">'10'</span> )]</span><br><span class="line"><span class="comment"># 多级排序，先按照第3个元素排序，然后按照第2个元素排序：</span></span><br><span class="line"><span class="comment"># reverse = False 降序</span></span><br><span class="line">print(<span class="built_in">sorted</span>(alist, key=<span class="keyword">lambda</span>  x:( <span class="built_in">int</span> (x[ <span class="number">2</span> ]),<span class="built_in">int</span> (x[ <span class="number">1</span> ])),reverse  =  <span class="literal">False</span> )) </span><br><span class="line"><span class="comment"># reverse = False 升序</span></span><br><span class="line">alist.sort(key=<span class="keyword">lambda</span>  x:( <span class="built_in">int</span> (x[ <span class="number">2</span> ]),<span class="built_in">int</span> (x[ <span class="number">1</span> ])),reverse  =  <span class="literal">True</span> )</span><br><span class="line">print(alist)</span><br></pre></td></tr></tbody></table></figure>
-<p>得：</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">[(<span class="string">'1'</span>, <span class="string">'2'</span>, <span class="string">'3'</span>), (<span class="string">'5'</span>, <span class="string">'6'</span>, <span class="string">'7'</span>), (<span class="string">'2'</span>, <span class="string">'3'</span>, <span class="string">'10'</span>), (<span class="string">'2'</span>, <span class="string">'4'</span>, <span class="string">'10'</span>), (<span class="string">'2'</span>, <span class="string">'5'</span>, <span class="string">'10'</span>)]</span><br><span class="line">[(<span class="string">'2'</span>, <span class="string">'5'</span>, <span class="string">'10'</span>), (<span class="string">'2'</span>, <span class="string">'4'</span>, <span class="string">'10'</span>), (<span class="string">'2'</span>, <span class="string">'3'</span>, <span class="string">'10'</span>), (<span class="string">'5'</span>, <span class="string">'6'</span>, <span class="string">'7'</span>), (<span class="string">'1'</span>, <span class="string">'2'</span>, <span class="string">'3'</span>)]```</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
-<h5 id="结论："><a href="#结论：" class="headerlink" title="结论："></a>结论：</h5><p>1、函数sorted()不改变原来的list，而是返回一个新的排好序的list。<br>2、key可以采用lambda表达式<br>3、排序的key是函数自己选择；采用key是确定排序的key，排序方式是函数自己选择。</p>
-]]></content>
-      <categories>
-        <category>python</category>
-      </categories>
-      <tags>
-        <tag>python</tag>
-        <tag>内置方法</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Restful</title>
     <url>/id_36/</url>
     <content><![CDATA[<h3 id="Restful："><a href="#Restful：" class="headerlink" title="Restful："></a>Restful：</h3><p>一种软件架构风格、设计风格，而不是标准，只是提供了一组设计原则和约束条件。它主要用于客户端和服务器交互类的软件。基于这个风格设计的软件可以更简洁，更有层次，更易于实现缓存等机制。</p>
@@ -1212,6 +1179,39 @@
 ]]></content>
       <tags>
         <tag>Restful</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Sort和Sorted区别</title>
+    <url>/id_38/</url>
+    <content><![CDATA[<h4 id="引入"><a href="#引入" class="headerlink" title="引入"></a>引入</h4><p>我们需要对List进行排序，Python提供了两个方法<br>对给定的List L进行排序，<br>方法1.用List的成员函数sort进行排序<br>方法2.用内建函数sorted进行排序（从python 2.4开始）</p>
+<a id="more"></a>
+<h4 id="语法："><a href="#语法：" class="headerlink" title="语法："></a>语法：</h4><p>sort函数定义：sort(cmp=None, key=None, reverse=False)<br>sorted函数定义：sorted(iterable, cmp=None, key=None, reverse=False)</p>
+<p>参数解析：<br>iterable：是可迭代类型;<br>cmp：用于比较的函数（大于时返回1，小于时返回-1，等于时返回0），比较什么由key决定,有默认值，迭代集合中的一项;<br>key：用列表元素的某个属性和函数进行作为关键字，有默认值，迭代集合中的一项;<br>reverse：排序规则. reverse = True 或者 reverse = False，有默认值。</p>
+<h4 id="区别"><a href="#区别" class="headerlink" title="区别:"></a>区别:</h4><ol>
+<li>sort( )函数时对已存在的列表进行操作，调用其没有返回值；<br>而sorted( )函数是返回一个新的list,不在原来的list上进行操作，调用其返回一个排好序的list。</li>
+<li>sorted()不会改变原来的list，而是会返回一个新的已经排序好的list<br>list.sort()方法仅仅被list所定义，sorted()可用于任何一个可迭代对象</li>
+</ol>
+<h4 id="举例说明："><a href="#举例说明：" class="headerlink" title="举例说明："></a>举例说明：</h4><p>示例1:</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">a = [<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">3</span>,<span class="number">5</span>,<span class="number">2</span>]</span><br><span class="line">a.sort()</span><br><span class="line">print(a)</span><br><span class="line"> </span><br><span class="line">c = [<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">3</span>,<span class="number">5</span>,<span class="number">2</span>]</span><br><span class="line">d = <span class="built_in">sorted</span>(c)</span><br><span class="line"></span><br><span class="line">print(d)</span><br><span class="line">print(c)</span><br></pre></td></tr></tbody></table></figure>
+<p>得：</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">[<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>]</span><br><span class="line">[<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>]</span><br><span class="line">[<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">2</span>]</span><br></pre></td></tr></tbody></table></figure>
+<p>示例1是采用函数默认的设置</p>
+<ul>
+<li>对于排序参数设置，主要有以下两种：基于key；基于reverse。<br>示例2: 基于key和reverse</li>
+</ul>
+<p>1.reverse实现降序排序，需要提供一个布尔值，默认为False（升序排列）。<br>2.key在使用时必须提供一个排序过程总调用的函数：</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">alist  =  [( <span class="string">'2'</span> ,  <span class="string">'3'</span> ,  <span class="string">'10'</span> ), ( <span class="string">'1'</span> ,  <span class="string">'2'</span> ,  <span class="string">'3'</span> ), ( <span class="string">'5'</span> ,  <span class="string">'6'</span> ,  <span class="string">'7'</span> ), ( <span class="string">'2'</span> ,  <span class="string">'5'</span> ,  <span class="string">'10'</span> ), ( <span class="string">'2'</span> ,  <span class="string">'4'</span> ,  <span class="string">'10'</span> )]</span><br><span class="line"><span class="comment"># 多级排序，先按照第3个元素排序，然后按照第2个元素排序：</span></span><br><span class="line"><span class="comment"># reverse = False 降序</span></span><br><span class="line">print(<span class="built_in">sorted</span>(alist, key=<span class="keyword">lambda</span>  x:( <span class="built_in">int</span> (x[ <span class="number">2</span> ]),<span class="built_in">int</span> (x[ <span class="number">1</span> ])),reverse  =  <span class="literal">False</span> )) </span><br><span class="line"><span class="comment"># reverse = False 升序</span></span><br><span class="line">alist.sort(key=<span class="keyword">lambda</span>  x:( <span class="built_in">int</span> (x[ <span class="number">2</span> ]),<span class="built_in">int</span> (x[ <span class="number">1</span> ])),reverse  =  <span class="literal">True</span> )</span><br><span class="line">print(alist)</span><br></pre></td></tr></tbody></table></figure>
+<p>得：</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">[(<span class="string">'1'</span>, <span class="string">'2'</span>, <span class="string">'3'</span>), (<span class="string">'5'</span>, <span class="string">'6'</span>, <span class="string">'7'</span>), (<span class="string">'2'</span>, <span class="string">'3'</span>, <span class="string">'10'</span>), (<span class="string">'2'</span>, <span class="string">'4'</span>, <span class="string">'10'</span>), (<span class="string">'2'</span>, <span class="string">'5'</span>, <span class="string">'10'</span>)]</span><br><span class="line">[(<span class="string">'2'</span>, <span class="string">'5'</span>, <span class="string">'10'</span>), (<span class="string">'2'</span>, <span class="string">'4'</span>, <span class="string">'10'</span>), (<span class="string">'2'</span>, <span class="string">'3'</span>, <span class="string">'10'</span>), (<span class="string">'5'</span>, <span class="string">'6'</span>, <span class="string">'7'</span>), (<span class="string">'1'</span>, <span class="string">'2'</span>, <span class="string">'3'</span>)]```</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+<h5 id="结论："><a href="#结论：" class="headerlink" title="结论："></a>结论：</h5><p>1、函数sorted()不改变原来的list，而是返回一个新的排好序的list。<br>2、key可以采用lambda表达式<br>3、排序的key是函数自己选择；采用key是确定排序的key，排序方式是函数自己选择。</p>
+]]></content>
+      <categories>
+        <category>python</category>
+      </categories>
+      <tags>
+        <tag>python</tag>
+        <tag>内置方法</tag>
       </tags>
   </entry>
   <entry>
@@ -1800,6 +1800,69 @@ flags:标志位，用于控制正则表达式的匹配方式</code></pre>
       </tags>
   </entry>
   <entry>
+    <title>机器学习 and NLP</title>
+    <url>/id_43/</url>
+    <content><![CDATA[<a id="more"></a>       ]]></content>
+      <categories>
+        <category>机器学习</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>排行榜实现</title>
+    <url>/id_42/</url>
+    <content><![CDATA[<p>目前我们要设计一个功能</p>
+<p>也就是用户的排行榜,首先我们要知道排行榜都有哪些特点，好选择合适的数据类型去做。我们还要知道排行榜的底层是什么?</p>
+<a id="more"></a>       
+
+<h4 id="需求分析"><a href="#需求分析" class="headerlink" title="需求分析"></a>需求分析</h4><p>排行榜有哪些特点</p>
+<pre><code>1. **有序**
+ 2. **唯一**
+ 3. **实时更新**</code></pre>
+<p>那我们现在知道排行榜的特点了，应该选择数据结构，从整体来看，使用Redis中的有序集合是最合适的</p>
+<p>所以我们可以通过利用<strong>redis</strong>的<strong>sorted set</strong>来进行设计，</p>
+<p>那为什么要用redis来实现，而不是使用传统数据库？</p>
+<p><strong>问</strong>：为什么不使用传统数据库？</p>
+<p>一、 用户排行榜属于热点数据，点击量高，所以使用redis要比使用mysql等传统数据库速度方面有优势</p>
+<p>二、 传统数据库的limit限制了查询排名靠后玩家的性能 举个例子： 当我们每页显示100名玩家，去查询第101页的时候，那么我们的sql中limit语句为</p>
+<figure class="highlight sql"><table><tbody><tr><td class="code"><pre><span class="line">limit <span class="number">10000</span> <span class="number">100</span></span><br></pre></td></tr></tbody></table></figure>
+<p>这个语句在执行的过程中会先扫描 100100个数据节点（假设有索引的情况下，没有索引则是全表扫描）<br>然后取出最后100条数据，这么执行实际上很没有效率，查询很靠后的用户排名的时候很容易出现慢查询。</p>
+<p>Redis的有序集合又能很好的避免这个问题</p>
+<p>既然要使用有序集合，我们先来了解一下有序集合的底层：</p>
+<p>有序集合的底层我们可以看做是一个链表，通过指针来指向下一个内存地址</p>
+]]></content>
+      <categories>
+        <category>数据结构</category>
+      </categories>
+      <tags>
+        <tag>redis</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Httpx测试脚本</title>
+    <url>/id_6/</url>
+    <content><![CDATA[<p>在 Python 众多的 HTTP 客户端中，最有名的莫过于<strong>requests</strong>、<strong>aiohttp</strong>和<strong>httpx</strong>。<br>在不借助其他第三方库的情况下，<strong>requests</strong>只能发送同步请求；<strong>aiohttp</strong>只能发送异步请求；<br><strong>httpx</strong>既能发送同步请求，又能发送异步请求</p>
+<a id="more"></a>
+<blockquote>
+<p>所谓的<strong>同步</strong>请求，是指在单进程单线程的代码中，发起一次请求后，在收到返回结果之前，不能发起下一次请求。<br>所谓<strong>异步</strong>请求，是指在单进程单线程的代码中，发起一次请求后，在等待网站返回结果的时间里，可以继续发送更多请求</p>
+</blockquote>
+<p>那么我们篇文章就来介绍一下使用<strong>httpx</strong>编写测试脚本发送请求</p>
+<ul>
+<li>相关问题：</li>
+</ul>
+<p><strong>问</strong>：怎么在终端运行python文件？<br><strong>答</strong>：在终端运行python文件，需要先进到要运行的文件目录下，然后 python 文件名<br>废话不多说，上代码。</p>
+<h3 id="用httpx发送同步请求-和requests就差个关键字"><a href="#用httpx发送同步请求-和requests就差个关键字" class="headerlink" title="用httpx发送同步请求(和requests就差个关键字)"></a>用httpx发送同步请求(和requests就差个关键字)</h3><p>httpx由于支持异步请求，所以发送大量的请求时，httpx的效率是优于requests的</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># httpx发送请求</span></span><br><span class="line"></span><br><span class="line">url = <span class="string">'http://127.0.0.1:8000/p8/user/'</span></span><br><span class="line">data = {</span><br><span class="line">    <span class="string">'username'</span>: <span class="string">'admin'</span>,</span><br><span class="line">    <span class="string">'password'</span>: <span class="string">'123456'</span></span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">r = httpx.post(url=url,data=data)</span><br><span class="line"><span class="comment"># requests发送请求</span></span><br><span class="line"><span class="comment"># r = requests.post(url=url,data=data)</span></span><br><span class="line">print(r.text)</span><br></pre></td></tr></tbody></table></figure>
+<h3 id="用httpx发送异步请求"><a href="#用httpx发送异步请求" class="headerlink" title="用httpx发送异步请求"></a>用httpx发送异步请求</h3><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> httpx</span><br><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line">url = <span class="string">'http://127.0.0.1:8000/p8/user/'</span></span><br><span class="line">data = {</span><br><span class="line">    <span class="string">'username'</span>: <span class="string">'before'</span>,</span><br><span class="line">    <span class="string">'password'</span>: <span class="string">'123456'</span></span><br><span class="line">}</span><br><span class="line">update = {</span><br><span class="line">    <span class="string">'uid'</span>: <span class="number">2</span>,</span><br><span class="line">    <span class="string">'username'</span>: <span class="string">'abc'</span>,</span><br><span class="line">    <span class="string">'password'</span>: <span class="string">'123456'</span></span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">fun</span>():</span></span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">with</span> httpx.AsyncClient() <span class="keyword">as</span> client:</span><br><span class="line">        r = <span class="keyword">await</span> client.get(url)</span><br><span class="line">        c = <span class="keyword">await</span> client.post(url, data=data)</span><br><span class="line">        u = <span class="keyword">await</span> client.put(url, data=update)</span><br><span class="line">        d = <span class="keyword">await</span> client.delete(url, params={<span class="string">'uid'</span>: <span class="number">1</span>})</span><br><span class="line">        print(<span class="string">"查"</span>, r.json())</span><br><span class="line">        print(<span class="string">"填"</span>, c.json())</span><br><span class="line">        print(<span class="string">"改"</span>, u.json())</span><br><span class="line">        print(<span class="string">"删"</span>, d.json())</span><br><span class="line"></span><br><span class="line">asyncio.run(fun())</span><br></pre></td></tr></tbody></table></figure>
+<h3 id="快拿去测试接口吧"><a href="#快拿去测试接口吧" class="headerlink" title="快拿去测试接口吧"></a>快拿去测试接口吧</h3>]]></content>
+      <categories>
+        <category>后端</category>
+      </categories>
+      <tags>
+        <tag>python</tag>
+        <tag>httpx</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>docker打包镜像</title>
     <url>/id_5/</url>
     <content><![CDATA[<p>在docker hub上有时我们找不到想要的image,或自己想要打包纯净的image ( 怕投毒?? ).</p>
@@ -1866,31 +1929,6 @@ flags:标志位，用于控制正则表达式的匹配方式</code></pre>
       </tags>
   </entry>
   <entry>
-    <title>Httpx测试脚本</title>
-    <url>/id_6/</url>
-    <content><![CDATA[<p>在 Python 众多的 HTTP 客户端中，最有名的莫过于<strong>requests</strong>、<strong>aiohttp</strong>和<strong>httpx</strong>。<br>在不借助其他第三方库的情况下，<strong>requests</strong>只能发送同步请求；<strong>aiohttp</strong>只能发送异步请求；<br><strong>httpx</strong>既能发送同步请求，又能发送异步请求</p>
-<a id="more"></a>
-<blockquote>
-<p>所谓的<strong>同步</strong>请求，是指在单进程单线程的代码中，发起一次请求后，在收到返回结果之前，不能发起下一次请求。<br>所谓<strong>异步</strong>请求，是指在单进程单线程的代码中，发起一次请求后，在等待网站返回结果的时间里，可以继续发送更多请求</p>
-</blockquote>
-<p>那么我们篇文章就来介绍一下使用<strong>httpx</strong>编写测试脚本发送请求</p>
-<ul>
-<li>相关问题：</li>
-</ul>
-<p><strong>问</strong>：怎么在终端运行python文件？<br><strong>答</strong>：在终端运行python文件，需要先进到要运行的文件目录下，然后 python 文件名<br>废话不多说，上代码。</p>
-<h3 id="用httpx发送同步请求-和requests就差个关键字"><a href="#用httpx发送同步请求-和requests就差个关键字" class="headerlink" title="用httpx发送同步请求(和requests就差个关键字)"></a>用httpx发送同步请求(和requests就差个关键字)</h3><p>httpx由于支持异步请求，所以发送大量的请求时，httpx的效率是优于requests的</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># httpx发送请求</span></span><br><span class="line"></span><br><span class="line">url = <span class="string">'http://127.0.0.1:8000/p8/user/'</span></span><br><span class="line">data = {</span><br><span class="line">    <span class="string">'username'</span>: <span class="string">'admin'</span>,</span><br><span class="line">    <span class="string">'password'</span>: <span class="string">'123456'</span></span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">r = httpx.post(url=url,data=data)</span><br><span class="line"><span class="comment"># requests发送请求</span></span><br><span class="line"><span class="comment"># r = requests.post(url=url,data=data)</span></span><br><span class="line">print(r.text)</span><br></pre></td></tr></tbody></table></figure>
-<h3 id="用httpx发送异步请求"><a href="#用httpx发送异步请求" class="headerlink" title="用httpx发送异步请求"></a>用httpx发送异步请求</h3><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> httpx</span><br><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line">url = <span class="string">'http://127.0.0.1:8000/p8/user/'</span></span><br><span class="line">data = {</span><br><span class="line">    <span class="string">'username'</span>: <span class="string">'before'</span>,</span><br><span class="line">    <span class="string">'password'</span>: <span class="string">'123456'</span></span><br><span class="line">}</span><br><span class="line">update = {</span><br><span class="line">    <span class="string">'uid'</span>: <span class="number">2</span>,</span><br><span class="line">    <span class="string">'username'</span>: <span class="string">'abc'</span>,</span><br><span class="line">    <span class="string">'password'</span>: <span class="string">'123456'</span></span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">fun</span>():</span></span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">with</span> httpx.AsyncClient() <span class="keyword">as</span> client:</span><br><span class="line">        r = <span class="keyword">await</span> client.get(url)</span><br><span class="line">        c = <span class="keyword">await</span> client.post(url, data=data)</span><br><span class="line">        u = <span class="keyword">await</span> client.put(url, data=update)</span><br><span class="line">        d = <span class="keyword">await</span> client.delete(url, params={<span class="string">'uid'</span>: <span class="number">1</span>})</span><br><span class="line">        print(<span class="string">"查"</span>, r.json())</span><br><span class="line">        print(<span class="string">"填"</span>, c.json())</span><br><span class="line">        print(<span class="string">"改"</span>, u.json())</span><br><span class="line">        print(<span class="string">"删"</span>, d.json())</span><br><span class="line"></span><br><span class="line">asyncio.run(fun())</span><br></pre></td></tr></tbody></table></figure>
-<h3 id="快拿去测试接口吧"><a href="#快拿去测试接口吧" class="headerlink" title="快拿去测试接口吧"></a>快拿去测试接口吧</h3>]]></content>
-      <categories>
-        <category>后端</category>
-      </categories>
-      <tags>
-        <tag>python</tag>
-        <tag>httpx</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>VUE父子组件</title>
     <url>/id_7/</url>
     <content><![CDATA[<h4 id="VUE父子组件使用"><a href="#VUE父子组件使用" class="headerlink" title="VUE父子组件使用"></a>VUE父子组件使用</h4><p>在vue组件通信中其中最常见通信方式就是父子组件之中的通信，而父子组件的设定方式在不同情况下又各有不同。<br>最常见的就是父组件为控制组件，子组件为视图组件。<br>父组件传递数据给子组件使用，遇到业务逻辑操作时子组件触发父组件的自定义事件。<br>但是，无论哪种组织方式父子组件的通信方式都是大同小异</p>
@@ -1916,6 +1954,30 @@ flags:标志位，用于控制正则表达式的匹配方式</code></pre>
       </tags>
   </entry>
   <entry>
+    <title>VUE路由钩子</title>
+    <url>/id_9/</url>
+    <content><![CDATA[<p>描述：通常我们在跳转页面时会遇到各种各样的要求，比如没有登录不能查看，比如跳转需要验证，各种各样的要求。如果分开写代码的话就会显得很乱，代码很繁重，此时就用到了我们的路由钩子<br>路由钩子主要是给使用者在路由发生变化时进行一些特殊的处理而定义的</p>
+<a id="more"></a>
+<h4 id="路由钩子主要分三种"><a href="#路由钩子主要分三种" class="headerlink" title="路由钩子主要分三种"></a><strong>路由钩子</strong>主要分三种</h4><p>全局路由钩子：beforeEach<br>单个路由钩子：beforeEnter<br>路由组件钩子：beforeEachEnter</p>
+<h4 id="三种路由钩子中都涉及到了三个参数"><a href="#三种路由钩子中都涉及到了三个参数" class="headerlink" title="三种路由钩子中都涉及到了三个参数:"></a>三种路由钩子中都涉及到了三个参数:</h4><p>to: Route: 即将要进入的目标 路由对象<br>from: Route: 当前导航正要离开的路由<br>next: Function: 通过这个方法来调用下一个钩子函数</p>
+<h4 id="使用："><a href="#使用：" class="headerlink" title="使用："></a>使用：</h4><p>beforeEach(跳转前)  &amp;&amp;  afterEach(跳转后)<br>需要通过main.js配置</p>
+<hr>
+<figure class="highlight js"><table><tbody><tr><td class="code"><pre><span class="line">router.beforeEach(<span class="function">(<span class="params">to, <span class="keyword">from</span>, next</span>) =&gt;</span> {</span><br><span class="line">    <span class="comment">//会在任意路由跳转前执行，next一定要记着执行，不然路由不能跳转了</span></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"我要跳转啦"</span>)</span><br><span class="line">  <span class="built_in">console</span>.log(to,<span class="keyword">from</span>)</span><br><span class="line">  <span class="comment">//调用下一个钩子函数</span></span><br><span class="line">  next()</span><br><span class="line">})</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">router.afterEach(<span class="function">(<span class="params">to, <span class="keyword">from</span></span>) =&gt;</span> {</span><br><span class="line">    <span class="comment">//会在任意路由跳转后执行</span></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'我跳过来了'</span>)</span><br><span class="line">})</span><br></pre></td></tr></tbody></table></figure>
+<p>beforeEnter(写在router-index.js里面)</p>
+<hr>
+<figure class="highlight js"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="keyword">new</span> Router({</span><br><span class="line">  routes: [</span><br><span class="line">    {</span><br><span class="line">      path: <span class="string">'/index'</span>,</span><br><span class="line">      name: <span class="string">'Index'</span>,</span><br><span class="line">      component: Index,</span><br><span class="line">      <span class="function"><span class="title">beforeEnter</span>(<span class="params">to, <span class="keyword">from</span>, next</span>)</span> {</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">"我是只守护Index的beforeEnter"</span>)</span><br><span class="line">        next()</span><br><span class="line">      }</span><br><span class="line">    }</span><br><span class="line">  ]</span><br><span class="line">})</span><br></pre></td></tr></tbody></table></figure>
+<p>beforeRouteEnter(到达之后)   &amp;&amp;   beforeRouteUpdate(到达子路由)   &amp;&amp;   beforeRouteLeave(离开之前)<br>写在具体页面里</p>
+<hr>
+<figure class="highlight js"><table><tbody><tr><td class="code"><pre><span class="line"><span class="function"><span class="title">beforeRouteEnter</span>(<span class="params">to, <span class="keyword">from</span>, next</span>)</span> {</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"****************Test1****我来啦**************"</span>);</span><br><span class="line">  next(<span class="function"><span class="params">vm</span> =&gt;</span> {</span><br><span class="line">    <span class="comment">//因为当钩子执行前，组件实例还没被创建</span></span><br><span class="line">    <span class="comment">// vm 就是当前组件的实例相当于上面的 this，所以在 next 方法里你就可以把 vm 当 this 来用了。</span></span><br><span class="line">    <span class="built_in">console</span>.log(vm);<span class="comment">//当前组件的实例</span></span><br><span class="line">  });</span><br><span class="line">},</span><br><span class="line"><span class="function"><span class="title">beforeRouteUpdate</span>(<span class="params">to, <span class="keyword">from</span>, next</span>)</span> {</span><br><span class="line">  <span class="comment">//在当前路由改变，但是该组件被复用时调用</span></span><br><span class="line">  <span class="comment">//对于一个带有动态参数的路径 /good/:id，在 /good/1 和 /good/2 之间跳转的时候，</span></span><br><span class="line">  <span class="comment">// 由于会渲染同样的good组件，因此组件实例会被复用。而这个钩子就会在这个情况下被调用。</span></span><br><span class="line">  <span class="comment">// 可以访问组件实例 `this`</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">//简单来说就是在跳转子路由的时候可以获取query和params</span></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"****************Test1*******Update***********"</span>);</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="built_in">this</span>, <span class="string">'Update'</span>); <span class="comment">//当前组件实例</span></span><br><span class="line">  next();</span><br><span class="line">}</span><br><span class="line"><span class="function"><span class="title">beforeRouteLeave</span>(<span class="params">to, <span class="keyword">from</span>, next</span>)</span> {</span><br><span class="line">  <span class="comment">// 导航离开该组件的对应路由时调用</span></span><br><span class="line">  <span class="comment">// 可以访问组件实例 `this`</span></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"****************Test1****我走啦**************"</span>);</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="built_in">this</span>, <span class="string">'Leave'</span>); <span class="comment">//当前组件实例</span></span><br><span class="line">  next();</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+]]></content>
+      <categories>
+        <category>前端</category>
+      </categories>
+      <tags>
+        <tag>vue</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>VUE拦截器</title>
     <url>/id_8/</url>
     <content><![CDATA[<p>vue拦截器axios 是一个基于Promise 用于浏览器和 nodejs 的 HTTP 客户端,<br>他主要分为请求拦截器和响应拦截器…</p>
@@ -1932,30 +1994,6 @@ flags:标志位，用于控制正则表达式的匹配方式</code></pre>
 <li>比如每次发送网络请求的时候，都希望在界面中显示一个动态加载的请求图标，就是一直在转圈圈，让用户知道当前页面正在加载数据，准备渲染视图。</li>
 <li>比如某些网络请求（比如登录token）,必须携带一些特殊的信息。</li>
 </ul>
-]]></content>
-      <categories>
-        <category>前端</category>
-      </categories>
-      <tags>
-        <tag>vue</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>VUE路由钩子</title>
-    <url>/id_9/</url>
-    <content><![CDATA[<p>描述：通常我们在跳转页面时会遇到各种各样的要求，比如没有登录不能查看，比如跳转需要验证，各种各样的要求。如果分开写代码的话就会显得很乱，代码很繁重，此时就用到了我们的路由钩子<br>路由钩子主要是给使用者在路由发生变化时进行一些特殊的处理而定义的</p>
-<a id="more"></a>
-<h4 id="路由钩子主要分三种"><a href="#路由钩子主要分三种" class="headerlink" title="路由钩子主要分三种"></a><strong>路由钩子</strong>主要分三种</h4><p>全局路由钩子：beforeEach<br>单个路由钩子：beforeEnter<br>路由组件钩子：beforeEachEnter</p>
-<h4 id="三种路由钩子中都涉及到了三个参数"><a href="#三种路由钩子中都涉及到了三个参数" class="headerlink" title="三种路由钩子中都涉及到了三个参数:"></a>三种路由钩子中都涉及到了三个参数:</h4><p>to: Route: 即将要进入的目标 路由对象<br>from: Route: 当前导航正要离开的路由<br>next: Function: 通过这个方法来调用下一个钩子函数</p>
-<h4 id="使用："><a href="#使用：" class="headerlink" title="使用："></a>使用：</h4><p>beforeEach(跳转前)  &amp;&amp;  afterEach(跳转后)<br>需要通过main.js配置</p>
-<hr>
-<figure class="highlight js"><table><tbody><tr><td class="code"><pre><span class="line">router.beforeEach(<span class="function">(<span class="params">to, <span class="keyword">from</span>, next</span>) =&gt;</span> {</span><br><span class="line">    <span class="comment">//会在任意路由跳转前执行，next一定要记着执行，不然路由不能跳转了</span></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"我要跳转啦"</span>)</span><br><span class="line">  <span class="built_in">console</span>.log(to,<span class="keyword">from</span>)</span><br><span class="line">  <span class="comment">//调用下一个钩子函数</span></span><br><span class="line">  next()</span><br><span class="line">})</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">router.afterEach(<span class="function">(<span class="params">to, <span class="keyword">from</span></span>) =&gt;</span> {</span><br><span class="line">    <span class="comment">//会在任意路由跳转后执行</span></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'我跳过来了'</span>)</span><br><span class="line">})</span><br></pre></td></tr></tbody></table></figure>
-<p>beforeEnter(写在router-index.js里面)</p>
-<hr>
-<figure class="highlight js"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="keyword">new</span> Router({</span><br><span class="line">  routes: [</span><br><span class="line">    {</span><br><span class="line">      path: <span class="string">'/index'</span>,</span><br><span class="line">      name: <span class="string">'Index'</span>,</span><br><span class="line">      component: Index,</span><br><span class="line">      <span class="function"><span class="title">beforeEnter</span>(<span class="params">to, <span class="keyword">from</span>, next</span>)</span> {</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">"我是只守护Index的beforeEnter"</span>)</span><br><span class="line">        next()</span><br><span class="line">      }</span><br><span class="line">    }</span><br><span class="line">  ]</span><br><span class="line">})</span><br></pre></td></tr></tbody></table></figure>
-<p>beforeRouteEnter(到达之后)   &amp;&amp;   beforeRouteUpdate(到达子路由)   &amp;&amp;   beforeRouteLeave(离开之前)<br>写在具体页面里</p>
-<hr>
-<figure class="highlight js"><table><tbody><tr><td class="code"><pre><span class="line"><span class="function"><span class="title">beforeRouteEnter</span>(<span class="params">to, <span class="keyword">from</span>, next</span>)</span> {</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"****************Test1****我来啦**************"</span>);</span><br><span class="line">  next(<span class="function"><span class="params">vm</span> =&gt;</span> {</span><br><span class="line">    <span class="comment">//因为当钩子执行前，组件实例还没被创建</span></span><br><span class="line">    <span class="comment">// vm 就是当前组件的实例相当于上面的 this，所以在 next 方法里你就可以把 vm 当 this 来用了。</span></span><br><span class="line">    <span class="built_in">console</span>.log(vm);<span class="comment">//当前组件的实例</span></span><br><span class="line">  });</span><br><span class="line">},</span><br><span class="line"><span class="function"><span class="title">beforeRouteUpdate</span>(<span class="params">to, <span class="keyword">from</span>, next</span>)</span> {</span><br><span class="line">  <span class="comment">//在当前路由改变，但是该组件被复用时调用</span></span><br><span class="line">  <span class="comment">//对于一个带有动态参数的路径 /good/:id，在 /good/1 和 /good/2 之间跳转的时候，</span></span><br><span class="line">  <span class="comment">// 由于会渲染同样的good组件，因此组件实例会被复用。而这个钩子就会在这个情况下被调用。</span></span><br><span class="line">  <span class="comment">// 可以访问组件实例 `this`</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">//简单来说就是在跳转子路由的时候可以获取query和params</span></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"****************Test1*******Update***********"</span>);</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="built_in">this</span>, <span class="string">'Update'</span>); <span class="comment">//当前组件实例</span></span><br><span class="line">  next();</span><br><span class="line">}</span><br><span class="line"><span class="function"><span class="title">beforeRouteLeave</span>(<span class="params">to, <span class="keyword">from</span>, next</span>)</span> {</span><br><span class="line">  <span class="comment">// 导航离开该组件的对应路由时调用</span></span><br><span class="line">  <span class="comment">// 可以访问组件实例 `this`</span></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"****************Test1****我走啦**************"</span>);</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="built_in">this</span>, <span class="string">'Leave'</span>); <span class="comment">//当前组件实例</span></span><br><span class="line">  next();</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
 ]]></content>
       <categories>
         <category>前端</category>
