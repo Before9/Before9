@@ -1,26 +1,4 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.3.0">
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
-
-<link rel="stylesheet" href="/css/main.css">
-
-
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
-
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.hr915.xyz","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":true,"preload":true},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
-
-  <meta name="description" content="在docker hub上有时我们找不到想要的image,或自己想要打包纯净的image ( 怕投毒?? ). 所以自己制作docker image是一种不错的选择">
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="format-detection" content="telephone=no"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black"><link rel="icon" href="https://gitee.com/BothSavage/PicGo/raw/master/image/favicon-16x16.png?v=2.6.2" type="image/png" sizes="16x16"><link rel="icon" href="https://gitee.com/BothSavage/PicGo/raw/master/image/favicon-32x32.png?v=2.6.2" type="image/png" sizes="32x32"><meta name="description" content="在docker hub上有时我们找不到想要的image,或自己想要打包纯净的image ( 怕投毒?? ). 所以自己制作docker image是一种不错的选择">
 <meta property="og:type" content="article">
 <meta property="og:title" content="docker打包镜像">
 <meta property="og:url" content="https://www.hr915.xyz/id_5/index.html">
@@ -31,468 +9,150 @@
 <meta property="article:modified_time" content="2021-04-21T23:55:00.670Z">
 <meta property="article:author" content="Before">
 <meta property="article:tag" content="docker">
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary"><title>docker打包镜像 | I hope you're here for me</title><link ref="canonical" href="https://www.hr915.xyz/id_5/"><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.12.1/css/all.min.css" type="text/css"><link rel="stylesheet" href="/css/index.css?v=2.6.2"><script>var Stun = window.Stun || {};
+var CONFIG = {
+  root: '/',
+  algolia: undefined,
+  assistSearch: undefined,
+  fontIcon: {"prompt":{"success":"fas fa-check-circle","info":"fas fa-arrow-circle-right","warning":"fas fa-exclamation-circle","error":"fas fa-times-circle"},"copyBtn":"fas fa-copy"},
+  sidebar: {"offsetTop":"20px","tocMaxDepth":6},
+  header: {"enable":true,"showOnPost":true,"scrollDownIcon":true},
+  postWidget: {"endText":true},
+  nightMode: {"enable":true},
+  back2top: {"enable":true},
+  codeblock: {"style":"default","highlight":"light","wordWrap":false},
+  reward: false,
+  fancybox: false,
+  zoomImage: {"gapAside":"20px"},
+  galleryWaterfall: {"colWidth":"220px","gapX":"10px"},
+  lazyload: false,
+  pjax: undefined,
+  externalLink: {"icon":{"enable":true,"name":"fas fa-external-link-alt"}},
+  shortcuts: undefined,
+  prompt: {"copyButton":"复制","copySuccess":"复制成功","copyError":"复制失败"},
+  sourcePath: {"js":"js","css":"css","images":"images"},
+};
 
-<link rel="canonical" href="https://www.hr915.xyz/id_5/">
-
-
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
-
-  <title>docker打包镜像 | I hope you're here for me</title>
-  
-
-
-
-
-
-
-  <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+window.CONFIG = CONFIG;</script><meta name="generator" content="Hexo 5.3.0"><link rel="alternate" href="/atom.xml" title="I hope you're here for me" type="application/atom+xml">
 
 <style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
-<link rel="alternate" href="/atom.xml" title="I hope you're here for me" type="application/atom+xml">
-</head>
-
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
-
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
-    </div>
-  </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">I hope you're here for me</h1>
-      <span class="logo-line-after"><i></i></span>
-    </a>
-      <p class="site-subtitle" itemprop="description">贩卖日落</p>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger">
-    </div>
-  </div>
-</div>
-
-
-
-
-<nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-about">
-
-    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
-
-  </li>
-        <li class="menu-item menu-item-tags">
-
-    <a href="/tags/" rel="section"><i class="fafa-tags fa-fw"></i>标签</a>
-
-  </li>
-        <li class="menu-item menu-item-categories">
-
-    <a href="/categories/" rel="section"><i class="fafa-th fa-fw"></i>分类</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fafa-archive fa-fw"></i>归档</a>
-
-  </li>
-  </ul>
-</nav>
-
-
-
-
-</div>
-    </header>
-
-    
-  <div class="back-to-top">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
-
-
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
-
-          <div class="content post posts-expand">
-            
-
-    
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://www.hr915.xyz/id_5/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/123.jpg">
-      <meta itemprop="name" content="Before">
-      <meta itemprop="description" content="I hope you're here for me">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="I hope you're here for me">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          docker打包镜像
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-08-20 16:58:35" itemprop="dateCreated datePublished" datetime="2018-08-20T16:58:35+08:00">2018-08-20</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E9%83%A8%E7%BD%B2/" itemprop="url" rel="index"><span itemprop="name">部署</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-        <p>在docker hub上有时我们找不到想要的image,或自己想要打包纯净的image ( 怕投毒?? ).</p>
+</head><body><div class="container" id="container"><header class="header" id="header"><div class="header-inner"><nav class="header-nav header-nav--fixed"><div class="header-nav-inner"><div class="header-nav-menubtn"><i class="fas fa-bars"></i></div><div class="header-nav-menu"><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" href="/"><span class="header-nav-menu-item__icon"><i class="fas fa-home"></i></span><span class="header-nav-menu-item__text">首页</span></a></div><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" href="/archives/"><span class="header-nav-menu-item__icon"><i class="fas fa-folder-open"></i></span><span class="header-nav-menu-item__text">归档</span></a></div></div><div class="header-nav-mode"><div class="mode"><div class="mode-track"><span class="mode-track-moon"></span><span class="mode-track-sun"></span></div><div class="mode-thumb"></div></div></div></div></nav><div class="header-banner"><div class="header-banner-info"><div class="header-banner-info__title">I hope you're here for me</div><div class="header-banner-info__subtitle">贩卖日落</div></div><div class="header-banner-arrow"><div class="header-banner-arrow__icon"><i class="fas fa-angle-down"></i></div></div></div></div></header><main class="main" id="main"><div class="main-inner"><div class="content-wrap" id="content-wrap"><div class="content" id="content"><!-- Just used to judge whether it is an article page--><div id="is-post"></div><div class="post"><header class="post-header"><h1 class="post-title">docker打包镜像</h1><div class="post-meta"><span class="post-meta-item post-meta-item--createtime"><span class="post-meta-item__icon"><i class="far fa-calendar-plus"></i></span><span class="post-meta-item__info">发表于</span><span class="post-meta-item__value">2018-08-20</span></span></div></header><div class="post-body"><p>在docker hub上有时我们找不到想要的image,或自己想要打包纯净的image ( 怕投毒?? ).</p>
 <p>所以自己制作docker image是一种不错的选择</p>
 <a id="more"></a>
-<h5 id="拉取镜像"><a href="#拉取镜像" class="headerlink" title="拉取镜像"></a>拉取镜像</h5><blockquote>
+
+        <h5 id="拉取镜像">
+          <a href="#拉取镜像" class="heading-link"><i class="fas fa-link"></i></a><a href="#拉取镜像" class="headerlink" title="拉取镜像"></a>拉取镜像</h5>
+      <blockquote>
 <p>docker pull centos</p>
 </blockquote>
-<h5 id="查看镜像"><a href="#查看镜像" class="headerlink" title="查看镜像"></a>查看镜像</h5><blockquote>
+
+        <h5 id="查看镜像">
+          <a href="#查看镜像" class="heading-link"><i class="fas fa-link"></i></a><a href="#查看镜像" class="headerlink" title="查看镜像"></a>查看镜像</h5>
+      <blockquote>
 <p>docker images</p>
 </blockquote>
-<h5 id="创建容器"><a href="#创建容器" class="headerlink" title="创建容器"></a>创建容器</h5><blockquote>
+
+        <h5 id="创建容器">
+          <a href="#创建容器" class="heading-link"><i class="fas fa-link"></i></a><a href="#创建容器" class="headerlink" title="创建容器"></a>创建容器</h5>
+      <blockquote>
 <p>docker run -it –name=容器名  镜像名  /bin/bash</p>
 </blockquote>
-<h5 id="启动容器"><a href="#启动容器" class="headerlink" title="启动容器"></a>启动容器</h5><blockquote>
+
+        <h5 id="启动容器">
+          <a href="#启动容器" class="heading-link"><i class="fas fa-link"></i></a><a href="#启动容器" class="headerlink" title="启动容器"></a>启动容器</h5>
+      <blockquote>
 <p>docker start 容器ID</p>
 </blockquote>
-<h5 id="进入容器"><a href="#进入容器" class="headerlink" title="进入容器"></a>进入容器</h5><blockquote>
+
+        <h5 id="进入容器">
+          <a href="#进入容器" class="heading-link"><i class="fas fa-link"></i></a><a href="#进入容器" class="headerlink" title="进入容器"></a>进入容器</h5>
+      <blockquote>
 <p>docker exec -itd 容器名(容器ID) /bin/bash<br>docker attach 容器ID</p>
 </blockquote>
-<h5 id="安装ssh"><a href="#安装ssh" class="headerlink" title="安装ssh"></a>安装ssh</h5><blockquote>
+
+        <h5 id="安装ssh">
+          <a href="#安装ssh" class="heading-link"><i class="fas fa-link"></i></a><a href="#安装ssh" class="headerlink" title="安装ssh"></a>安装ssh</h5>
+      <blockquote>
 <p>yum install openssh-server</p>
 </blockquote>
 <p>没有正常启动的话通常需要生成当前主机的ssh-key</p>
 <blockquote>
 <p>ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key<br>ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key<br>ssh-keygen -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key<br>ssh-keygen -t dsa -f /etc/ssh/ssh_host_ed25519_key</p>
 </blockquote>
-<h5 id="在容器中启动ssh服务，让外界可以连接"><a href="#在容器中启动ssh服务，让外界可以连接" class="headerlink" title="在容器中启动ssh服务，让外界可以连接"></a>在容器中启动ssh服务，让外界可以连接</h5><blockquote>
+
+        <h5 id="在容器中启动ssh服务，让外界可以连接">
+          <a href="#在容器中启动ssh服务，让外界可以连接" class="heading-link"><i class="fas fa-link"></i></a><a href="#在容器中启动ssh服务，让外界可以连接" class="headerlink" title="在容器中启动ssh服务，让外界可以连接"></a>在容器中启动ssh服务，让外界可以连接</h5>
+      <blockquote>
 <p>/usr/sbin/sshd</p>
 </blockquote>
-<h5 id="修改容器内部密码"><a href="#修改容器内部密码" class="headerlink" title="修改容器内部密码"></a>修改容器内部密码</h5><blockquote>
+
+        <h5 id="修改容器内部密码">
+          <a href="#修改容器内部密码" class="heading-link"><i class="fas fa-link"></i></a><a href="#修改容器内部密码" class="headerlink" title="修改容器内部密码"></a>修改容器内部密码</h5>
+      <blockquote>
 <p>修改密码需要安装passwd<br>yum install passwd.x86_64<br>修改密码<br>passwd root</p>
 </blockquote>
-<h5 id="退出容器"><a href="#退出容器" class="headerlink" title="退出容器"></a>退出容器</h5><blockquote>
+
+        <h5 id="退出容器">
+          <a href="#退出容器" class="heading-link"><i class="fas fa-link"></i></a><a href="#退出容器" class="headerlink" title="退出容器"></a>退出容器</h5>
+      <blockquote>
 <p>exit</p>
 </blockquote>
-<h5 id="修改云主机密码"><a href="#修改云主机密码" class="headerlink" title="修改云主机密码"></a>修改云主机密码</h5><blockquote>
+
+        <h5 id="修改云主机密码">
+          <a href="#修改云主机密码" class="heading-link"><i class="fas fa-link"></i></a><a href="#修改云主机密码" class="headerlink" title="修改云主机密码"></a>修改云主机密码</h5>
+      <blockquote>
 <p>修改云主机密码需要退出容器在执行passwd</p>
 </blockquote>
-<h5 id="查看所有容器"><a href="#查看所有容器" class="headerlink" title="查看所有容器"></a>查看所有容器</h5><blockquote>
+
+        <h5 id="查看所有容器">
+          <a href="#查看所有容器" class="heading-link"><i class="fas fa-link"></i></a><a href="#查看所有容器" class="headerlink" title="查看所有容器"></a>查看所有容器</h5>
+      <blockquote>
 <p>docker ps -a</p>
 </blockquote>
-<h5 id="制作镜像"><a href="#制作镜像" class="headerlink" title="制作镜像"></a>制作镜像</h5><blockquote>
+
+        <h5 id="制作镜像">
+          <a href="#制作镜像" class="heading-link"><i class="fas fa-link"></i></a><a href="#制作镜像" class="headerlink" title="制作镜像"></a>制作镜像</h5>
+      <blockquote>
 <p>docker commit -a “作者” -m “简介”  被打包的容器ID  镜像名: 版本号</p>
 </blockquote>
-<h5 id="镜像导出"><a href="#镜像导出" class="headerlink" title="镜像导出"></a>镜像导出</h5><blockquote>
+
+        <h5 id="镜像导出">
+          <a href="#镜像导出" class="heading-link"><i class="fas fa-link"></i></a><a href="#镜像导出" class="headerlink" title="镜像导出"></a>镜像导出</h5>
+      <blockquote>
 <p>docker save 镜像名 &gt; ./文件名<br>例如： docker save ssh_image &gt; ./文件名</p>
 </blockquote>
-<h5 id="加载镜像-解压"><a href="#加载镜像-解压" class="headerlink" title="加载镜像(解压)"></a>加载镜像(解压)</h5><blockquote>
+
+        <h5 id="加载镜像-解压">
+          <a href="#加载镜像-解压" class="heading-link"><i class="fas fa-link"></i></a><a href="#加载镜像-解压" class="headerlink" title="加载镜像(解压)"></a>加载镜像(解压)</h5>
+      <blockquote>
 <p>docker load &lt; ./文件名<br>例如： docker load &lt; ./文件名</p>
 </blockquote>
-<h5 id="查看镜像是否存在"><a href="#查看镜像是否存在" class="headerlink" title="查看镜像是否存在"></a>查看镜像是否存在</h5><blockquote>
+
+        <h5 id="查看镜像是否存在">
+          <a href="#查看镜像是否存在" class="heading-link"><i class="fas fa-link"></i></a><a href="#查看镜像是否存在" class="headerlink" title="查看镜像是否存在"></a>查看镜像是否存在</h5>
+      <blockquote>
 <p>docker images</p>
 </blockquote>
-<h5 id="创建容器并映射端口把镜像跑起来"><a href="#创建容器并映射端口把镜像跑起来" class="headerlink" title="创建容器并映射端口把镜像跑起来"></a>创建容器并映射端口把镜像跑起来</h5><blockquote>
+
+        <h5 id="创建容器并映射端口把镜像跑起来">
+          <a href="#创建容器并映射端口把镜像跑起来" class="heading-link"><i class="fas fa-link"></i></a><a href="#创建容器并映射端口把镜像跑起来" class="headerlink" title="创建容器并映射端口把镜像跑起来"></a>创建容器并映射端口把镜像跑起来</h5>
+      <blockquote>
 <p>docker run -itd -p 11111:22(映射的端口号)  镜像ID  /bin/bash</p>
 </blockquote>
-
-    </div>
-
-    
-    
-    
-
-      <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/docker/" rel="tag"># docker</a>
-          </div>
-
-        
-
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/id_4/" rel="prev" title="docker操作 容器、镜像 && dockerfile">
-      <i class="fa fa-chevron-left"></i> docker操作 容器、镜像 && dockerfile
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/id_6/" rel="next" title="Httpx测试脚本">
-      Httpx测试脚本 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-
-
-          </div>
-          
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%8B%89%E5%8F%96%E9%95%9C%E5%83%8F"><span class="nav-number">1.</span> <span class="nav-text">拉取镜像</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E9%95%9C%E5%83%8F"><span class="nav-number">2.</span> <span class="nav-text">查看镜像</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%AE%B9%E5%99%A8"><span class="nav-number">3.</span> <span class="nav-text">创建容器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8%E5%AE%B9%E5%99%A8"><span class="nav-number">4.</span> <span class="nav-text">启动容器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%BF%9B%E5%85%A5%E5%AE%B9%E5%99%A8"><span class="nav-number">5.</span> <span class="nav-text">进入容器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%89%E8%A3%85ssh"><span class="nav-number">6.</span> <span class="nav-text">安装ssh</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%9C%A8%E5%AE%B9%E5%99%A8%E4%B8%AD%E5%90%AF%E5%8A%A8ssh%E6%9C%8D%E5%8A%A1%EF%BC%8C%E8%AE%A9%E5%A4%96%E7%95%8C%E5%8F%AF%E4%BB%A5%E8%BF%9E%E6%8E%A5"><span class="nav-number">7.</span> <span class="nav-text">在容器中启动ssh服务，让外界可以连接</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E5%AE%B9%E5%99%A8%E5%86%85%E9%83%A8%E5%AF%86%E7%A0%81"><span class="nav-number">8.</span> <span class="nav-text">修改容器内部密码</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%80%80%E5%87%BA%E5%AE%B9%E5%99%A8"><span class="nav-number">9.</span> <span class="nav-text">退出容器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E4%BA%91%E4%B8%BB%E6%9C%BA%E5%AF%86%E7%A0%81"><span class="nav-number">10.</span> <span class="nav-text">修改云主机密码</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E6%89%80%E6%9C%89%E5%AE%B9%E5%99%A8"><span class="nav-number">11.</span> <span class="nav-text">查看所有容器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%B6%E4%BD%9C%E9%95%9C%E5%83%8F"><span class="nav-number">12.</span> <span class="nav-text">制作镜像</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%95%9C%E5%83%8F%E5%AF%BC%E5%87%BA"><span class="nav-number">13.</span> <span class="nav-text">镜像导出</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8A%A0%E8%BD%BD%E9%95%9C%E5%83%8F-%E8%A7%A3%E5%8E%8B"><span class="nav-number">14.</span> <span class="nav-text">加载镜像(解压)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E9%95%9C%E5%83%8F%E6%98%AF%E5%90%A6%E5%AD%98%E5%9C%A8"><span class="nav-number">15.</span> <span class="nav-text">查看镜像是否存在</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%AE%B9%E5%99%A8%E5%B9%B6%E6%98%A0%E5%B0%84%E7%AB%AF%E5%8F%A3%E6%8A%8A%E9%95%9C%E5%83%8F%E8%B7%91%E8%B5%B7%E6%9D%A5"><span class="nav-number">16.</span> <span class="nav-text">创建容器并映射端口把镜像跑起来</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="Before"
-      src="/images/123.jpg">
-  <p class="site-author-name" itemprop="name">Before</p>
-  <div class="site-description" itemprop="description">I hope you're here for me</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">41</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-            <a href="/categories/">
-          
-        <span class="site-state-item-count">9</span>
-        <span class="site-state-item-name">分类</span></a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-          
-        <span class="site-state-item-count">24</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
-</div>
-  <div class="links-of-author motion-element">
-      <span class="links-of-author-item">
-        <a href="https://weibo.com/u/6558520690" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;u&#x2F;6558520690" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="https://twitter.com/Before82644822" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;Before82644822" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
-      </span>
-  </div>
-
-
-  <div class="links-of-blogroll motion-element">
-    <div class="links-of-blogroll-title"><i class="fa fa-lin0k fa-fw"></i>
-      友情链接
-    </div>
-    <ul class="links-of-blogroll-list">
-        <li class="links-of-blogroll-item">
-          <a href="https://zhang-sitong.gitee.io/blogs" title="https:&#x2F;&#x2F;zhang-sitong.gitee.io&#x2F;blogs" rel="noopener" target="_blank">小张</a>
-        </li>
-        <li class="links-of-blogroll-item">
-          <a href="https://v3u.cn/" title="https:&#x2F;&#x2F;v3u.cn&#x2F;" rel="noopener" target="_blank">悦哥</a>
-        </li>
-        <li class="links-of-blogroll-item">
-          <a href="https://gentleman_sc.gitee.io/hexopro/" title="https:&#x2F;&#x2F;gentleman_sc.gitee.io&#x2F;hexopro&#x2F;" rel="noopener" target="_blank">小刘</a>
-        </li>
-    </ul>
-  </div>
-
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
-
-
-      </div>
-    </main>
-
-    <footer class="footer">
-      <div class="footer-inner">
-        
-
-        
-
-<div class="copyright">
-  
-  &copy; 
-  <span itemprop="copyrightYear">2021</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">Before</span>
-</div>
-  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
-  </div>
-
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
-
-  
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-
-<script src="/js/utils.js"></script>
-
-<script src="/js/motion.js"></script>
-
-
-<script src="/js/schemes/muse.js"></script>
-
-
-<script src="/js/next-boot.js"></script>
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
-
-<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
-</html>
+</div><footer class="post-footer"><div class="post-ending ending"><div class="ending__text">------ 本文结束，感谢您的阅读 ------</div></div><div class="post-copyright copyright"><div class="copyright-author"><span class="copyright-author__name">本文作者: </span><span class="copyright-author__value"><a href="https://www.hr915.xyz">Before</a></span></div><div class="copyright-link"><span class="copyright-link__name">本文链接: </span><span class="copyright-link__value"><a href="https://www.hr915.xyz/id_5/">https://www.hr915.xyz/id_5/</a></span></div><div class="copyright-notice"><span class="copyright-notice__name">版权声明: </span><span class="copyright-notice__value">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en" rel="external nofollow" target="_blank">BY-NC-SA</a> 许可协议。转载请注明出处！</span></div></div><div class="post-tags"><span class="post-tags-item"><span class="post-tags-item__icon"><i class="fas fa-tag"></i></span><a class="post-tags-item__link" href="https://www.hr915.xyz/tags/docker/">docker</a></span></div><nav class="post-paginator paginator"><div class="paginator-prev"><a class="paginator-prev__link" href="/id_6/"><span class="paginator-prev__icon"><i class="fas fa-angle-left"></i></span><span class="paginator-prev__text">Httpx测试脚本</span></a></div><div class="paginator-next"><a class="paginator-next__link" href="/id_4/"><span class="paginator-prev__text">docker操作 容器、镜像 &amp;&amp; dockerfile</span><span class="paginator-next__icon"><i class="fas fa-angle-right"></i></span></a></div></nav></footer></div></div></div><div class="sidebar-wrap" id="sidebar-wrap"><aside class="sidebar" id="sidebar"><div class="sidebar-nav"><span class="sidebar-nav-toc current">文章目录</span><span class="sidebar-nav-ov">站点概览</span></div><section class="sidebar-toc"><ol class="toc"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%8B%89%E5%8F%96%E9%95%9C%E5%83%8F"><span class="toc-number">1.</span> <span class="toc-text">
+          拉取镜像</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E9%95%9C%E5%83%8F"><span class="toc-number">2.</span> <span class="toc-text">
+          查看镜像</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%AE%B9%E5%99%A8"><span class="toc-number">3.</span> <span class="toc-text">
+          创建容器</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8%E5%AE%B9%E5%99%A8"><span class="toc-number">4.</span> <span class="toc-text">
+          启动容器</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%BF%9B%E5%85%A5%E5%AE%B9%E5%99%A8"><span class="toc-number">5.</span> <span class="toc-text">
+          进入容器</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AE%89%E8%A3%85ssh"><span class="toc-number">6.</span> <span class="toc-text">
+          安装ssh</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%9C%A8%E5%AE%B9%E5%99%A8%E4%B8%AD%E5%90%AF%E5%8A%A8ssh%E6%9C%8D%E5%8A%A1%EF%BC%8C%E8%AE%A9%E5%A4%96%E7%95%8C%E5%8F%AF%E4%BB%A5%E8%BF%9E%E6%8E%A5"><span class="toc-number">7.</span> <span class="toc-text">
+          在容器中启动ssh服务，让外界可以连接</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9%E5%AE%B9%E5%99%A8%E5%86%85%E9%83%A8%E5%AF%86%E7%A0%81"><span class="toc-number">8.</span> <span class="toc-text">
+          修改容器内部密码</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%80%80%E5%87%BA%E5%AE%B9%E5%99%A8"><span class="toc-number">9.</span> <span class="toc-text">
+          退出容器</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9%E4%BA%91%E4%B8%BB%E6%9C%BA%E5%AF%86%E7%A0%81"><span class="toc-number">10.</span> <span class="toc-text">
+          修改云主机密码</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E6%89%80%E6%9C%89%E5%AE%B9%E5%99%A8"><span class="toc-number">11.</span> <span class="toc-text">
+          查看所有容器</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%88%B6%E4%BD%9C%E9%95%9C%E5%83%8F"><span class="toc-number">12.</span> <span class="toc-text">
+          制作镜像</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%95%9C%E5%83%8F%E5%AF%BC%E5%87%BA"><span class="toc-number">13.</span> <span class="toc-text">
+          镜像导出</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%8A%A0%E8%BD%BD%E9%95%9C%E5%83%8F-%E8%A7%A3%E5%8E%8B"><span class="toc-number">14.</span> <span class="toc-text">
+          加载镜像(解压)</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E9%95%9C%E5%83%8F%E6%98%AF%E5%90%A6%E5%AD%98%E5%9C%A8"><span class="toc-number">15.</span> <span class="toc-text">
+          查看镜像是否存在</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%AE%B9%E5%99%A8%E5%B9%B6%E6%98%A0%E5%B0%84%E7%AB%AF%E5%8F%A3%E6%8A%8A%E9%95%9C%E5%83%8F%E8%B7%91%E8%B5%B7%E6%9D%A5"><span class="toc-number">16.</span> <span class="toc-text">
+          创建容器并映射端口把镜像跑起来</span></a></li></ol></section><!-- ov = overview--><section class="sidebar-ov hide"><div class="sidebar-ov-author"><div class="sidebar-ov-author__avatar"><img class="sidebar-ov-author__avatar_img" src="/images/icons/123.jpg" alt="avatar"></div><p class="sidebar-ov-author__text">伸个懒腰吧</p></div><div class="sidebar-ov-state"><a class="sidebar-ov-state-item sidebar-ov-state-item--posts" href="/archives/"><div class="sidebar-ov-state-item__count">42</div><div class="sidebar-ov-state-item__name">归档</div></a></div><div class="sidebar-ov-cc"><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en" target="_blank" rel="noopener" data-popover="知识共享许可协议" data-popover-pos="up"><img src="/images/cc-by-nc-sa.svg"></a></div></section><div class="sidebar-reading"><div class="sidebar-reading-info"><span class="sidebar-reading-info__text">你已阅读了 </span><span class="sidebar-reading-info__num">0</span><span class="sidebar-reading-info__perc">%</span></div><div class="sidebar-reading-line"></div></div></aside></div><div class="clearfix"></div></div></main><footer class="footer" id="footer"><div class="footer-inner"><div><span>Copyright © 2021</span><span class="footer__icon"><i class="fas fa-heart"></i></span><span>Before</span></div><div><span>由 <a href="http://hexo.io/" title="Hexo" target="_blank" rel="noopener">Hexo</a> 强力驱动</span><span> v5.3.0</span><span class="footer__devider">|</span><span>主题 - <a href="https://github.com/liuyib/hexo-theme-stun/" title="Stun" target="_blank" rel="noopener">Stun</a></span><span> v2.6.2</span></div></div></footer><div class="loading-bar" id="loading-bar"><div class="loading-bar__progress"></div></div><div class="back2top" id="back2top"><span class="back2top__icon"><i class="fas fa-rocket"></i></span></div></div><script src="https://cdn.jsdelivr.net/npm/jquery@v3.4.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@1.5.2/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@1.5.2/velocity.ui.min.js"></script><script src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1.0.1/dist/canvas-nest.min.js" color="black" opacity="0.6" count="99" zIndex="-1"></script><script src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js"></script><script src="/js/utils.js?v=2.6.2"></script><script src="/js/stun-boot.js?v=2.6.2"></script><script src="/js/scroll.js?v=2.6.2"></script><script src="/js/header.js?v=2.6.2"></script><script src="/js/sidebar.js?v=2.6.2"></script><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body></html>
