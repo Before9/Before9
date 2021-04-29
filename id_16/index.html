@@ -83,9 +83,9 @@
   </style>
 </noscript>
 
+<link rel="alternate" href="/atom.xml" title="I hope you're here for me" type="application/atom+xml">
 
 <style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
-<link rel="alternate" href="/atom.xml" title="I hope you're here for me" type="application/atom+xml">
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
@@ -224,14 +224,8 @@
       
         <p>Redis提供了发布订阅功能，跟消息中间件是类似的，可以用于消息的传输，Redis提供了一组命令可以让开发者实现“发布/订阅”模式 (publish/subscribe) ，该模式同样可以实现进程间的消息传递。<br>它的实现原理是发布/订阅模式包含两种角色，分别是发布者和订阅者。订阅者可以订阅一个或多个频道，而发布者可以向指定的 频道发送消息，所有订阅此频道的订阅者都会收到该消息。</p>
 <a id="more"></a>
-
-        <h4 id="关系图">
-          <a href="#关系图" class="heading-link"><i class="fas fa-link"></i></a><a href="#关系图" class="headerlink" title="关系图"></a>关系图</h4>
-      <p><img src="/id_16/01.png" alt="发布订阅"></p>
-
-        <h4 id="redis-消息订阅和发布命令：">
-          <a href="#redis-消息订阅和发布命令：" class="heading-link"><i class="fas fa-link"></i></a><a href="#redis-消息订阅和发布命令：" class="headerlink" title="redis 消息订阅和发布命令："></a>redis 消息订阅和发布命令：</h4>
-      <ol>
+<h4 id="关系图"><a href="#关系图" class="headerlink" title="关系图"></a>关系图</h4><p><img src="/id_16/01.png" alt="发布订阅"></p>
+<h4 id="redis-消息订阅和发布命令："><a href="#redis-消息订阅和发布命令：" class="headerlink" title="redis 消息订阅和发布命令："></a>redis 消息订阅和发布命令：</h4><ol>
 <li>psubscribe pattern [pattern…] ：订阅一个或多个给定模式的 频道</li>
 <li>punsubscribe [pattern [pttern…]]：退订所有频道给定模式的频道</li>
 <li>pubsub subcommand [argument [argument…]]：查看订阅与发布系统状态</li>
@@ -239,10 +233,7 @@
 <li>subscribe channel [channel…]：订阅给定的一个或多个频道信息。</li>
 <li>unsubscribe [channel [channel…]]：指退订给定的频道。</li>
 </ol>
-
-        <h4 id="案例-for-example-：">
-          <a href="#案例-for-example-：" class="heading-link"><i class="fas fa-link"></i></a><a href="#案例-for-example-：" class="headerlink" title="案例 for example ："></a>案例 for example ：</h4>
-      <p><strong>注意</strong>：需要打开两个小黑窗口哦！</p>
+<h4 id="案例-for-example-："><a href="#案例-for-example-：" class="headerlink" title="案例 for example ："></a>案例 for example ：</h4><p><strong>注意</strong>：需要打开两个小黑窗口哦！</p>
 <ol>
 <li><p>一次订阅多个频道 c1,c2,c3 (subscribe c1 c2 c3)<br><img src="/id_16/02.png" alt="订阅多个频道"></p>
 </li>
@@ -253,10 +244,7 @@
 <li><p>发布消息 (publish new1 redis-hello)<br><img src="/id_16/05.png" alt="发布消息"></p>
 </li>
 </ol>
-
-        <h4 id="OK-本文到此结束">
-          <a href="#OK-本文到此结束" class="heading-link"><i class="fas fa-link"></i></a><a href="#OK-本文到此结束" class="headerlink" title="OK 本文到此结束"></a>OK 本文到此结束</h4>
-      
+<h4 id="OK-本文到此结束"><a href="#OK-本文到此结束" class="headerlink" title="OK 本文到此结束"></a>OK 本文到此结束</h4>
     </div>
 
     
@@ -339,11 +327,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B3%E7%B3%BB%E5%9B%BE"><span class="nav-number">1.</span> <span class="nav-text">
-          关系图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#redis-%E6%B6%88%E6%81%AF%E8%AE%A2%E9%98%85%E5%92%8C%E5%8F%91%E5%B8%83%E5%91%BD%E4%BB%A4%EF%BC%9A"><span class="nav-number">2.</span> <span class="nav-text">
-          redis 消息订阅和发布命令：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A1%88%E4%BE%8B-for-example-%EF%BC%9A"><span class="nav-number">3.</span> <span class="nav-text">
-          案例 for example ：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#OK-%E6%9C%AC%E6%96%87%E5%88%B0%E6%AD%A4%E7%BB%93%E6%9D%9F"><span class="nav-number">4.</span> <span class="nav-text">
-          OK 本文到此结束</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B3%E7%B3%BB%E5%9B%BE"><span class="nav-number">1.</span> <span class="nav-text">关系图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#redis-%E6%B6%88%E6%81%AF%E8%AE%A2%E9%98%85%E5%92%8C%E5%8F%91%E5%B8%83%E5%91%BD%E4%BB%A4%EF%BC%9A"><span class="nav-number">2.</span> <span class="nav-text">redis 消息订阅和发布命令：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A1%88%E4%BE%8B-for-example-%EF%BC%9A"><span class="nav-number">3.</span> <span class="nav-text">案例 for example ：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#OK-%E6%9C%AC%E6%96%87%E5%88%B0%E6%AD%A4%E7%BB%93%E6%9D%9F"><span class="nav-number">4.</span> <span class="nav-text">OK 本文到此结束</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -359,14 +343,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">42</span>
+          <span class="site-state-item-count">41</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-count">8</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">

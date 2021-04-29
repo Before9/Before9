@@ -77,9 +77,9 @@
   </style>
 </noscript>
 
+<link rel="alternate" href="/atom.xml" title="I hope you're here for me" type="application/atom+xml">
 
 <style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
-<link rel="alternate" href="/atom.xml" title="I hope you're here for me" type="application/atom+xml">
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
@@ -219,104 +219,56 @@
         <p>在docker hub上有时我们找不到想要的image,或自己想要打包纯净的image ( 怕投毒?? ).</p>
 <p>所以自己制作docker image是一种不错的选择</p>
 <a id="more"></a>
-
-        <h5 id="拉取镜像">
-          <a href="#拉取镜像" class="heading-link"><i class="fas fa-link"></i></a><a href="#拉取镜像" class="headerlink" title="拉取镜像"></a>拉取镜像</h5>
-      <blockquote>
+<h5 id="拉取镜像"><a href="#拉取镜像" class="headerlink" title="拉取镜像"></a>拉取镜像</h5><blockquote>
 <p>docker pull centos</p>
 </blockquote>
-
-        <h5 id="查看镜像">
-          <a href="#查看镜像" class="heading-link"><i class="fas fa-link"></i></a><a href="#查看镜像" class="headerlink" title="查看镜像"></a>查看镜像</h5>
-      <blockquote>
+<h5 id="查看镜像"><a href="#查看镜像" class="headerlink" title="查看镜像"></a>查看镜像</h5><blockquote>
 <p>docker images</p>
 </blockquote>
-
-        <h5 id="创建容器">
-          <a href="#创建容器" class="heading-link"><i class="fas fa-link"></i></a><a href="#创建容器" class="headerlink" title="创建容器"></a>创建容器</h5>
-      <blockquote>
+<h5 id="创建容器"><a href="#创建容器" class="headerlink" title="创建容器"></a>创建容器</h5><blockquote>
 <p>docker run -it –name=容器名  镜像名  /bin/bash</p>
 </blockquote>
-
-        <h5 id="启动容器">
-          <a href="#启动容器" class="heading-link"><i class="fas fa-link"></i></a><a href="#启动容器" class="headerlink" title="启动容器"></a>启动容器</h5>
-      <blockquote>
+<h5 id="启动容器"><a href="#启动容器" class="headerlink" title="启动容器"></a>启动容器</h5><blockquote>
 <p>docker start 容器ID</p>
 </blockquote>
-
-        <h5 id="进入容器">
-          <a href="#进入容器" class="heading-link"><i class="fas fa-link"></i></a><a href="#进入容器" class="headerlink" title="进入容器"></a>进入容器</h5>
-      <blockquote>
+<h5 id="进入容器"><a href="#进入容器" class="headerlink" title="进入容器"></a>进入容器</h5><blockquote>
 <p>docker exec -itd 容器名(容器ID) /bin/bash<br>docker attach 容器ID</p>
 </blockquote>
-
-        <h5 id="安装ssh">
-          <a href="#安装ssh" class="heading-link"><i class="fas fa-link"></i></a><a href="#安装ssh" class="headerlink" title="安装ssh"></a>安装ssh</h5>
-      <blockquote>
+<h5 id="安装ssh"><a href="#安装ssh" class="headerlink" title="安装ssh"></a>安装ssh</h5><blockquote>
 <p>yum install openssh-server</p>
 </blockquote>
 <p>没有正常启动的话通常需要生成当前主机的ssh-key</p>
 <blockquote>
 <p>ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key<br>ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key<br>ssh-keygen -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key<br>ssh-keygen -t dsa -f /etc/ssh/ssh_host_ed25519_key</p>
 </blockquote>
-
-        <h5 id="在容器中启动ssh服务，让外界可以连接">
-          <a href="#在容器中启动ssh服务，让外界可以连接" class="heading-link"><i class="fas fa-link"></i></a><a href="#在容器中启动ssh服务，让外界可以连接" class="headerlink" title="在容器中启动ssh服务，让外界可以连接"></a>在容器中启动ssh服务，让外界可以连接</h5>
-      <blockquote>
+<h5 id="在容器中启动ssh服务，让外界可以连接"><a href="#在容器中启动ssh服务，让外界可以连接" class="headerlink" title="在容器中启动ssh服务，让外界可以连接"></a>在容器中启动ssh服务，让外界可以连接</h5><blockquote>
 <p>/usr/sbin/sshd</p>
 </blockquote>
-
-        <h5 id="修改容器内部密码">
-          <a href="#修改容器内部密码" class="heading-link"><i class="fas fa-link"></i></a><a href="#修改容器内部密码" class="headerlink" title="修改容器内部密码"></a>修改容器内部密码</h5>
-      <blockquote>
+<h5 id="修改容器内部密码"><a href="#修改容器内部密码" class="headerlink" title="修改容器内部密码"></a>修改容器内部密码</h5><blockquote>
 <p>修改密码需要安装passwd<br>yum install passwd.x86_64<br>修改密码<br>passwd root</p>
 </blockquote>
-
-        <h5 id="退出容器">
-          <a href="#退出容器" class="heading-link"><i class="fas fa-link"></i></a><a href="#退出容器" class="headerlink" title="退出容器"></a>退出容器</h5>
-      <blockquote>
+<h5 id="退出容器"><a href="#退出容器" class="headerlink" title="退出容器"></a>退出容器</h5><blockquote>
 <p>exit</p>
 </blockquote>
-
-        <h5 id="修改云主机密码">
-          <a href="#修改云主机密码" class="heading-link"><i class="fas fa-link"></i></a><a href="#修改云主机密码" class="headerlink" title="修改云主机密码"></a>修改云主机密码</h5>
-      <blockquote>
+<h5 id="修改云主机密码"><a href="#修改云主机密码" class="headerlink" title="修改云主机密码"></a>修改云主机密码</h5><blockquote>
 <p>修改云主机密码需要退出容器在执行passwd</p>
 </blockquote>
-
-        <h5 id="查看所有容器">
-          <a href="#查看所有容器" class="heading-link"><i class="fas fa-link"></i></a><a href="#查看所有容器" class="headerlink" title="查看所有容器"></a>查看所有容器</h5>
-      <blockquote>
+<h5 id="查看所有容器"><a href="#查看所有容器" class="headerlink" title="查看所有容器"></a>查看所有容器</h5><blockquote>
 <p>docker ps -a</p>
 </blockquote>
-
-        <h5 id="制作镜像">
-          <a href="#制作镜像" class="heading-link"><i class="fas fa-link"></i></a><a href="#制作镜像" class="headerlink" title="制作镜像"></a>制作镜像</h5>
-      <blockquote>
+<h5 id="制作镜像"><a href="#制作镜像" class="headerlink" title="制作镜像"></a>制作镜像</h5><blockquote>
 <p>docker commit -a “作者” -m “简介”  被打包的容器ID  镜像名: 版本号</p>
 </blockquote>
-
-        <h5 id="镜像导出">
-          <a href="#镜像导出" class="heading-link"><i class="fas fa-link"></i></a><a href="#镜像导出" class="headerlink" title="镜像导出"></a>镜像导出</h5>
-      <blockquote>
+<h5 id="镜像导出"><a href="#镜像导出" class="headerlink" title="镜像导出"></a>镜像导出</h5><blockquote>
 <p>docker save 镜像名 &gt; ./文件名<br>例如： docker save ssh_image &gt; ./文件名</p>
 </blockquote>
-
-        <h5 id="加载镜像-解压">
-          <a href="#加载镜像-解压" class="heading-link"><i class="fas fa-link"></i></a><a href="#加载镜像-解压" class="headerlink" title="加载镜像(解压)"></a>加载镜像(解压)</h5>
-      <blockquote>
+<h5 id="加载镜像-解压"><a href="#加载镜像-解压" class="headerlink" title="加载镜像(解压)"></a>加载镜像(解压)</h5><blockquote>
 <p>docker load &lt; ./文件名<br>例如： docker load &lt; ./文件名</p>
 </blockquote>
-
-        <h5 id="查看镜像是否存在">
-          <a href="#查看镜像是否存在" class="heading-link"><i class="fas fa-link"></i></a><a href="#查看镜像是否存在" class="headerlink" title="查看镜像是否存在"></a>查看镜像是否存在</h5>
-      <blockquote>
+<h5 id="查看镜像是否存在"><a href="#查看镜像是否存在" class="headerlink" title="查看镜像是否存在"></a>查看镜像是否存在</h5><blockquote>
 <p>docker images</p>
 </blockquote>
-
-        <h5 id="创建容器并映射端口把镜像跑起来">
-          <a href="#创建容器并映射端口把镜像跑起来" class="heading-link"><i class="fas fa-link"></i></a><a href="#创建容器并映射端口把镜像跑起来" class="headerlink" title="创建容器并映射端口把镜像跑起来"></a>创建容器并映射端口把镜像跑起来</h5>
-      <blockquote>
+<h5 id="创建容器并映射端口把镜像跑起来"><a href="#创建容器并映射端口把镜像跑起来" class="headerlink" title="创建容器并映射端口把镜像跑起来"></a>创建容器并映射端口把镜像跑起来</h5><blockquote>
 <p>docker run -itd -p 11111:22(映射的端口号)  镜像ID  /bin/bash</p>
 </blockquote>
 
@@ -402,23 +354,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%8B%89%E5%8F%96%E9%95%9C%E5%83%8F"><span class="nav-number">1.</span> <span class="nav-text">
-          拉取镜像</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E9%95%9C%E5%83%8F"><span class="nav-number">2.</span> <span class="nav-text">
-          查看镜像</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%AE%B9%E5%99%A8"><span class="nav-number">3.</span> <span class="nav-text">
-          创建容器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8%E5%AE%B9%E5%99%A8"><span class="nav-number">4.</span> <span class="nav-text">
-          启动容器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%BF%9B%E5%85%A5%E5%AE%B9%E5%99%A8"><span class="nav-number">5.</span> <span class="nav-text">
-          进入容器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%89%E8%A3%85ssh"><span class="nav-number">6.</span> <span class="nav-text">
-          安装ssh</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%9C%A8%E5%AE%B9%E5%99%A8%E4%B8%AD%E5%90%AF%E5%8A%A8ssh%E6%9C%8D%E5%8A%A1%EF%BC%8C%E8%AE%A9%E5%A4%96%E7%95%8C%E5%8F%AF%E4%BB%A5%E8%BF%9E%E6%8E%A5"><span class="nav-number">7.</span> <span class="nav-text">
-          在容器中启动ssh服务，让外界可以连接</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E5%AE%B9%E5%99%A8%E5%86%85%E9%83%A8%E5%AF%86%E7%A0%81"><span class="nav-number">8.</span> <span class="nav-text">
-          修改容器内部密码</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%80%80%E5%87%BA%E5%AE%B9%E5%99%A8"><span class="nav-number">9.</span> <span class="nav-text">
-          退出容器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E4%BA%91%E4%B8%BB%E6%9C%BA%E5%AF%86%E7%A0%81"><span class="nav-number">10.</span> <span class="nav-text">
-          修改云主机密码</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E6%89%80%E6%9C%89%E5%AE%B9%E5%99%A8"><span class="nav-number">11.</span> <span class="nav-text">
-          查看所有容器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%B6%E4%BD%9C%E9%95%9C%E5%83%8F"><span class="nav-number">12.</span> <span class="nav-text">
-          制作镜像</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%95%9C%E5%83%8F%E5%AF%BC%E5%87%BA"><span class="nav-number">13.</span> <span class="nav-text">
-          镜像导出</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8A%A0%E8%BD%BD%E9%95%9C%E5%83%8F-%E8%A7%A3%E5%8E%8B"><span class="nav-number">14.</span> <span class="nav-text">
-          加载镜像(解压)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E9%95%9C%E5%83%8F%E6%98%AF%E5%90%A6%E5%AD%98%E5%9C%A8"><span class="nav-number">15.</span> <span class="nav-text">
-          查看镜像是否存在</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%AE%B9%E5%99%A8%E5%B9%B6%E6%98%A0%E5%B0%84%E7%AB%AF%E5%8F%A3%E6%8A%8A%E9%95%9C%E5%83%8F%E8%B7%91%E8%B5%B7%E6%9D%A5"><span class="nav-number">16.</span> <span class="nav-text">
-          创建容器并映射端口把镜像跑起来</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%8B%89%E5%8F%96%E9%95%9C%E5%83%8F"><span class="nav-number">1.</span> <span class="nav-text">拉取镜像</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E9%95%9C%E5%83%8F"><span class="nav-number">2.</span> <span class="nav-text">查看镜像</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%AE%B9%E5%99%A8"><span class="nav-number">3.</span> <span class="nav-text">创建容器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8%E5%AE%B9%E5%99%A8"><span class="nav-number">4.</span> <span class="nav-text">启动容器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%BF%9B%E5%85%A5%E5%AE%B9%E5%99%A8"><span class="nav-number">5.</span> <span class="nav-text">进入容器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%89%E8%A3%85ssh"><span class="nav-number">6.</span> <span class="nav-text">安装ssh</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%9C%A8%E5%AE%B9%E5%99%A8%E4%B8%AD%E5%90%AF%E5%8A%A8ssh%E6%9C%8D%E5%8A%A1%EF%BC%8C%E8%AE%A9%E5%A4%96%E7%95%8C%E5%8F%AF%E4%BB%A5%E8%BF%9E%E6%8E%A5"><span class="nav-number">7.</span> <span class="nav-text">在容器中启动ssh服务，让外界可以连接</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E5%AE%B9%E5%99%A8%E5%86%85%E9%83%A8%E5%AF%86%E7%A0%81"><span class="nav-number">8.</span> <span class="nav-text">修改容器内部密码</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%80%80%E5%87%BA%E5%AE%B9%E5%99%A8"><span class="nav-number">9.</span> <span class="nav-text">退出容器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E4%BA%91%E4%B8%BB%E6%9C%BA%E5%AF%86%E7%A0%81"><span class="nav-number">10.</span> <span class="nav-text">修改云主机密码</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E6%89%80%E6%9C%89%E5%AE%B9%E5%99%A8"><span class="nav-number">11.</span> <span class="nav-text">查看所有容器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%B6%E4%BD%9C%E9%95%9C%E5%83%8F"><span class="nav-number">12.</span> <span class="nav-text">制作镜像</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%95%9C%E5%83%8F%E5%AF%BC%E5%87%BA"><span class="nav-number">13.</span> <span class="nav-text">镜像导出</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8A%A0%E8%BD%BD%E9%95%9C%E5%83%8F-%E8%A7%A3%E5%8E%8B"><span class="nav-number">14.</span> <span class="nav-text">加载镜像(解压)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E9%95%9C%E5%83%8F%E6%98%AF%E5%90%A6%E5%AD%98%E5%9C%A8"><span class="nav-number">15.</span> <span class="nav-text">查看镜像是否存在</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%AE%B9%E5%99%A8%E5%B9%B6%E6%98%A0%E5%B0%84%E7%AB%AF%E5%8F%A3%E6%8A%8A%E9%95%9C%E5%83%8F%E8%B7%91%E8%B5%B7%E6%9D%A5"><span class="nav-number">16.</span> <span class="nav-text">创建容器并映射端口把镜像跑起来</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -434,14 +370,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">42</span>
+          <span class="site-state-item-count">41</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-count">8</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
