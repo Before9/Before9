@@ -359,24 +359,6 @@
       </tags>
   </entry>
   <entry>
-    <title>用户注册</title>
-    <url>/id_18/</url>
-    <content><![CDATA[<h4 id="用户注册功能"><a href="#用户注册功能" class="headerlink" title="用户注册功能"></a>用户注册功能</h4><p>需求：实现用户注册功能，并将用户注册信息保存到磁盘文件中，用户注册时至少给定：用户名和密码<br>注意：用户名使用了唯一索引，不可重复</p>
-<a id="more"></a>
-<ul>
-<li>相关问题：</li>
-</ul>
-<p><strong>问</strong>：唯一索引干嘛用的 为什么用？<br><strong>答</strong>：指的是某个字段不能出现重复的值，比如身份证列，手机号。<br>使用唯一索引避免了注册时需要进数据库查询是否有重复的一次IO操作，节省时间，提高效率</p>
-<p>OK 上代码</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">register</span>(<span class="params">APIView</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">post</span>(<span class="params">self, request</span>):</span></span><br><span class="line">        username = request.data.get(<span class="string">"username"</span>)</span><br><span class="line">        password = request.data.get(<span class="string">"password"</span>)</span><br><span class="line">        leave = request.data.get(<span class="string">"leave"</span>)       <span class="comment"># 用户等级</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            UserModel.objects.create(username=username, password=password, leave=leave)</span><br><span class="line">            <span class="keyword">return</span> Response({<span class="string">"msg"</span>: <span class="string">"添加成功"</span>, <span class="string">"code"</span>: <span class="number">200</span>})</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            print(e)</span><br><span class="line">            <span class="keyword">return</span> Response({<span class="string">"msg"</span>: <span class="string">"该用户已存在"</span>, <span class="string">"code"</span>: <span class="number">400</span>})</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>]]></content>
-      <categories>
-        <category>后端</category>
-      </categories>
-      <tags>
-        <tag>django</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>接口测试中的异步调用和异步写入文件</title>
     <url>/id_19/</url>
     <content><![CDATA[<p>异步调用：<br>异步方法必须async 关键字声明<br>所有其他方法，耗时任务都需要加上await关键字，await必须依靠async<br>with用来建立工作流和关闭流对象</p>
@@ -431,6 +413,46 @@
       </tags>
   </entry>
   <entry>
+    <title>用户注册</title>
+    <url>/id_18/</url>
+    <content><![CDATA[<h4 id="用户注册功能"><a href="#用户注册功能" class="headerlink" title="用户注册功能"></a>用户注册功能</h4><p>需求：实现用户注册功能，并将用户注册信息保存到磁盘文件中，用户注册时至少给定：用户名和密码<br>注意：用户名使用了唯一索引，不可重复</p>
+<a id="more"></a>
+<ul>
+<li>相关问题：</li>
+</ul>
+<p><strong>问</strong>：唯一索引干嘛用的 为什么用？<br><strong>答</strong>：指的是某个字段不能出现重复的值，比如身份证列，手机号。<br>使用唯一索引避免了注册时需要进数据库查询是否有重复的一次IO操作，节省时间，提高效率</p>
+<p>OK 上代码</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">register</span>(<span class="params">APIView</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">post</span>(<span class="params">self, request</span>):</span></span><br><span class="line">        username = request.data.get(<span class="string">"username"</span>)</span><br><span class="line">        password = request.data.get(<span class="string">"password"</span>)</span><br><span class="line">        leave = request.data.get(<span class="string">"leave"</span>)       <span class="comment"># 用户等级</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            UserModel.objects.create(username=username, password=password, leave=leave)</span><br><span class="line">            <span class="keyword">return</span> Response({<span class="string">"msg"</span>: <span class="string">"添加成功"</span>, <span class="string">"code"</span>: <span class="number">200</span>})</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            print(e)</span><br><span class="line">            <span class="keyword">return</span> Response({<span class="string">"msg"</span>: <span class="string">"该用户已存在"</span>, <span class="string">"code"</span>: <span class="number">400</span>})</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>]]></content>
+      <categories>
+        <category>后端</category>
+      </categories>
+      <tags>
+        <tag>django</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Redis实现消息队列(Queue)</title>
+    <url>/id_21/</url>
+    <content><![CDATA[<ul>
+<li>相关问题：</li>
+</ul>
+<p><strong>问</strong>：为什么能用列表推导式的时候不用普通for循环？<br><strong>答</strong>：列表推导式比普通for循环性能好</p>
+<a id="more"></a>
+<p><strong>问</strong>：什么是lambda表达式？怎么用？<br><strong>答</strong>：lambda表达式又被称为匿名函数，一般在执行简单的逻辑时使用<br>lambda x:x<em>x   lambda关键字 x变量 x</em>x逻辑<br>注意：lambda的使用大量简化了代码，使代码简练清晰。但是值得注意的是，这会在一定程度上降低代码的可读性。还有lambda内不要包含循环，如果有，我宁愿定义函数来完成，使代码获得可重用性和更好的可读性。<br><strong>问</strong>：redis列表里只能存字符串，如果想存别的类型有什么办法？<br><strong>答</strong>：使用eval()</p>
+<blockquote>
+<p>eval() 原样输出字符串，将字符串强转成它包含的数据类型<br>例: a = “[1,2,3]”(字符串)<br>    a = eval(a)<br>结果：a=<a href="%E5%88%97%E8%A1%A8">1,2,3</a></p>
+</blockquote>
+<p><strong>加权队列</strong>：举个例子吧，在银行窗口办理业务的时候需要先取号==放进队列，然后排队等待。<br>但是这只是普通用户。如果有金卡用户取号，那么金卡用户的业务就可以插队==加权，先行办理金卡用户的业务<br>加权需要用到排序，并且Celery并没有加权这一功能<br>上代码！</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 首先进行方法封装</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyQueue</span>:</span></span><br><span class="line">    <span class="comment"># 队列遵循先进先出的原则</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, name, **redis_kwargs</span>):</span></span><br><span class="line">        <span class="comment"># **kwarys不定长参数  用于可传可不传的参数 </span></span><br><span class="line">        <span class="comment"># kwargs是用来传键值对，args 一般用来传列表和元祖</span></span><br><span class="line">        <span class="comment"># self.__变量名：使用双下划线开头的变量是私有变量，在类外不可以被调用</span></span><br><span class="line">        <span class="comment"># redis的默认参数为：host='localhost', port=6379, db=0， 其中db为定义redis的第几个库</span></span><br><span class="line">        self.__db = redis.Redis(**redis_kwargs, decode_responses=<span class="literal">True</span>)</span><br><span class="line">        self.key = name</span><br><span class="line">        <span class="comment"># llen:获取列表长度</span></span><br><span class="line">        <span class="comment"># lrange:获取列表指定范围内的元素</span></span><br><span class="line">        self.r_len = self.__db.llen(self.key)</span><br><span class="line">        self.l = self.__db.lrange(self.key, <span class="number">0</span>, -<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">push</span>(<span class="params">self, x: <span class="built_in">tuple</span></span>):</span></span><br><span class="line">        <span class="comment"># rpush:在列表中添加一个或多个值</span></span><br><span class="line">        self.__db.rpush(self.key, x)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">show</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(self.__db.lrange(self.key, <span class="number">0</span>, -<span class="number">1</span>))</span><br><span class="line">        <span class="keyword">return</span> self.__db.lrange(self.key, <span class="number">0</span>, -<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 排序用来加权(加权是celery没有的)</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">sort</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="comment"># 因为redis里存的是字符串，而排序的依据是元组中最后一个元素为int,所以使用-2下标</span></span><br><span class="line">        <span class="comment"># 此处可用eval </span></span><br><span class="line">        self.l = <span class="built_in">sorted</span>(self.l, key=<span class="keyword">lambda</span> x: x[-<span class="number">2</span>], reverse=<span class="literal">True</span>)</span><br><span class="line">        <span class="keyword">return</span> self.l</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">pop</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="comment"># pop(0):移出并获取列表的第一个元素</span></span><br><span class="line">        <span class="comment"># lrem 根据第二个参数的值，移除列表中与参数相等的元素。</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> self.l:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line">        item = self.l.pop(<span class="number">0</span>)</span><br><span class="line">        self.__db.lrem(self.key, item, <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> item</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">clear</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="comment"># 用来清空列表</span></span><br><span class="line">        <span class="keyword">return</span> self.__db.delete(self.key)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    m = MyQueue(<span class="string">'que'</span>)</span><br><span class="line">    <span class="comment"># 添加到redis</span></span><br><span class="line">    i = <span class="number">1</span></span><br><span class="line">    <span class="comment"># 列表推导式</span></span><br><span class="line">    [m.push(i,i+<span class="number">1</span>,i+<span class="number">2</span>) <span class="keyword">for</span> item <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>) i++]</span><br><span class="line">    <span class="comment"># 将添加进去的数据排序 </span></span><br><span class="line">    m.sort()</span><br><span class="line">    <span class="comment"># 删除排序后列表中的第一个元素</span></span><br><span class="line">    m.pop()</span><br><span class="line">    <span class="comment"># 清空列表</span></span><br><span class="line">    m.clear()</span><br></pre></td></tr></tbody></table></figure>]]></content>
+      <categories>
+        <category>数据结构</category>
+      </categories>
+      <tags>
+        <tag>redis</tag>
+        <tag>队列</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Redis封禁账号30分钟</title>
     <url>/id_20/</url>
     <content><![CDATA[<p><strong>问题</strong>： 账号锁定问题  五分钟以内输错五次密码，锁定账号30分钟</p>
@@ -477,28 +499,6 @@
       </categories>
       <tags>
         <tag>redis</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Redis实现消息队列(Queue)</title>
-    <url>/id_21/</url>
-    <content><![CDATA[<ul>
-<li>相关问题：</li>
-</ul>
-<p><strong>问</strong>：为什么能用列表推导式的时候不用普通for循环？<br><strong>答</strong>：列表推导式比普通for循环性能好</p>
-<a id="more"></a>
-<p><strong>问</strong>：什么是lambda表达式？怎么用？<br><strong>答</strong>：lambda表达式又被称为匿名函数，一般在执行简单的逻辑时使用<br>lambda x:x<em>x   lambda关键字 x变量 x</em>x逻辑<br>注意：lambda的使用大量简化了代码，使代码简练清晰。但是值得注意的是，这会在一定程度上降低代码的可读性。还有lambda内不要包含循环，如果有，我宁愿定义函数来完成，使代码获得可重用性和更好的可读性。<br><strong>问</strong>：redis列表里只能存字符串，如果想存别的类型有什么办法？<br><strong>答</strong>：使用eval()</p>
-<blockquote>
-<p>eval() 原样输出字符串，将字符串强转成它包含的数据类型<br>例: a = “[1,2,3]”(字符串)<br>    a = eval(a)<br>结果：a=<a href="%E5%88%97%E8%A1%A8">1,2,3</a></p>
-</blockquote>
-<p><strong>加权队列</strong>：举个例子吧，在银行窗口办理业务的时候需要先取号==放进队列，然后排队等待。<br>但是这只是普通用户。如果有金卡用户取号，那么金卡用户的业务就可以插队==加权，先行办理金卡用户的业务<br>加权需要用到排序，并且Celery并没有加权这一功能<br>上代码！</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># 首先进行方法封装</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyQueue</span>:</span></span><br><span class="line">    <span class="comment"># 队列遵循先进先出的原则</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, name, **redis_kwargs</span>):</span></span><br><span class="line">        <span class="comment"># **kwarys不定长参数  用于可传可不传的参数 </span></span><br><span class="line">        <span class="comment"># kwargs是用来传键值对，args 一般用来传列表和元祖</span></span><br><span class="line">        <span class="comment"># self.__变量名：使用双下划线开头的变量是私有变量，在类外不可以被调用</span></span><br><span class="line">        <span class="comment"># redis的默认参数为：host='localhost', port=6379, db=0， 其中db为定义redis的第几个库</span></span><br><span class="line">        self.__db = redis.Redis(**redis_kwargs, decode_responses=<span class="literal">True</span>)</span><br><span class="line">        self.key = name</span><br><span class="line">        <span class="comment"># llen:获取列表长度</span></span><br><span class="line">        <span class="comment"># lrange:获取列表指定范围内的元素</span></span><br><span class="line">        self.r_len = self.__db.llen(self.key)</span><br><span class="line">        self.l = self.__db.lrange(self.key, <span class="number">0</span>, -<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">push</span>(<span class="params">self, x: <span class="built_in">tuple</span></span>):</span></span><br><span class="line">        <span class="comment"># rpush:在列表中添加一个或多个值</span></span><br><span class="line">        self.__db.rpush(self.key, x)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">show</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(self.__db.lrange(self.key, <span class="number">0</span>, -<span class="number">1</span>))</span><br><span class="line">        <span class="keyword">return</span> self.__db.lrange(self.key, <span class="number">0</span>, -<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 排序用来加权(加权是celery没有的)</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">sort</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="comment"># 因为redis里存的是字符串，而排序的依据是元组中最后一个元素为int,所以使用-2下标</span></span><br><span class="line">        <span class="comment"># 此处可用eval </span></span><br><span class="line">        self.l = <span class="built_in">sorted</span>(self.l, key=<span class="keyword">lambda</span> x: x[-<span class="number">2</span>], reverse=<span class="literal">True</span>)</span><br><span class="line">        <span class="keyword">return</span> self.l</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">pop</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="comment"># pop(0):移出并获取列表的第一个元素</span></span><br><span class="line">        <span class="comment"># lrem 根据第二个参数的值，移除列表中与参数相等的元素。</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> self.l:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line">        item = self.l.pop(<span class="number">0</span>)</span><br><span class="line">        self.__db.lrem(self.key, item, <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> item</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">clear</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="comment"># 用来清空列表</span></span><br><span class="line">        <span class="keyword">return</span> self.__db.delete(self.key)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    m = MyQueue(<span class="string">'que'</span>)</span><br><span class="line">    <span class="comment"># 添加到redis</span></span><br><span class="line">    i = <span class="number">1</span></span><br><span class="line">    <span class="comment"># 列表推导式</span></span><br><span class="line">    [m.push(i,i+<span class="number">1</span>,i+<span class="number">2</span>) <span class="keyword">for</span> item <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>) i++]</span><br><span class="line">    <span class="comment"># 将添加进去的数据排序 </span></span><br><span class="line">    m.sort()</span><br><span class="line">    <span class="comment"># 删除排序后列表中的第一个元素</span></span><br><span class="line">    m.pop()</span><br><span class="line">    <span class="comment"># 清空列表</span></span><br><span class="line">    m.clear()</span><br></pre></td></tr></tbody></table></figure>]]></content>
-      <categories>
-        <category>数据结构</category>
-      </categories>
-      <tags>
-        <tag>redis</tag>
-        <tag>队列</tag>
       </tags>
   </entry>
   <entry>
@@ -640,29 +640,6 @@
       </tags>
   </entry>
   <entry>
-    <title>栈的使用</title>
-    <url>/id_25/</url>
-    <content><![CDATA[<h3 id="栈"><a href="#栈" class="headerlink" title="栈"></a>栈</h3><p>栈（stack）又名堆栈，它是一种运算受限的<strong>线性表</strong>。限定仅在表尾进行插入和删除操作的线性表。<br>这一端被称为栈顶，相对地，把另一端称为栈底。向一个栈插入新元素又称作进栈、入栈或压栈，它是把新元素放到栈顶元素的上面，使之成为新的栈顶元素；<br>从一个栈删除元素又称作出栈或退栈，它是把栈顶元素删除掉，使其相邻的元素成为新的栈顶元素。</p>
-<a id="more"></a>
-<p>栈作为一种数据结构，是一种只能在一端进行插入和删除操作的特殊线性表。<br>它按照<strong>先进后出</strong>，<strong>后进先出</strong>的原则存储数据</p>
-<h4 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h4><ul>
-<li>银行ATM自动存取款机<br>  假设取款机下有一个用来钱的箱子，箱子只有一个口供用户存取现金<br>  当你存钱的时候，ATM会把钱放在最上面<br>  当你取钱的时候，ATM会把最上面的钱吐出来</li>
-</ul>
-<h4 id="案例"><a href="#案例" class="headerlink" title="案例"></a>案例</h4><h5 id="将十进制的数转换为二进制的数"><a href="#将十进制的数转换为二进制的数" class="headerlink" title="将十进制的数转换为二进制的数"></a>将十进制的数转换为二进制的数</h5><p>我们都知道，通过求余法，可以将十进制数转换为其他进制，比如要转为二进制，将十进制数除以2，记录余数，然后继续将商除以2，一直到商等于0为止，最后将余数倒着写数来就可以了。</p>
-<p>比如13的二进制，13首先除以2商6余1,1首先进栈，然后6除以2商3余0，第二个余数0进栈，接着3除以2，商1余1，第三个余数1进栈，继续1除以2商0余1，第四个余数1进栈。最后将四个余数出栈，就得到了13的二进制1101。<br>实现代码如下</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Stack</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        self.item = []</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">push</span>(<span class="params">self, key</span>):</span></span><br><span class="line">        self.item.append(key)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">pop</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">while</span> <span class="number">1</span>:</span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">len</span>(self.item) != <span class="number">0</span>:</span><br><span class="line">                print(self.item.pop(),end=<span class="string">''</span>)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">exe</span>(<span class="params">self, key</span>):</span></span><br><span class="line">        key = <span class="built_in">int</span>(key)</span><br><span class="line">        <span class="keyword">while</span> <span class="number">1</span>:</span><br><span class="line">            self.push(key % <span class="number">2</span>)</span><br><span class="line">            key //= <span class="number">2</span></span><br><span class="line">            <span class="keyword">if</span> key == <span class="number">0</span>:</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">s = Stack()</span><br><span class="line">s.exe(<span class="built_in">input</span>(<span class="string">"请输入您要进行换算的数字："</span>))</span><br><span class="line">s.pop()</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
-<h3 id="栈和队列的异同点"><a href="#栈和队列的异同点" class="headerlink" title="栈和队列的异同点"></a>栈和队列的异同点</h3><h4 id="首先，栈（Stack）和队列（Queue）是两种操作受限的线性表。"><a href="#首先，栈（Stack）和队列（Queue）是两种操作受限的线性表。" class="headerlink" title="首先，栈（Stack）和队列（Queue）是两种操作受限的线性表。"></a>首先，栈（Stack）和队列（Queue）是两种操作受限的线性表。</h4><h4 id="栈与队列的相同点："><a href="#栈与队列的相同点：" class="headerlink" title="栈与队列的相同点："></a>栈与队列的相同点：</h4><p>1.都是线性结构。<br>2.插入操作都是限定在表尾进行。<br>3.都可以通过顺序结构和链式结构实现。<br>4.插入与删除的时间复杂度都是O（1），在空间复杂度上两者也一样。<br>5.多链栈和多链队列的管理模式可以相同。</p>
-<h4 id="栈与队列的不同点："><a href="#栈与队列的不同点：" class="headerlink" title="栈与队列的不同点："></a>栈与队列的不同点：</h4><p>1.删除数据元素的位置不同，栈的删除操作在表尾进行，队列的删除操作在表头进行。<br>2.应用场景不同；常见栈的应用场景包括括号问题的求解，表达式的转换和求值，函数调用和递归实现，深度优先搜索遍历等；常见的队列的应用场景包括计算机系统中各种资源的管理，消息缓冲器的管理和广度优先搜索遍历等。<br>3.顺序栈能够实现多栈空间共享，而顺序队列不能。</p>
-]]></content>
-      <categories>
-        <category>数据结构</category>
-      </categories>
-      <tags>
-        <tag>进制</tag>
-        <tag>栈</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>设计模式</title>
     <url>/id_26/</url>
     <content><![CDATA[<h4 id="设计模式简介"><a href="#设计模式简介" class="headerlink" title="设计模式简介"></a>设计模式简介</h4><p>设计模式是一套被反复使用的、多数人知晓的、经过分类编目的、代码设计经验的总结。使用设计模式是为了重用代码、让代码更容易被他人理解、保证代码可靠性。</p>
@@ -748,6 +725,29 @@
       </categories>
       <tags>
         <tag>python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>栈的使用</title>
+    <url>/id_25/</url>
+    <content><![CDATA[<h3 id="栈"><a href="#栈" class="headerlink" title="栈"></a>栈</h3><p>栈（stack）又名堆栈，它是一种运算受限的<strong>线性表</strong>。限定仅在表尾进行插入和删除操作的线性表。<br>这一端被称为栈顶，相对地，把另一端称为栈底。向一个栈插入新元素又称作进栈、入栈或压栈，它是把新元素放到栈顶元素的上面，使之成为新的栈顶元素；<br>从一个栈删除元素又称作出栈或退栈，它是把栈顶元素删除掉，使其相邻的元素成为新的栈顶元素。</p>
+<a id="more"></a>
+<p>栈作为一种数据结构，是一种只能在一端进行插入和删除操作的特殊线性表。<br>它按照<strong>先进后出</strong>，<strong>后进先出</strong>的原则存储数据</p>
+<h4 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h4><ul>
+<li>银行ATM自动存取款机<br>  假设取款机下有一个用来钱的箱子，箱子只有一个口供用户存取现金<br>  当你存钱的时候，ATM会把钱放在最上面<br>  当你取钱的时候，ATM会把最上面的钱吐出来</li>
+</ul>
+<h4 id="案例"><a href="#案例" class="headerlink" title="案例"></a>案例</h4><h5 id="将十进制的数转换为二进制的数"><a href="#将十进制的数转换为二进制的数" class="headerlink" title="将十进制的数转换为二进制的数"></a>将十进制的数转换为二进制的数</h5><p>我们都知道，通过求余法，可以将十进制数转换为其他进制，比如要转为二进制，将十进制数除以2，记录余数，然后继续将商除以2，一直到商等于0为止，最后将余数倒着写数来就可以了。</p>
+<p>比如13的二进制，13首先除以2商6余1,1首先进栈，然后6除以2商3余0，第二个余数0进栈，接着3除以2，商1余1，第三个余数1进栈，继续1除以2商0余1，第四个余数1进栈。最后将四个余数出栈，就得到了13的二进制1101。<br>实现代码如下</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Stack</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        self.item = []</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">push</span>(<span class="params">self, key</span>):</span></span><br><span class="line">        self.item.append(key)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">pop</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">while</span> <span class="number">1</span>:</span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">len</span>(self.item) != <span class="number">0</span>:</span><br><span class="line">                print(self.item.pop(),end=<span class="string">''</span>)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">exe</span>(<span class="params">self, key</span>):</span></span><br><span class="line">        key = <span class="built_in">int</span>(key)</span><br><span class="line">        <span class="keyword">while</span> <span class="number">1</span>:</span><br><span class="line">            self.push(key % <span class="number">2</span>)</span><br><span class="line">            key //= <span class="number">2</span></span><br><span class="line">            <span class="keyword">if</span> key == <span class="number">0</span>:</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">s = Stack()</span><br><span class="line">s.exe(<span class="built_in">input</span>(<span class="string">"请输入您要进行换算的数字："</span>))</span><br><span class="line">s.pop()</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+<h3 id="栈和队列的异同点"><a href="#栈和队列的异同点" class="headerlink" title="栈和队列的异同点"></a>栈和队列的异同点</h3><h4 id="首先，栈（Stack）和队列（Queue）是两种操作受限的线性表。"><a href="#首先，栈（Stack）和队列（Queue）是两种操作受限的线性表。" class="headerlink" title="首先，栈（Stack）和队列（Queue）是两种操作受限的线性表。"></a>首先，栈（Stack）和队列（Queue）是两种操作受限的线性表。</h4><h4 id="栈与队列的相同点："><a href="#栈与队列的相同点：" class="headerlink" title="栈与队列的相同点："></a>栈与队列的相同点：</h4><p>1.都是线性结构。<br>2.插入操作都是限定在表尾进行。<br>3.都可以通过顺序结构和链式结构实现。<br>4.插入与删除的时间复杂度都是O（1），在空间复杂度上两者也一样。<br>5.多链栈和多链队列的管理模式可以相同。</p>
+<h4 id="栈与队列的不同点："><a href="#栈与队列的不同点：" class="headerlink" title="栈与队列的不同点："></a>栈与队列的不同点：</h4><p>1.删除数据元素的位置不同，栈的删除操作在表尾进行，队列的删除操作在表头进行。<br>2.应用场景不同；常见栈的应用场景包括括号问题的求解，表达式的转换和求值，函数调用和递归实现，深度优先搜索遍历等；常见的队列的应用场景包括计算机系统中各种资源的管理，消息缓冲器的管理和广度优先搜索遍历等。<br>3.顺序栈能够实现多栈空间共享，而顺序队列不能。</p>
+]]></content>
+      <categories>
+        <category>数据结构</category>
+      </categories>
+      <tags>
+        <tag>进制</tag>
+        <tag>栈</tag>
       </tags>
   </entry>
   <entry>
@@ -860,104 +860,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Git常用命令</title>
-    <url>/id_3/</url>
-    <content><![CDATA[<p>Gitee 提供免费的 Git 仓库，还集成了代码质量检测、项目演示等功能。对于团队协作开发，Gitee 还提供了项目管理、代码托管、文档管理的服务，5 人以下小团队免费。</p>
-<p>接下来我们学习一下如何使用 Gitee。</p>
-<a id="more"></a>
-<h3 id="Git-的工作流程。"><a href="#Git-的工作流程。" class="headerlink" title="Git 的工作流程。"></a>Git 的工作流程。</h3><p>一般工作流程如下：</p>
-<ul>
-<li>克隆 Git 资源作为工作目录。</li>
-<li>在克隆的资源上添加或修改文件。</li>
-<li>如果其他人修改了，你可以更新资源。</li>
-<li>在提交前查看修改。</li>
-<li>提交修改。</li>
-<li>在修改完成后，如果发现错误，可以撤回提交并再次修改并提交。</li>
-</ul>
-<p><img src="/id_3/4.png" alt="git"></p>
-<h3 id="首先登录Gitee"><a href="#首先登录Gitee" class="headerlink" title="首先登录Gitee"></a>首先登录Gitee</h3><p><a href="https://gitee.com/">https://gitee.com/</a><br><img src="/id_3/1.png" alt="登录Git"></p>
-<h3 id="新建仓库"><a href="#新建仓库" class="headerlink" title="新建仓库"></a>新建仓库</h3><p><img src="/id_3/2.png" alt="新建仓库"><br><img src="/id_3/3.png" alt="新建仓库"></p>
-<h2 id="git常用命令"><a href="#git常用命令" class="headerlink" title="git常用命令"></a>git常用命令</h2><h5 id="将存储库的内容克隆到本地"><a href="#将存储库的内容克隆到本地" class="headerlink" title="将存储库的内容克隆到本地"></a>将存储库的内容克隆到本地</h5><blockquote>
-<p>git clone 链接地址</p>
-</blockquote>
-<h5 id="首先-作为-git-的基础配置，作用是告诉-git-你是谁，你输入的信息将出现在你创建的提交中。然后初始化项目"><a href="#首先-作为-git-的基础配置，作用是告诉-git-你是谁，你输入的信息将出现在你创建的提交中。然后初始化项目" class="headerlink" title="首先,作为 git 的基础配置，作用是告诉 git 你是谁，你输入的信息将出现在你创建的提交中。然后初始化项目"></a>首先,作为 git 的基础配置，作用是告诉 git 你是谁，你输入的信息将出现在你创建的提交中。然后初始化项目</h5><blockquote>
-<p> git config - -global user.name “你的名字或昵称”<br> git config - -global user.email “你的邮箱”<br>git init</p>
-</blockquote>
-<h5 id="将所有内容添加到暂存区-代表所有"><a href="#将所有内容添加到暂存区-代表所有" class="headerlink" title="将所有内容添加到暂存区     .代表所有"></a>将所有内容添加到暂存区     .代表所有</h5><blockquote>
-<p>git add .</p>
-</blockquote>
-<h5 id="存储库记录更改"><a href="#存储库记录更改" class="headerlink" title="存储库记录更改"></a>存储库记录更改</h5><blockquote>
-<p>git commit -m “更改说明”</p>
-</blockquote>
-<h5 id="将仓库和服务器连接"><a href="#将仓库和服务器连接" class="headerlink" title="将仓库和服务器连接"></a>将仓库和服务器连接</h5><blockquote>
-<p>git remote add origin 链接地址</p>
-</blockquote>
-<h5 id="删除远程地址"><a href="#删除远程地址" class="headerlink" title="删除远程地址"></a>删除远程地址</h5><blockquote>
-<p>git remote rm origin</p>
-</blockquote>
-<h5 id="将本地仓库提交到远程仓库"><a href="#将本地仓库提交到远程仓库" class="headerlink" title="将本地仓库提交到远程仓库"></a>将本地仓库提交到远程仓库</h5><blockquote>
-<p>git push origin master</p>
-</blockquote>
-<h5 id="创建分支并切换过去"><a href="#创建分支并切换过去" class="headerlink" title="创建分支并切换过去"></a>创建分支并切换过去</h5><blockquote>
-<p>git checkout -b 分支名</p>
-</blockquote>
-<h5 id="切换回主分支"><a href="#切换回主分支" class="headerlink" title="切换回主分支"></a>切换回主分支</h5><blockquote>
-<p>git checkout master</p>
-</blockquote>
-<h5 id="删除分支"><a href="#删除分支" class="headerlink" title="删除分支"></a>删除分支</h5><blockquote>
-<p>git branch  -d 分支名</p>
-</blockquote>
-<h5 id="更新本地仓库"><a href="#更新本地仓库" class="headerlink" title="更新本地仓库"></a>更新本地仓库</h5><blockquote>
-<p>git pull</p>
-</blockquote>
-<h5 id="将分支推送到远程仓库"><a href="#将分支推送到远程仓库" class="headerlink" title="将分支推送到远程仓库"></a>将分支推送到远程仓库</h5><blockquote>
-<p>git push origin 分支名</p>
-</blockquote>
-<h5 id="查看仓库当前的状态，显示有变更的文件。"><a href="#查看仓库当前的状态，显示有变更的文件。" class="headerlink" title="查看仓库当前的状态，显示有变更的文件。"></a>查看仓库当前的状态，显示有变更的文件。</h5><blockquote>
-<p>git status</p>
-</blockquote>
-]]></content>
-      <categories>
-        <category>代码库</category>
-      </categories>
-      <tags>
-        <tag>git</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>周期总结</title>
-    <url>/id_30/</url>
-    <content><![CDATA[<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>转眼一个周期过去了，学了很多零碎的知识点。有遇到困难，有得到解惑。</p>
-<a id="more"></a>
-
-<p>day01: 在vue中使用ant_design<br>ant_design+vue官方文档：<a href="https://antdv.com/docs/vue/introduce-cn/">https://antdv.com/docs/vue/introduce-cn/</a></p>
-<p>day02: IT新闻资讯<br>网址: <a href="https://www.cnbeta.com/">https://www.cnbeta.com/</a></p>
-<p>day03: redis实现输入密码错误五次封禁账号<br>移步: <a href="https://www.hr915.xyz/id_20/">https://www.hr915.xyz/id_20/</a></p>
-<p>day04: httpx编写测试脚本<br>移步: <a href="https://www.hr915.xyz/id_6/">https://www.hr915.xyz/id_6/</a></p>
-<p>day05: 异步任务队列<br>移步: <a href="https://www.hr915.xyz/id_19/">https://www.hr915.xyz/id_19/</a></p>
-<p>day06: 加权队列<br>移步: <a href="https://www.hr915.xyz/id_21/">https://www.hr915.xyz/id_21/</a></p>
-<p>day07: 异步消费<br>移步: <a href="https://www.hr915.xyz/id_22/">https://www.hr915.xyz/id_22/</a></p>
-<p>day08: 权限模型</p>
-<p>day09: 三方登录<br>移步: <a href="https://www.hr915.xyz/id_13/">https://www.hr915.xyz/id_13/</a></p>
-<p>day10: 位运算<br>移步: <a href="https://www.hr915.xyz/id_23/">https://www.hr915.xyz/id_23/</a></p>
-<p>day11: 工单分类</p>
-<p>day12: Mongodb<br>移步: <a href="https://www.hr915.xyz/id_24/">https://www.hr915.xyz/id_24/</a></p>
-<p>day13: 审批流程</p>
-<p>day14: 栈的使用<br>移步: <a href="https://www.hr915.xyz/id_25/">https://www.hr915.xyz/id_25/</a></p>
-<p>day15: 设计模式<br>移步: <a href="https://www.hr915.xyz/id_26/">https://www.hr915.xyz/id_26/</a></p>
-<p>day16: 消息盒子</p>
-<p>day17: websocket<br>移步: <a href="https://www.hr915.xyz/id_10/">https://www.hr915.xyz/id_10/</a></p>
-<p>day18: 客服系统</p>
-<p>day19: 部署</p>
-]]></content>
-      <categories>
-        <category>总结</category>
-      </categories>
-      <tags>
-        <tag>python</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Git分支</title>
     <url>/id_33/</url>
     <content><![CDATA[<h3 id="Git分支"><a href="#Git分支" class="headerlink" title="Git分支"></a>Git分支</h3><h4 id="什么是分支"><a href="#什么是分支" class="headerlink" title="什么是分支"></a>什么是分支</h4><p>分支是为了将修改记录的整体流程分叉保存。分叉后的分支不受其他分支的影响，所以在同一个数据库里可以同时进行多个修改。<br>简单理解：可以理解为复仇者联盟里面的多元宇宙，各个宇宙之间互不影响，到某一时间点会合并</p>
@@ -1061,6 +963,109 @@
       </tags>
   </entry>
   <entry>
+    <title>Git常用命令</title>
+    <url>/id_3/</url>
+    <content><![CDATA[<p>Gitee 提供免费的 Git 仓库，还集成了代码质量检测、项目演示等功能。对于团队协作开发，Gitee 还提供了项目管理、代码托管、文档管理的服务，5 人以下小团队免费。</p>
+<p>接下来我们学习一下如何使用 Gitee。</p>
+<a id="more"></a>
+<h3 id="Git-的工作流程。"><a href="#Git-的工作流程。" class="headerlink" title="Git 的工作流程。"></a>Git 的工作流程。</h3><p>一般工作流程如下：</p>
+<ul>
+<li>克隆 Git 资源作为工作目录。</li>
+<li>在克隆的资源上添加或修改文件。</li>
+<li>如果其他人修改了，你可以更新资源。</li>
+<li>在提交前查看修改。</li>
+<li>提交修改。</li>
+<li>在修改完成后，如果发现错误，可以撤回提交并再次修改并提交。</li>
+</ul>
+<p><img src="/id_3/4.png" alt="git"></p>
+<h3 id="首先登录Gitee"><a href="#首先登录Gitee" class="headerlink" title="首先登录Gitee"></a>首先登录Gitee</h3><p><a href="https://gitee.com/">https://gitee.com/</a><br><img src="/id_3/1.png" alt="登录Git"></p>
+<h3 id="新建仓库"><a href="#新建仓库" class="headerlink" title="新建仓库"></a>新建仓库</h3><p><img src="/id_3/2.png" alt="新建仓库"><br><img src="/id_3/3.png" alt="新建仓库"></p>
+<h2 id="git常用命令"><a href="#git常用命令" class="headerlink" title="git常用命令"></a>git常用命令</h2><h5 id="将存储库的内容克隆到本地"><a href="#将存储库的内容克隆到本地" class="headerlink" title="将存储库的内容克隆到本地"></a>将存储库的内容克隆到本地</h5><blockquote>
+<p>git clone 链接地址</p>
+</blockquote>
+<h5 id="首先-作为-git-的基础配置，作用是告诉-git-你是谁，你输入的信息将出现在你创建的提交中。然后初始化项目"><a href="#首先-作为-git-的基础配置，作用是告诉-git-你是谁，你输入的信息将出现在你创建的提交中。然后初始化项目" class="headerlink" title="首先,作为 git 的基础配置，作用是告诉 git 你是谁，你输入的信息将出现在你创建的提交中。然后初始化项目"></a>首先,作为 git 的基础配置，作用是告诉 git 你是谁，你输入的信息将出现在你创建的提交中。然后初始化项目</h5><blockquote>
+<p> git config - -global user.name “你的名字或昵称”<br> git config - -global user.email “你的邮箱”<br>git init</p>
+</blockquote>
+<h5 id="将所有内容添加到暂存区-代表所有"><a href="#将所有内容添加到暂存区-代表所有" class="headerlink" title="将所有内容添加到暂存区     .代表所有"></a>将所有内容添加到暂存区     .代表所有</h5><blockquote>
+<p>git add .</p>
+</blockquote>
+<h5 id="存储库记录更改"><a href="#存储库记录更改" class="headerlink" title="存储库记录更改"></a>存储库记录更改</h5><blockquote>
+<p>git commit -m “更改说明”</p>
+</blockquote>
+<h5 id="将仓库和服务器连接"><a href="#将仓库和服务器连接" class="headerlink" title="将仓库和服务器连接"></a>将仓库和服务器连接</h5><blockquote>
+<p>git remote add origin 链接地址</p>
+</blockquote>
+<h5 id="删除远程地址"><a href="#删除远程地址" class="headerlink" title="删除远程地址"></a>删除远程地址</h5><blockquote>
+<p>git remote rm origin</p>
+</blockquote>
+<h5 id="将本地仓库提交到远程仓库"><a href="#将本地仓库提交到远程仓库" class="headerlink" title="将本地仓库提交到远程仓库"></a>将本地仓库提交到远程仓库</h5><blockquote>
+<p>git push origin master</p>
+</blockquote>
+<h5 id="创建分支并切换过去"><a href="#创建分支并切换过去" class="headerlink" title="创建分支并切换过去"></a>创建分支并切换过去</h5><blockquote>
+<p>git checkout -b 分支名</p>
+</blockquote>
+<h5 id="切换回主分支"><a href="#切换回主分支" class="headerlink" title="切换回主分支"></a>切换回主分支</h5><blockquote>
+<p>git checkout master</p>
+</blockquote>
+<h5 id="删除分支"><a href="#删除分支" class="headerlink" title="删除分支"></a>删除分支</h5><blockquote>
+<p>git branch  -d 分支名</p>
+</blockquote>
+<h5 id="更新本地仓库"><a href="#更新本地仓库" class="headerlink" title="更新本地仓库"></a>更新本地仓库</h5><blockquote>
+<p>git pull</p>
+</blockquote>
+<h5 id="将分支推送到远程仓库"><a href="#将分支推送到远程仓库" class="headerlink" title="将分支推送到远程仓库"></a>将分支推送到远程仓库</h5><blockquote>
+<p>git push origin 分支名</p>
+</blockquote>
+<h5 id="查看仓库当前的状态，显示有变更的文件。"><a href="#查看仓库当前的状态，显示有变更的文件。" class="headerlink" title="查看仓库当前的状态，显示有变更的文件。"></a>查看仓库当前的状态，显示有变更的文件。</h5><blockquote>
+<p>git status</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>代码库</category>
+      </categories>
+      <tags>
+        <tag>git</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Restful</title>
+    <url>/id_36/</url>
+    <content><![CDATA[<h3 id="Restful："><a href="#Restful：" class="headerlink" title="Restful："></a>Restful：</h3><p>一种软件架构风格、设计风格，而不是标准，只是提供了一组设计原则和约束条件。它主要用于客户端和服务器交互类的软件。基于这个风格设计的软件可以更简洁，更有层次，更易于实现缓存等机制。</p>
+<a id="more"></a>
+<p>这么理解试试看，也就是你听过建筑的复古风格，欧美风格之类的么，大体就是一个意思。如果你盖个别墅不按设计风格走，直接以小茅屋的形式，没有属于任何风格它也能盖成不是，这就是我们平时开发API不按RESTFUL风格也可以是一个道理。REST 指的是一组架构约束条件和原则，满足这些约束条件和原则的应用程序或设计就是RESTful。</p>
+<h4 id="Restful发展历程："><a href="#Restful发展历程：" class="headerlink" title="Restful发展历程："></a>Restful发展历程：</h4><p>详细发展历程：<a href="https://blog.csdn.net/a78270528/article/details/78469758">https://blog.csdn.net/a78270528/article/details/78469758</a><br>Restful风格==面向过程—&gt;面向资源—&gt;面向标签—&gt;面向文档</p>
+<p>面向过程==想起一出是一出，只要有功能就写新接口</p>
+<p>面向资源==封装单个接口，添加一个接口，删除一个接口，修改一个接口，多重逻辑需要多个if-else</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> request.method ==POST:</span><br><span class="line">	.....</span><br><span class="line"><span class="keyword">elif</span> request.method==GET:</span><br><span class="line">    </span><br></pre></td></tr></tbody></table></figure>
+<p>面向标签==封装单个接口，通过method进行语义化操作 post/put/delete/get</p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Test</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span>:</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">post</span>:</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">put</span>:</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">delete</span>:</span></span><br><span class="line">        <span class="keyword">pass</span></span><br></pre></td></tr></tbody></table></figure>
+<p>面向文档==具备面向标签的功能语义化，在返回响应的时候告诉客户还可以做什么操作</p>
+<h4 id="生活场景"><a href="#生活场景" class="headerlink" title="生活场景"></a>生活场景</h4><p><strong>面向过程</strong>：每次都写新接口，就比如说我们去星巴克喝咖啡，这个时候我们想要点一杯咖啡，点一杯咖啡需要写一个接口，下完单之后我突然想到今天要早点睡不能喝咖啡，我要取消订单，那这个时候就需要再写一个接口，每一次下单，取消订单，修改订单都要重新写接口</p>
+<p><strong>面向资源</strong>：封装单个接口，还是星巴克的例子，老板意识到每次都写新接口不行，然后这个老板就招了几个员工，分工明确，下单一个接口，取消订单一个接口，修改订单一个接口，但是这样用户不知道哪个是下单的，哪个是取消订单的，就要写好多个if-else,会浪费用户的时间，拖慢这个程序</p>
+<p><strong>面向标签</strong>：这个时候老板就想了，那我直接把他们挂牌分开咋样，就是我们的通过method进行语义化操作，类就是星巴克的大门，每个函数方法都是一个小牌，下单是post,取消订单是delete,修改订单是put,这样用户就方便了很多。</p>
+<p><strong>面向文档</strong>：挂小牌的方法很好，但是有的用户不仔细看不知道还可以有别的操作，老板就召集员工开了个小会，通知他们用户去每个小牌前的时候员工顺便告诉一下用户还可以有别的操作， 比如有用户的朋友临时不来了，但是这个用户点了两杯，那这个时候员工就需要告诉他您的另一杯饮品是可以取消的，这就是restful完美的境界了</p>
+<ul>
+<li>说这么多，到底restful是什么？<h4 id="接口规范"><a href="#接口规范" class="headerlink" title="接口规范"></a>接口规范</h4></li>
+</ul>
+<ol>
+<li><p>统一资源接口<br> RESTful架构应该遵循统一接口原则，统一接口包含了一组受限的预定义的操作，不论什么样的资源，都是通过使用相同的接口进行资源的访问。接口应该使用标准的HTTP方法如GET，PUT和POST，并遵循这些方法的语义。</p>
+</li>
+<li><p>URL中只使用名词来指定资源，原则上不使用动词</p>
+</li>
+<li><p>用HTTP协议里的动词来实现资源的添加，修改，删除等操作。即通过HTTP动词来实现资源的状态扭转<br> GET 用来获取资源，<br> POST 用来新建资源（也可以用于更新资源），<br> PUT 用来更新资源，<br> DELETE 用来删除资源。  </p>
+</li>
+<li><p>Server和Client之间传递某资源的一个表现形式，比如用JSON，XML传输文本，或者用JPG，WebP传输图片等。当然还可以压缩HTTP传输时的数据（on-wire data compression）。</p>
+</li>
+<li><p>用 HTTP Status Code传递Server的状态信息。比如最常用的 200 表示成功，500 表示Server内部错误等。</p>
+</li>
+</ol>
+<h4 id="一些其他规范："><a href="#一些其他规范：" class="headerlink" title="一些其他规范："></a>一些其他规范：</h4><p>规则1：URI结尾不应包含（/）<br>规则2：正斜杠分隔符（/）必须用来指示层级关系<br>规则3：应使用连字符（ - ）来提高URI的可读性<br>规则4：不得在URI中使用下划线（_）<br>规则5：URI路径中全都使用小写字母</p>
+]]></content>
+      <tags>
+        <tag>Restful</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>数据结构之二叉树</title>
     <url>/id_34/</url>
     <content><![CDATA[<h3 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h3><p>简单的三种数据结构：</p>
@@ -1145,44 +1150,6 @@
       </categories>
       <tags>
         <tag>OpenLdap</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Restful</title>
-    <url>/id_36/</url>
-    <content><![CDATA[<h3 id="Restful："><a href="#Restful：" class="headerlink" title="Restful："></a>Restful：</h3><p>一种软件架构风格、设计风格，而不是标准，只是提供了一组设计原则和约束条件。它主要用于客户端和服务器交互类的软件。基于这个风格设计的软件可以更简洁，更有层次，更易于实现缓存等机制。</p>
-<a id="more"></a>
-<p>这么理解试试看，也就是你听过建筑的复古风格，欧美风格之类的么，大体就是一个意思。如果你盖个别墅不按设计风格走，直接以小茅屋的形式，没有属于任何风格它也能盖成不是，这就是我们平时开发API不按RESTFUL风格也可以是一个道理。REST 指的是一组架构约束条件和原则，满足这些约束条件和原则的应用程序或设计就是RESTful。</p>
-<h4 id="Restful发展历程："><a href="#Restful发展历程：" class="headerlink" title="Restful发展历程："></a>Restful发展历程：</h4><p>详细发展历程：<a href="https://blog.csdn.net/a78270528/article/details/78469758">https://blog.csdn.net/a78270528/article/details/78469758</a><br>Restful风格==面向过程—&gt;面向资源—&gt;面向标签—&gt;面向文档</p>
-<p>面向过程==想起一出是一出，只要有功能就写新接口</p>
-<p>面向资源==封装单个接口，添加一个接口，删除一个接口，修改一个接口，多重逻辑需要多个if-else</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> request.method ==POST:</span><br><span class="line">	.....</span><br><span class="line"><span class="keyword">elif</span> request.method==GET:</span><br><span class="line">    </span><br></pre></td></tr></tbody></table></figure>
-<p>面向标签==封装单个接口，通过method进行语义化操作 post/put/delete/get</p>
-<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Test</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span>:</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">post</span>:</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">put</span>:</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">delete</span>:</span></span><br><span class="line">        <span class="keyword">pass</span></span><br></pre></td></tr></tbody></table></figure>
-<p>面向文档==具备面向标签的功能语义化，在返回响应的时候告诉客户还可以做什么操作</p>
-<h4 id="生活场景"><a href="#生活场景" class="headerlink" title="生活场景"></a>生活场景</h4><p><strong>面向过程</strong>：每次都写新接口，就比如说我们去星巴克喝咖啡，这个时候我们想要点一杯咖啡，点一杯咖啡需要写一个接口，下完单之后我突然想到今天要早点睡不能喝咖啡，我要取消订单，那这个时候就需要再写一个接口，每一次下单，取消订单，修改订单都要重新写接口</p>
-<p><strong>面向资源</strong>：封装单个接口，还是星巴克的例子，老板意识到每次都写新接口不行，然后这个老板就招了几个员工，分工明确，下单一个接口，取消订单一个接口，修改订单一个接口，但是这样用户不知道哪个是下单的，哪个是取消订单的，就要写好多个if-else,会浪费用户的时间，拖慢这个程序</p>
-<p><strong>面向标签</strong>：这个时候老板就想了，那我直接把他们挂牌分开咋样，就是我们的通过method进行语义化操作，类就是星巴克的大门，每个函数方法都是一个小牌，下单是post,取消订单是delete,修改订单是put,这样用户就方便了很多。</p>
-<p><strong>面向文档</strong>：挂小牌的方法很好，但是有的用户不仔细看不知道还可以有别的操作，老板就召集员工开了个小会，通知他们用户去每个小牌前的时候员工顺便告诉一下用户还可以有别的操作， 比如有用户的朋友临时不来了，但是这个用户点了两杯，那这个时候员工就需要告诉他您的另一杯饮品是可以取消的，这就是restful完美的境界了</p>
-<ul>
-<li>说这么多，到底restful是什么？<h4 id="接口规范"><a href="#接口规范" class="headerlink" title="接口规范"></a>接口规范</h4></li>
-</ul>
-<ol>
-<li><p>统一资源接口<br> RESTful架构应该遵循统一接口原则，统一接口包含了一组受限的预定义的操作，不论什么样的资源，都是通过使用相同的接口进行资源的访问。接口应该使用标准的HTTP方法如GET，PUT和POST，并遵循这些方法的语义。</p>
-</li>
-<li><p>URL中只使用名词来指定资源，原则上不使用动词</p>
-</li>
-<li><p>用HTTP协议里的动词来实现资源的添加，修改，删除等操作。即通过HTTP动词来实现资源的状态扭转<br> GET 用来获取资源，<br> POST 用来新建资源（也可以用于更新资源），<br> PUT 用来更新资源，<br> DELETE 用来删除资源。  </p>
-</li>
-<li><p>Server和Client之间传递某资源的一个表现形式，比如用JSON，XML传输文本，或者用JPG，WebP传输图片等。当然还可以压缩HTTP传输时的数据（on-wire data compression）。</p>
-</li>
-<li><p>用 HTTP Status Code传递Server的状态信息。比如最常用的 200 表示成功，500 表示Server内部错误等。</p>
-</li>
-</ol>
-<h4 id="一些其他规范："><a href="#一些其他规范：" class="headerlink" title="一些其他规范："></a>一些其他规范：</h4><p>规则1：URI结尾不应包含（/）<br>规则2：正斜杠分隔符（/）必须用来指示层级关系<br>规则3：应使用连字符（ - ）来提高URI的可读性<br>规则4：不得在URI中使用下划线（_）<br>规则5：URI路径中全都使用小写字母</p>
-]]></content>
-      <tags>
-        <tag>Restful</tag>
       </tags>
   </entry>
   <entry>
@@ -1998,30 +1965,6 @@ flags:标志位，用于控制正则表达式的匹配方式</code></pre>
       </tags>
   </entry>
   <entry>
-    <title>VUE路由钩子</title>
-    <url>/id_9/</url>
-    <content><![CDATA[<p>描述：通常我们在跳转页面时会遇到各种各样的要求，比如没有登录不能查看，比如跳转需要验证，各种各样的要求。如果分开写代码的话就会显得很乱，代码很繁重，此时就用到了我们的路由钩子<br>路由钩子主要是给使用者在路由发生变化时进行一些特殊的处理而定义的</p>
-<a id="more"></a>
-<h4 id="路由钩子主要分三种"><a href="#路由钩子主要分三种" class="headerlink" title="路由钩子主要分三种"></a><strong>路由钩子</strong>主要分三种</h4><p>全局路由钩子：beforeEach<br>单个路由钩子：beforeEnter<br>路由组件钩子：beforeEachEnter</p>
-<h4 id="三种路由钩子中都涉及到了三个参数"><a href="#三种路由钩子中都涉及到了三个参数" class="headerlink" title="三种路由钩子中都涉及到了三个参数:"></a>三种路由钩子中都涉及到了三个参数:</h4><p>to: Route: 即将要进入的目标 路由对象<br>from: Route: 当前导航正要离开的路由<br>next: Function: 通过这个方法来调用下一个钩子函数</p>
-<h4 id="使用："><a href="#使用：" class="headerlink" title="使用："></a>使用：</h4><p>beforeEach(跳转前)  &amp;&amp;  afterEach(跳转后)<br>需要通过main.js配置</p>
-<hr>
-<figure class="highlight js"><table><tbody><tr><td class="code"><pre><span class="line">router.beforeEach(<span class="function">(<span class="params">to, <span class="keyword">from</span>, next</span>) =&gt;</span> {</span><br><span class="line">    <span class="comment">//会在任意路由跳转前执行，next一定要记着执行，不然路由不能跳转了</span></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"我要跳转啦"</span>)</span><br><span class="line">  <span class="built_in">console</span>.log(to,<span class="keyword">from</span>)</span><br><span class="line">  <span class="comment">//调用下一个钩子函数</span></span><br><span class="line">  next()</span><br><span class="line">})</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">router.afterEach(<span class="function">(<span class="params">to, <span class="keyword">from</span></span>) =&gt;</span> {</span><br><span class="line">    <span class="comment">//会在任意路由跳转后执行</span></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'我跳过来了'</span>)</span><br><span class="line">})</span><br></pre></td></tr></tbody></table></figure>
-<p>beforeEnter(写在router-index.js里面)</p>
-<hr>
-<figure class="highlight js"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="keyword">new</span> Router({</span><br><span class="line">  routes: [</span><br><span class="line">    {</span><br><span class="line">      path: <span class="string">'/index'</span>,</span><br><span class="line">      name: <span class="string">'Index'</span>,</span><br><span class="line">      component: Index,</span><br><span class="line">      <span class="function"><span class="title">beforeEnter</span>(<span class="params">to, <span class="keyword">from</span>, next</span>)</span> {</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">"我是只守护Index的beforeEnter"</span>)</span><br><span class="line">        next()</span><br><span class="line">      }</span><br><span class="line">    }</span><br><span class="line">  ]</span><br><span class="line">})</span><br></pre></td></tr></tbody></table></figure>
-<p>beforeRouteEnter(到达之后)   &amp;&amp;   beforeRouteUpdate(到达子路由)   &amp;&amp;   beforeRouteLeave(离开之前)<br>写在具体页面里</p>
-<hr>
-<figure class="highlight js"><table><tbody><tr><td class="code"><pre><span class="line"><span class="function"><span class="title">beforeRouteEnter</span>(<span class="params">to, <span class="keyword">from</span>, next</span>)</span> {</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"****************Test1****我来啦**************"</span>);</span><br><span class="line">  next(<span class="function"><span class="params">vm</span> =&gt;</span> {</span><br><span class="line">    <span class="comment">//因为当钩子执行前，组件实例还没被创建</span></span><br><span class="line">    <span class="comment">// vm 就是当前组件的实例相当于上面的 this，所以在 next 方法里你就可以把 vm 当 this 来用了。</span></span><br><span class="line">    <span class="built_in">console</span>.log(vm);<span class="comment">//当前组件的实例</span></span><br><span class="line">  });</span><br><span class="line">},</span><br><span class="line"><span class="function"><span class="title">beforeRouteUpdate</span>(<span class="params">to, <span class="keyword">from</span>, next</span>)</span> {</span><br><span class="line">  <span class="comment">//在当前路由改变，但是该组件被复用时调用</span></span><br><span class="line">  <span class="comment">//对于一个带有动态参数的路径 /good/:id，在 /good/1 和 /good/2 之间跳转的时候，</span></span><br><span class="line">  <span class="comment">// 由于会渲染同样的good组件，因此组件实例会被复用。而这个钩子就会在这个情况下被调用。</span></span><br><span class="line">  <span class="comment">// 可以访问组件实例 `this`</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">//简单来说就是在跳转子路由的时候可以获取query和params</span></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"****************Test1*******Update***********"</span>);</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="built_in">this</span>, <span class="string">'Update'</span>); <span class="comment">//当前组件实例</span></span><br><span class="line">  next();</span><br><span class="line">}</span><br><span class="line"><span class="function"><span class="title">beforeRouteLeave</span>(<span class="params">to, <span class="keyword">from</span>, next</span>)</span> {</span><br><span class="line">  <span class="comment">// 导航离开该组件的对应路由时调用</span></span><br><span class="line">  <span class="comment">// 可以访问组件实例 `this`</span></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"****************Test1****我走啦**************"</span>);</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="built_in">this</span>, <span class="string">'Leave'</span>); <span class="comment">//当前组件实例</span></span><br><span class="line">  next();</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
-]]></content>
-      <categories>
-        <category>前端</category>
-      </categories>
-      <tags>
-        <tag>vue</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>VUE拦截器</title>
     <url>/id_8/</url>
     <content><![CDATA[<p>vue拦截器axios 是一个基于Promise 用于浏览器和 nodejs 的 HTTP 客户端,<br>他主要分为请求拦截器和响应拦截器…</p>
@@ -2038,6 +1981,30 @@ flags:标志位，用于控制正则表达式的匹配方式</code></pre>
 <li>比如每次发送网络请求的时候，都希望在界面中显示一个动态加载的请求图标，就是一直在转圈圈，让用户知道当前页面正在加载数据，准备渲染视图。</li>
 <li>比如某些网络请求（比如登录token）,必须携带一些特殊的信息。</li>
 </ul>
+]]></content>
+      <categories>
+        <category>前端</category>
+      </categories>
+      <tags>
+        <tag>vue</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>VUE路由钩子</title>
+    <url>/id_9/</url>
+    <content><![CDATA[<p>描述：通常我们在跳转页面时会遇到各种各样的要求，比如没有登录不能查看，比如跳转需要验证，各种各样的要求。如果分开写代码的话就会显得很乱，代码很繁重，此时就用到了我们的路由钩子<br>路由钩子主要是给使用者在路由发生变化时进行一些特殊的处理而定义的</p>
+<a id="more"></a>
+<h4 id="路由钩子主要分三种"><a href="#路由钩子主要分三种" class="headerlink" title="路由钩子主要分三种"></a><strong>路由钩子</strong>主要分三种</h4><p>全局路由钩子：beforeEach<br>单个路由钩子：beforeEnter<br>路由组件钩子：beforeEachEnter</p>
+<h4 id="三种路由钩子中都涉及到了三个参数"><a href="#三种路由钩子中都涉及到了三个参数" class="headerlink" title="三种路由钩子中都涉及到了三个参数:"></a>三种路由钩子中都涉及到了三个参数:</h4><p>to: Route: 即将要进入的目标 路由对象<br>from: Route: 当前导航正要离开的路由<br>next: Function: 通过这个方法来调用下一个钩子函数</p>
+<h4 id="使用："><a href="#使用：" class="headerlink" title="使用："></a>使用：</h4><p>beforeEach(跳转前)  &amp;&amp;  afterEach(跳转后)<br>需要通过main.js配置</p>
+<hr>
+<figure class="highlight js"><table><tbody><tr><td class="code"><pre><span class="line">router.beforeEach(<span class="function">(<span class="params">to, <span class="keyword">from</span>, next</span>) =&gt;</span> {</span><br><span class="line">    <span class="comment">//会在任意路由跳转前执行，next一定要记着执行，不然路由不能跳转了</span></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"我要跳转啦"</span>)</span><br><span class="line">  <span class="built_in">console</span>.log(to,<span class="keyword">from</span>)</span><br><span class="line">  <span class="comment">//调用下一个钩子函数</span></span><br><span class="line">  next()</span><br><span class="line">})</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">router.afterEach(<span class="function">(<span class="params">to, <span class="keyword">from</span></span>) =&gt;</span> {</span><br><span class="line">    <span class="comment">//会在任意路由跳转后执行</span></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'我跳过来了'</span>)</span><br><span class="line">})</span><br></pre></td></tr></tbody></table></figure>
+<p>beforeEnter(写在router-index.js里面)</p>
+<hr>
+<figure class="highlight js"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="keyword">new</span> Router({</span><br><span class="line">  routes: [</span><br><span class="line">    {</span><br><span class="line">      path: <span class="string">'/index'</span>,</span><br><span class="line">      name: <span class="string">'Index'</span>,</span><br><span class="line">      component: Index,</span><br><span class="line">      <span class="function"><span class="title">beforeEnter</span>(<span class="params">to, <span class="keyword">from</span>, next</span>)</span> {</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">"我是只守护Index的beforeEnter"</span>)</span><br><span class="line">        next()</span><br><span class="line">      }</span><br><span class="line">    }</span><br><span class="line">  ]</span><br><span class="line">})</span><br></pre></td></tr></tbody></table></figure>
+<p>beforeRouteEnter(到达之后)   &amp;&amp;   beforeRouteUpdate(到达子路由)   &amp;&amp;   beforeRouteLeave(离开之前)<br>写在具体页面里</p>
+<hr>
+<figure class="highlight js"><table><tbody><tr><td class="code"><pre><span class="line"><span class="function"><span class="title">beforeRouteEnter</span>(<span class="params">to, <span class="keyword">from</span>, next</span>)</span> {</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"****************Test1****我来啦**************"</span>);</span><br><span class="line">  next(<span class="function"><span class="params">vm</span> =&gt;</span> {</span><br><span class="line">    <span class="comment">//因为当钩子执行前，组件实例还没被创建</span></span><br><span class="line">    <span class="comment">// vm 就是当前组件的实例相当于上面的 this，所以在 next 方法里你就可以把 vm 当 this 来用了。</span></span><br><span class="line">    <span class="built_in">console</span>.log(vm);<span class="comment">//当前组件的实例</span></span><br><span class="line">  });</span><br><span class="line">},</span><br><span class="line"><span class="function"><span class="title">beforeRouteUpdate</span>(<span class="params">to, <span class="keyword">from</span>, next</span>)</span> {</span><br><span class="line">  <span class="comment">//在当前路由改变，但是该组件被复用时调用</span></span><br><span class="line">  <span class="comment">//对于一个带有动态参数的路径 /good/:id，在 /good/1 和 /good/2 之间跳转的时候，</span></span><br><span class="line">  <span class="comment">// 由于会渲染同样的good组件，因此组件实例会被复用。而这个钩子就会在这个情况下被调用。</span></span><br><span class="line">  <span class="comment">// 可以访问组件实例 `this`</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">//简单来说就是在跳转子路由的时候可以获取query和params</span></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"****************Test1*******Update***********"</span>);</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="built_in">this</span>, <span class="string">'Update'</span>); <span class="comment">//当前组件实例</span></span><br><span class="line">  next();</span><br><span class="line">}</span><br><span class="line"><span class="function"><span class="title">beforeRouteLeave</span>(<span class="params">to, <span class="keyword">from</span>, next</span>)</span> {</span><br><span class="line">  <span class="comment">// 导航离开该组件的对应路由时调用</span></span><br><span class="line">  <span class="comment">// 可以访问组件实例 `this`</span></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"****************Test1****我走啦**************"</span>);</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="built_in">this</span>, <span class="string">'Leave'</span>); <span class="comment">//当前组件实例</span></span><br><span class="line">  next();</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
 ]]></content>
       <categories>
         <category>前端</category>

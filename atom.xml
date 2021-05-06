@@ -186,27 +186,6 @@
   </entry>
   
   <entry>
-    <title>周期总结</title>
-    <link href="https://www.hr915.xyz/id_30/"/>
-    <id>https://www.hr915.xyz/id_30/</id>
-    <published>2018-12-07T13:46:25.000Z</published>
-    <updated>2021-04-21T23:55:00.729Z</updated>
-    
-    <content type="html"><![CDATA[<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>转眼一个周期过去了，学了很多零碎的知识点。有遇到困难，有得到解惑。</p><a id="more"></a><p>day01: 在vue中使用ant_design<br>ant_design+vue官方文档：<a href="https://antdv.com/docs/vue/introduce-cn/">https://antdv.com/docs/vue/introduce-cn/</a></p><p>day02: IT新闻资讯<br>网址: <a href="https://www.cnbeta.com/">https://www.cnbeta.com/</a></p><p>day03: redis实现输入密码错误五次封禁账号<br>移步: <a href="https://www.hr915.xyz/id_20/">https://www.hr915.xyz/id_20/</a></p><p>day04: httpx编写测试脚本<br>移步: <a href="https://www.hr915.xyz/id_6/">https://www.hr915.xyz/id_6/</a></p><p>day05: 异步任务队列<br>移步: <a href="https://www.hr915.xyz/id_19/">https://www.hr915.xyz/id_19/</a></p><p>day06: 加权队列<br>移步: <a href="https://www.hr915.xyz/id_21/">https://www.hr915.xyz/id_21/</a></p><p>day07: 异步消费<br>移步: <a href="https://www.hr915.xyz/id_22/">https://www.hr915.xyz/id_22/</a></p><p>day08: 权限模型</p><p>day09: 三方登录<br>移步: <a href="https://www.hr915.xyz/id_13/">https://www.hr915.xyz/id_13/</a></p><p>day10: 位运算<br>移步: <a href="https://www.hr915.xyz/id_23/">https://www.hr915.xyz/id_23/</a></p><p>day11: 工单分类</p><p>day12: Mongodb<br>移步: <a href="https://www.hr915.xyz/id_24/">https://www.hr915.xyz/id_24/</a></p><p>day13: 审批流程</p><p>day14: 栈的使用<br>移步: <a href="https://www.hr915.xyz/id_25/">https://www.hr915.xyz/id_25/</a></p><p>day15: 设计模式<br>移步: <a href="https://www.hr915.xyz/id_26/">https://www.hr915.xyz/id_26/</a></p><p>day16: 消息盒子</p><p>day17: websocket<br>移步: <a href="https://www.hr915.xyz/id_10/">https://www.hr915.xyz/id_10/</a></p><p>day18: 客服系统</p><p>day19: 部署</p>]]></content>
-    
-    
-    <summary type="html">&lt;h3 id=&quot;总结&quot;&gt;&lt;a href=&quot;#总结&quot; class=&quot;headerlink&quot; title=&quot;总结&quot;&gt;&lt;/a&gt;总结&lt;/h3&gt;&lt;p&gt;转眼一个周期过去了，学了很多零碎的知识点。有遇到困难，有得到解惑。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="总结" scheme="https://www.hr915.xyz/categories/%E6%80%BB%E7%BB%93/"/>
-    
-    
-    <category term="python" scheme="https://www.hr915.xyz/tags/python/"/>
-    
-  </entry>
-  
-  <entry>
     <title>分代回收</title>
     <link href="https://www.hr915.xyz/id_29/"/>
     <id>https://www.hr915.xyz/id_29/</id>
@@ -465,6 +444,27 @@
     
     
     <category term="redis" scheme="https://www.hr915.xyz/tags/redis/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>接口测试中的异步调用和异步写入文件</title>
+    <link href="https://www.hr915.xyz/id_19/"/>
+    <id>https://www.hr915.xyz/id_19/</id>
+    <published>2018-11-26T07:21:32.000Z</published>
+    <updated>2021-04-21T23:55:00.785Z</updated>
+    
+    <content type="html"><![CDATA[<p>异步调用：<br>异步方法必须async 关键字声明<br>所有其他方法，耗时任务都需要加上await关键字，await必须依靠async<br>with用来建立工作流和关闭流对象</p><a id="more"></a><h4 id="异步发送100次请求"><a href="#异步发送100次请求" class="headerlink" title="异步发送100次请求"></a>异步发送100次请求</h4><figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 异步调用</span></span><br><span class="line"><span class="keyword">import</span> httpx</span><br><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line">url = <span class="string">'http://127.0.0.1:8000/p8/user'</span></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">request</span>(<span class="params">client</span>):</span></span><br><span class="line">    r = <span class="keyword">await</span> client.get(url)</span><br><span class="line">    print(r.json())</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">with</span> httpx.AsyncClient() <span class="keyword">as</span> client:</span><br><span class="line">        <span class="comment"># 100 次调用</span></span><br><span class="line">        task_list = []</span><br><span class="line">        <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">100</span>):</span><br><span class="line">            req = request(client)</span><br><span class="line">            task = asyncio.create_task(req)</span><br><span class="line">            task_list.append(task)</span><br><span class="line">        <span class="keyword">await</span> asyncio.gather(*task_list)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    <span class="comment">#开始</span></span><br><span class="line">    start = time.time()</span><br><span class="line">    asyncio.run(main())</span><br><span class="line">    <span class="comment"># 结束</span></span><br><span class="line">    end = time.time()</span><br><span class="line">    print(<span class="string">f'异步：发送100次请求，耗时：<span class="subst">{end - start}</span>'</span>)</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure><h4 id="异步写文件"><a href="#异步写文件" class="headerlink" title="异步写文件"></a>异步写文件</h4><figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">write</span>(<span class="params">f</span>):</span></span><br><span class="line">    <span class="keyword">await</span> f.write(<span class="string">"欢迎来到缅甸北部\n"</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">fun</span>():</span></span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">with</span> aiofiles.<span class="built_in">open</span>(<span class="string">"10000.txt"</span>, <span class="string">'a'</span>) <span class="keyword">as</span> f:</span><br><span class="line">        <span class="comment"># 列表推导式调用，更快，效率更高 </span></span><br><span class="line">        task = [asyncio.create_task(write(f)) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10000</span>)]</span><br><span class="line">        <span class="comment"># 普通列表 相对于列表推导式要慢一点</span></span><br><span class="line">        <span class="comment"># test_list = []</span></span><br><span class="line">        <span class="comment"># for i in range(10000):</span></span><br><span class="line">        <span class="comment">#     w = write(f)</span></span><br><span class="line">        <span class="comment">#     task = asyncio.create_task(w)</span></span><br><span class="line">        <span class="comment">#     test_list.append(task)</span></span><br><span class="line">        <span class="keyword">await</span> asyncio.gather(*task)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    start = time.time()</span><br><span class="line">    asyncio.run(fun())</span><br><span class="line">    end = time.time()</span><br><span class="line">    print(<span class="string">"执行了%d秒"</span> % (end - start))</span><br></pre></td></tr></tbody></table></figure>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;异步调用：&lt;br&gt;异步方法必须async 关键字声明&lt;br&gt;所有其他方法，耗时任务都需要加上await关键字，await必须依靠async&lt;br&gt;with用来建立工作流和关闭流对象&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="后端" scheme="https://www.hr915.xyz/categories/%E5%90%8E%E7%AB%AF/"/>
+    
+    
+    <category term="异步" scheme="https://www.hr915.xyz/tags/%E5%BC%82%E6%AD%A5/"/>
     
   </entry>
   
