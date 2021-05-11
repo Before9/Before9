@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.hr915.xyz","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":true,"preload":true},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"www.hr915.xyz","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":true,"preload":true},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
   <meta name="description" content="最近“全栈数据库”的概念甚嚣尘上，主角就是PostgreSQL，它最近这几年的技术发展不可谓不猛，覆盖OLTP、OLAP、NoSQL、搜索、图像等应用场景，实实在在的全栈性发展。帮助公司解决了数据孤岛、数据平台多、同步一致性、延迟，软硬件成本增加等业务痛点，在互联网、金融、物联网、传统企业等领域得到了广泛的应用。PostgreSQL的应用场景丰富，不亚于商用数据库Oracle，常被业界称为“开源界">
@@ -83,9 +83,6 @@
   </style>
 </noscript>
 
-<link rel="alternate" href="/atom.xml" title="I hope you're here for me" type="application/atom+xml">
-
-<style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
@@ -234,7 +231,7 @@
 <blockquote>
 <p>docker images</p>
 </blockquote>
-<p><img src="/id_41/id_41%5C1.png" alt="镜像"></p>
+<p><img src="id_41%5C1.png" alt="镜像"></p>
 <p>我们可以看到确实PostgreSQL比MySQL小</p>
 <p>镜像拉取成功，我们现在可以启动容器了</p>
 <blockquote>
@@ -245,14 +242,14 @@
 <blockquote>
 <p>docker ps</p>
 </blockquote>
-<p><img src="/id_41/id_41%5C2.png" alt="容器"></p>
+<p><img src="id_41%5C2.png" alt="容器"></p>
 <p>可以，现在我们的容器已经正常运行了</p>
 <p>我们进入容器的命令行看一看</p>
 <blockquote>
 <p>docker exec -it dev-postgres bash </p>
 <p>psql -h localhost -U postgres</p>
 </blockquote>
-<p>现在我们已经进入命令行了，在命令行输入PostgrelSQL的命令\l 就可以查看数据库列表。<br><img src="/id_41/id_41%5C3.png" alt="数据库"></p>
+<p>现在我们已经进入命令行了，在命令行输入PostgrelSQL的命令\l 就可以查看数据库列表。<br><img src="id_41%5C3.png" alt="数据库"></p>
 <p>建立数据库</p>
 <blockquote>
 <p>CREATE DATABASE mytest;</p>
@@ -269,7 +266,7 @@
 <blockquote>
 <p>\d</p>
 </blockquote>
-<p>如果不习惯使用命令行，也可以用可视化工具来进行链接，比如Navicat<br><img src="/id_41/id_41%5C4.png" alt="可视化工具"><br>这里因为我们用的是云主机所以IP地址不能写本地，还有密码是我们上边指定的密码</p>
+<p>如果不习惯使用命令行，也可以用可视化工具来进行链接，比如Navicat<br><img src="id_41%5C4.png" alt="可视化工具"><br>这里因为我们用的是云主机所以IP地址不能写本地，还有密码是我们上边指定的密码</p>
 <p><strong>注意</strong> 默认用户是postgres，值得一提的是，使用navicat无法像Mysql一样手动设置属性自增长(auto-increment)，PostgreSQL使用的是序列的形式来实现自增长：</p>
 <blockquote>
 <p>CREATE SEQUENCE serial START 1;</p>
@@ -280,7 +277,7 @@
 <p>ALTER TABLE “public”.”article” ALTER COLUMN “id” SET DEFAULT nextval(‘serial’);</p>
 </blockquote>
 <p><strong>OVER子句</strong></p>
-<p>我们现在有一个部门表empsal<br><img src="/id_41/id_41%5C5.png" alt="部门表"><br> 现在我想将每一个员工的工资与他所在部门的平均工资做个比较，怎么做？<br> 其实这也是leetcode原题，用mysql只能用子查询，而用PostgreSQL该查询可以很容易的实现</p>
+<p>我们现在有一个部门表empsal<br><img src="id_41%5C5.png" alt="部门表"><br> 现在我想将每一个员工的工资与他所在部门的平均工资做个比较，怎么做？<br> 其实这也是leetcode原题，用mysql只能用子查询，而用PostgreSQL该查询可以很容易的实现</p>
 <blockquote>
 <p>mysql：</p>
 <p>select t1.depname, t1.userid,t1.salary,t2.sal FROM empsalary t1 INNER JOIN (select depname,avg(salary) sal FROM empsalary group by depname) t2 ON t1.depname=t2.depname</p>
@@ -290,7 +287,7 @@
 <p>可以看到，这个查询中，聚合函数avg的含义没有变，仍然是求平均值。但和普通的聚合函数不同的是，它不再对表中所有的salary求平均值，而是针对同一个部门（PARTITION BY指定的depname）内的salary求平均值，而且得到的结果由同一个部门内的所有行共享，并没有将这些行合并，这就大大简化了sql的复杂度，同时也能很方便的解决 “每组取 top k” 的这类问题</p>
 <p>在Django项目中使用PostgreSQL和使用mysql是一样的。在setting配置一下</p>
 <p><strong>注意</strong>：我们是在云主机上整的postgreSQL,所以HOST不可以是本地的</p>
-<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">DATABASES = {</span><br><span class="line">    <span class="string">'default'</span>: {</span><br><span class="line">        <span class="comment"># mysql配置</span></span><br><span class="line">        <span class="comment"># 'ENGINE': 'django.db.backends.mysql',</span></span><br><span class="line">        <span class="comment"># 'NAME': 'test',</span></span><br><span class="line">        <span class="comment"># 'PORT': 3306,</span></span><br><span class="line">        <span class="comment"># 'HOST': '127.0.0.1',</span></span><br><span class="line">        <span class="comment"># 'USER': 'root',</span></span><br><span class="line">        <span class="comment"># 'PASSWORD': '123456'</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment"># postgreSQL配置</span></span><br><span class="line">        <span class="string">'ENGINE'</span>: <span class="string">'django.db.backends.postgresql_psycopg2'</span>,</span><br><span class="line">        <span class="string">'NAME'</span>: <span class="string">'mytest'</span>,</span><br><span class="line">        <span class="string">'PORT'</span>: <span class="number">5432</span>,</span><br><span class="line">        <span class="string">'HOST'</span>: <span class="string">'39.***.***.***'</span>,</span><br><span class="line">        <span class="string">'USER'</span>: <span class="string">'postgres'</span>,</span><br><span class="line">        <span class="string">'PASSWORD'</span>: <span class="string">'root'</span></span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">DATABASES = &#123;</span><br><span class="line">    <span class="string">&#x27;default&#x27;</span>: &#123;</span><br><span class="line">        <span class="comment"># mysql配置</span></span><br><span class="line">        <span class="comment"># &#x27;ENGINE&#x27;: &#x27;django.db.backends.mysql&#x27;,</span></span><br><span class="line">        <span class="comment"># &#x27;NAME&#x27;: &#x27;test&#x27;,</span></span><br><span class="line">        <span class="comment"># &#x27;PORT&#x27;: 3306,</span></span><br><span class="line">        <span class="comment"># &#x27;HOST&#x27;: &#x27;127.0.0.1&#x27;,</span></span><br><span class="line">        <span class="comment"># &#x27;USER&#x27;: &#x27;root&#x27;,</span></span><br><span class="line">        <span class="comment"># &#x27;PASSWORD&#x27;: &#x27;123456&#x27;</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment"># postgreSQL配置</span></span><br><span class="line">        <span class="string">&#x27;ENGINE&#x27;</span>: <span class="string">&#x27;django.db.backends.postgresql_psycopg2&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;NAME&#x27;</span>: <span class="string">&#x27;mytest&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;PORT&#x27;</span>: <span class="number">5432</span>,</span><br><span class="line">        <span class="string">&#x27;HOST&#x27;</span>: <span class="string">&#x27;39.***.***.***&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;USER&#x27;</span>: <span class="string">&#x27;postgres&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;PASSWORD&#x27;</span>: <span class="string">&#x27;root&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>其他的就和MySQL一样啦</p>
 <p>原文转载自「刘悦的技术博客」<a target="_blank" rel="noopener" href="https://v3u.cn/a_id_171">https://v3u.cn/a_id_171</a></p>
 
@@ -391,7 +388,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">40</span>
+          <span class="site-state-item-count">39</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -404,7 +401,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">23</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -515,5 +512,5 @@
 
   
 
-<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</body>
 </html>
